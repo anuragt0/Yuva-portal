@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useState } from 'react';
 import CourseStructure from './CourseStructure';
 
-// YOUTUBE API KEY = AIzaSyATcf3nBzwPYRG5wD6NCFma6J0hwEJujjg
 
 const Courses = () => {
     const host = 'http://localhost:5000';
