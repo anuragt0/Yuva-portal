@@ -1,11 +1,15 @@
-import {React, useState} from 'react'
+import {React, useState, useContext} from 'react'
 import { useNavigate } from 'react-router-dom';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import courseContext from '../context/CourseContext';
 
 const Signup = () => {
 
     const [credentials, setCredentials] = useState({name:"", email: "", phone:"", password: "", cpassword: ""}) 
     let navigate = useNavigate();
+    const context = useContext(courseContext);
+    const {fromLogin, setFromLogin} = context;
     const host = 'http://localhost:5000';
 
 
@@ -13,11 +17,19 @@ const Signup = () => {
         e.preventDefault();
         const {name, email, password, phone}=credentials;
         if(name.length<3){
-            alert('Name must be atleast 3 characters long');
+            // alert('Name must be atleast 3 characters long');
+            toast.warn("Name must be atleast 3 characters long", {
+                position: 'top-center',
+                autoClose: 2000
+            });
             return;
         }
         if((phone[0]!=='6' && phone[0]!=='7' &&phone[0]!=='8' &&phone[0]!=='9' ) || phone.length!=10){
-            alert('Invalid phone number');
+            // alert('Invalid phone number');
+            toast.warn("Invalid phone number", {
+                position: 'top-center',
+                autoClose: 2000
+            });
             return;
         }
         const response = await fetch(`${host}/api/auth/createuser`, {
@@ -33,14 +45,18 @@ const Signup = () => {
             // Save the auth token and redirect
             localStorage.setItem('token', json.authtoken); 
             localStorage.setItem('user_id', json.user_id);
+            setFromLogin(true);
             navigate("/courses");
             console.log("Account created successfully");
             // props.showAlert("Account created succesfully", "success");
-            window.location.reload()
+            // window.location.reload()
         }
         else{
             // props.showAlert("Invalid details", "danger");
-            alert("Please enter valid details")
+            toast.warn("Invalid details", {
+                position: 'top-center',
+                autoClose: 2000
+            });
             // console.log("Some error");
         }
 
@@ -74,11 +90,10 @@ const Signup = () => {
                     </div>
                   </div>
                   <div className="d-flex flex-row align-items-center mb-4">
-                      <i className="fa-solid fa-phone my-auto"></i>     
-                      <div className="form-outline flex-fill mb-0">
+                    <i class="fa-sharp fa-solid fa-phone"></i>
+                    <div className="form-outline flex-fill mb-0">
                       <input type="text" id="form3Example1c" className="form-control"  name='phone' onChange={onChange}/>
-
-                      <label className="form-label" htmlFor="form3Example1c">Phone</label>
+                      <label className="form-label" htmlFor="form3Example1c">Phone number</label>
                     </div>
                   </div>
 
@@ -93,7 +108,7 @@ const Signup = () => {
                     <i className="fas fa-envelope fa-lg me-3 fa-fw"></i>
                     <div className="form-outline flex-fill mb-0">
                       <input type="text" id="form3Example3c2" className="form-control" name='dob' onChange={onChange}/>
-                      <label className="form-label" htmlFor="form3Example3c2">Date of birth (in the form 00/00/0000)</label>
+                      <label className="form-label" htmlFor="form3Example3c2">Date of birth</label>
                     </div>
                   </div>
 
@@ -135,6 +150,7 @@ const Signup = () => {
     </div>
   </div>
 </section>
+<ToastContainer/>
     </div>
   )
 }

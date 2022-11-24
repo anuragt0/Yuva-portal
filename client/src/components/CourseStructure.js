@@ -16,7 +16,8 @@ const CourseStructure = (props) => {
     }
 
   return (
-        <div className="card bg-light mb-3" id={`${props.course._id}`} style={{width: "18rem", border: "1px solid", display:"inline-block", padding: "20px", margin: "40px", backgroundColor: "#CFF5E7"}}>
+    
+        <div  className="card bg-light mb-5 rounded-4" id={`${props.course._id}`} style={{width: "20rem", border: "1px solid", display:"inline-block", padding: "20px", margin: "50px", backgroundColor: "#CFF5E7", fontFamily: "Montserrat"}}>
             {/* <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTY-1IC8C9PRC45b_SUwrxwJWp1VitPNcEjFA&usqp=CAU" className="card-img-top" alt="..."/> */}
             <div className="card-body">
                 <p className="card-title" style={{textAlign: "center", fontSize: "30px"}}> <b> {props.course.name}</b></p>

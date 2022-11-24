@@ -3,14 +3,16 @@ import CourseContext from '../context/CourseContext';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import ReactPlayer from 'react-player/youtube'
+import { useNavigate } from 'react-router-dom';
 import "../Player.css";
-
 
 const VideoPlayer = () => {
     const context = useContext(CourseContext);
     const {videocontext} = context;
     const [video, setVideo] = useState({source: ""});
     const [user, setUser] = useState({});
+    const [duration, setDuration] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch(`http://localhost:5000/api/getvideobyid`, {
@@ -68,28 +70,33 @@ const VideoPlayer = () => {
 
     }
 
+    const handleTakeQuiz = ()=>{
+        navigate('/course/video/player/quiz/instruction')
+    }
+
     const handleDuration = (e)=>{
-        console.log(e.target);
+        console.log("here: ",e.target);
+        setDuration(e.target);
     }
     
 
     return (
-        <div>
+        <div style={{ fontFamily: "Montserrat"}}>
         <div style={{margin: "30px",padding: "20px", border: "2px solid"}}>
         <h3 >Title:</h3>
-        <div style={{ padding: "20px", color: "grey"}}>
+        <div style={{ padding: "20px"}}>
             <h4>{video.title}</h4>
         </div>
         <h3>Description:</h3>
-        <div style={{ padding: "20px",color: "grey"}}>
+        <div style={{ padding: "20px"}}>
             <h4>{video.description}</h4>
         </div>
         </div>
-        <div className="text-center my-5">
-        <button type="button" class="btn btn-primary btn-lg mx-3" disabled>Get certificate</button>
-        </div>
 
-        <div  className='player-wrapper' style={{display: "flex", justifyContent: "center"}}>
+        <div className="text-center my-5">
+        <button type="button" class="btn btn-primary btn-lg " onClick={handleTakeQuiz}><b>Take quiz</b></button>
+        </div>
+        <div  className='player-wrapper' style={{}}>
 
         <ReactPlayer url={video.source}  
             onDuration={handleDuration}

@@ -1,14 +1,19 @@
 import React, { useState, useContext } from 'react'
 import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import courseContext from '../context/CourseContext';
 
 const Login = (props) => {
     const navigate = useNavigate();
+    const context = useContext(courseContext);
+    const {fromLogin, setFromLogin} = context;
 
     const [credentials, setCredentials] = useState({email: "", password: ""});
     const host = 'http://localhost:5000';
 
-
     const handleSubmit = async (e)=>{
+        
         e.preventDefault();
         const response = await fetch(`${host}/api/auth/login`, {
             method: 'POST',
@@ -23,7 +28,14 @@ const Login = (props) => {
         if (json.success){
             // Save the auth token and redirect
             localStorage.setItem('token', json.authtoken); 
+            // toast.success("Logged in successfully", {
+            //     position: 'top-center',
+            //     autoClose: 1000
+            // });
+            setFromLogin(true);
             navigate("/courses");
+                
+        
             // props.showAlert("Logged in succesfully", "success");
             // Checking if user is admin or not
             fetch(`${host}/api/auth/getuser`, {
@@ -46,9 +58,14 @@ const Login = (props) => {
                 console.error('Error:', error);
             });
             window.location.reload();
+            
+
         }
         else{
-            alert("Invalid credentials");
+            toast.error("Invalid credentials", {
+                position: 'top-center',
+                autoClose: 2000
+            });
             console.log("Please enter valid credentials");
         }
     }
@@ -100,6 +117,7 @@ const Login = (props) => {
   </div>
  
 </section>
+    <ToastContainer/>
 
     </div>
   )

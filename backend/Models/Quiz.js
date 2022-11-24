@@ -6,26 +6,16 @@ const QuizSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'video'
     },
-    totalQuestions: {
-        type: Number,
-        required: true
-    },
     questions : {
         type : Array ,
         default : [] 
     },
-    options: [
-        {
-            type: String
-        }
-    ],
-    
-
-        
+    options: {
+        type: Array,
+    }
     
 })
 
-const Quiz = mongoose.model("quiz", CourseSchema);
-// User.createIndexes();
+const Quiz = mongoose.model("quiz", QuizSchema);
 module.exports = Quiz;
 

@@ -35,7 +35,7 @@ const Videos = () => {
     }, [])
     
   return (
-    <div>
+    <div style={{ fontFamily: "Montserrat"}}>
         
         {videos.length==0? <h4 style={{color: "blue", margin: "30px"}}>Looks like videos are not uploaded in this course yet...</h4>: <h1 style={{padding: "30px"}} >Videos: </h1>}
         {

@@ -2,6 +2,7 @@ const express = require("express");
 const User = require("../models/User");
 const Video = require("../models/Video");
 const Course = require("../models/Course");
+const Quiz = require("../models/Quiz");
 const fetchuser = require('../middleware/fetchuser');
 const { findOne } = require("../models/User");
 
@@ -108,7 +109,6 @@ router.post("/increasewatchtime", async(req,res)=>{
     const videoID = req.body.videoID;
     const incrTime = Number(req.body.time);
     // const videoLength = Number(req.body.videoLength);
-    console.log("yaha tak to aa gayaa iska matlab");
 
     // console.log("here: ", incrTime);
     const user = await User.findById(userID);
@@ -121,7 +121,7 @@ router.post("/increasewatchtime", async(req,res)=>{
     currentWatchStatus[videoID]+=incrTime;
 
     const newUser = await User.findOneAndUpdate({_id: userID}, {watchStatus: currentWatchStatus}, {new:true})
-    console.log("Updated user: ", newUser);
+    // console.log("Updated user: ", newUser);
     res.json({"success": true, user: newUser});
 
 })
@@ -166,7 +166,82 @@ router.post('/auth/deletevideo', fetchuser, async(req,res)=>{
     }
 })
 
+router.post('/auth/uploadquestion', fetchuser, async (req,res)=>{
+    const userID = req.user.id;
+    const videoID = req.body.videoID;
+    // console.log("here: ", videoID);
+    const question = req.body.question;
+    const option1 = req.body.option1;
+    const option2 = req.body.option2;
+    const option3 = req.body.option3;
+    const option4 = req.body.option4;
+    const correctOption = req.body.correctoption;
+  
+    //wrap in try catch
 
+    const loggedInUser = await User.findOne({_id: userID});
+    if(loggedInUser.role==='user'){
+        res.send(401).send({ error: "Access denied, please login with correct credentials" });
+    }
+    else{
+        const video = await Video.findOne({_id: videoID});
+        // console.log(video);
+        if(video.quiz===undefined){
+            //Create a new quiz and update this new quiz id to video
+            const questionObj = {question, correctOption};
+            const optionssArr = [];
+            const questionsArr = [questionObj];
+            optionssArr.push(option1);
+            optionssArr.push(option2);
+            optionssArr.push(option3);
+            optionssArr.push(option4);
+            const newQuiz = await Quiz.create({
+                videoid: videoID,
+                questions: questionsArr,
+                options: optionssArr,
+            })
+            const newVideo = await Video.findByIdAndUpdate({_id: videoID}, {quiz: newQuiz._id}, {new: true});
+            res.json({newQuiz, newVideo});
+        }
+        else{
+            //Find the quiz and just update it
+            // console.log("here");
+            const foundQuiz = await Quiz.findOne({videoid: videoID});
+            const questionObj = {question, correctOption};
+            // console.log("foundQuiz: ", foundQuiz);
+            foundQuiz.questions.push(questionObj);
+            foundQuiz.options.push(option1);
+            foundQuiz.options.push(option2);
+            foundQuiz.options.push(option3);
+            foundQuiz.options.push(option4);
+            // console.log("NEW QUIZ: ", foundQuiz);
+
+            const updatedQuiz = await Quiz.findByIdAndUpdate({_id: foundQuiz._id}, {questions: foundQuiz.questions, options: foundQuiz.options}, {new:true});
+            res.json({success:"true", updatedQuiz});
+        }
+    }
+})
+
+router.post('/getquiz',fetchuser, async (req,res)=>{
+    const videoid = req.body.videoID;
+    const userID = req.user.id;
+
+    try {
+        const quiz = await Quiz.findOne({videoid: videoid});
+        res.json(quiz);
+    } catch (error) {
+        console.log("Some error occured: ", error);
+        res.json({success: false});
+    }
+})
+
+router.post('/getvideobyid', async(req,res)=>{
+    const videoid = req.body.videoID;
+
+    const video = await Video.findById(videoid);
+    res.json(video);
+
+})
 
 
 module.exports = router;

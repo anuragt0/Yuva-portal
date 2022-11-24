@@ -28,10 +28,10 @@ const VideoStructure = (props) => {
     }
 
   return (
-    <div className="card border-dark mb-3" style={{maxWidth: "540px", margin: "50px", marginLeft: "100px"}}>
-    <div className="row no-gutters">
+    <div className="card border-dark mb-3" style={{maxWidth: "540px", margin: "60px", padding: "10px"}}>
+    <div className="row no-gutters" >
       <div className="col-md-4">
-        <img src={`https://img.youtube.com/vi/${videoCode}/hqdefault.jpg`} className="card-img align-baseline" style={{marginTop: "15px"}} alt="image"/>
+        <img src={`https://img.youtube.com/vi/${videoCode}/hqdefault.jpg`} className="card-img align-baseline" style={{marginTop: "15px", padding:"8px"}} alt="image"/>
       </div>
       <div className="col-md-8">
         <div className="card-body">
