@@ -228,12 +228,15 @@ const QuizAdmin = () => {
         <h2>Title: {video.title}</h2> 
         <h3>Description: {video.description}</h3>
         <hr />
-        <h3>This video has following quiz questions: </h3>
+        <h3> {quiz?"This video has following quiz questions: ":"There are currently no questions in this video"} </h3>
         <hr />
+        <div style={{textAlign:"center"}}>
         <button className='btn btn-primary' onClick={()=>handleAddQuiz()}>Add quiz question</button>
 
+        </div>
+
         {
-            quiz.questions.map((question, index)=>{
+            quiz? quiz.questions.map((question, index)=>{
                 console.log(question);
                 return (<>
                      <p style={{fontSize: "25px"}} > {index+1}- {question.question}</p>
@@ -249,7 +252,7 @@ const QuizAdmin = () => {
                 
                 )
                 
-            })
+            }):""
             
         }
     </div>

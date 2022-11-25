@@ -15,6 +15,7 @@ import AdminVideos from './components/AdminVideos';
 import QuizAdmin from './components/QuizAdmin';
 import QuizUser from './components/QuizUser';
 import Instructions from './components/Instructions';
+import Footer from './components/Footer';
 
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
                 
             </Routes>
             </div>
+            {/* <Footer /> */}
         </Router>
         </CourseState>
     </>);

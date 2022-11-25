@@ -265,7 +265,7 @@ const AdminCourses = () => {
         </div>
       </div>
 
-    <div>
+    <div style={{backgroundImage: "url(`background.jpg`)"}}>
     <h1 className='my-5'>Available Courses: </h1>
     <div className="text-center my-5">
         <button type="button" class="btn btn-primary btn-lg mx-3" onClick={()=>handleNewCourse()}>Add a new Course</button>

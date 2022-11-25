@@ -9,7 +9,8 @@ const QuizUser = () => {
     const [questions, setQuestions] = useState([]);
     const [options, setOptions] = useState([]);
     const [video, setVideo] = useState({source: ""});
-    const [time, setTime] = useState(5);
+    const [time, setTime] = useState(15);
+    const [result, setResult] = useState(0);
 
     const[quizover, setQuizover] = useState(false);
 
@@ -61,43 +62,70 @@ const QuizUser = () => {
                     })
                 }
               }, 1000)
+              
+              
+            }, [])
             
-    
-    }, [])
-
-    const handleSubmit = (e)=>{
-        e.preventDefault();
-        alert("Submit quiz");
+    const handleReattempt = ()=>{
+        console.log("Reattempt");
+    }
+    const handleSubmit = ()=>{
+        // e.preventDefault();
+        // SCORE IS CALCULATED
+        console.log('calculate results');
+        let score = 0;
+        for(let i = 0; i<questions.length; i++){
+            if(document.getElementsByClassName(`question${i}`)[questions[i].correctOption-1].checked){
+                score++;
+            }
+        }
+        const correctAnswers = score;
+        const totalQuestions = questions.length;
+        const percentage = (correctAnswers/totalQuestions*100).toFixed(2);
+        console.log("You scored ", percentage);
+        setResult(percentage);
+        // document.getElementById('result').style.display = "";
+        document.getElementById('quiz').style.display = "none";
+        document.getElementById('timer').style.display = "none";
+        document.getElementById('submitquiz').style.disabled=true;
+                    
     }
     
   return (
-    <div>
+    <div style={{height: "100vh", backgroundColor: `url('background.jpg')`}}>
+
         <div id='timer' style={{position:'absolute',fontSize: "30px" ,right: "30px", fontFamily: "Montserrat", margin: "30px"}}>
             Time left: {time>=0?time:0  }
         </div>
-        <h3 style={{marginTop: "30px"}}>Quiz has been started! All the best</h3>
+        <h3 style={{marginTop: "30px"}} id='start'>Quiz has been started! All the best</h3>
+        {result}
+        {/* <h3 style={{marginTop: "30px", display: "none"}} id='result'>
+                        Quiz is over. You scored ${result}%
+                        <hr/>
+                        <button className='btn btn-primary' onClick={handleReattempt}>Re-attempt</button> 
+        </h3> */}
 
         {/* style={{display: time<=0?"none":""}} */}
-        <div id='quiz' style={{marginTop: "80px", fontSize: "20px"}}>
+        <div id='quiz' name='quiz' style={{marginTop: "80px", fontSize: "20px"}}>
             <form name='quiz' id='quiz'>
                 {
                     questions.map((question, index)=>{
                         return <div>
                             <p>{index+1}. {question.question}</p>
                             <div id='options' style={{paddingLeft: "20px"}}>
-                                <p><input  type="radio" name="1" value={1} disabled={time>0?false:true} /> &nbsp; A. {options[index*4]}</p>
-                                <p><input type="radio" name="2" value={2}disabled={time>0?false:true} />&nbsp; B. {options[index*4+1]}</p>
-                                <p><input type="radio" name="3" value={3}disabled={time>0?false:true} />&nbsp;C. {options[index*4+2]}</p>
-                                <p><input type="radio" name="4" value={4}disabled={time>0?false:true} />&nbsp; D. {options[index*4+3]}</p>
+                                <p><input  type="radio" className={`question${index}`} name={`question${index}`} value={1}/> &nbsp; A. {options[index*4]}</p>
+                                <p><input type="radio" className={`question${index}`} name={`question${index}`} value={2}/>&nbsp; B. {options[index*4+1]}</p>
+                                <p><input type="radio" className={`question${index}`} name={`question${index}`} value={3}/>&nbsp;C. {options[index*4+2]}</p>
+                                <p><input type="radio" className={`question${index}`} name={`question${index}`} value={4}/>&nbsp; D. {options[index*4+3]}</p>
                             </div>
                         </div>
                     })
-                }
-                <button id='submitquiz' className='btn btn-primary' onClick={handleSubmit}>Submit</button>
-            
+                }            
             </form>
 
         </div>
+        <button id='submitquiz' className='btn btn-primary' onClick={handleSubmit} disabled={time>0?false:true} >Submit</button>
+        <button id='reAttempt' className='btn btn-primary' onClick={handleReattempt} disabled={true}  >Re-attempt</button>
 
     </div>
   )
