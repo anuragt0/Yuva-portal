@@ -90,12 +90,6 @@ const AdminVideos = () => {
         setDltVideo(video);
         ref2.current.click();
     }
-    const handleAddQuiz = (video)=>{
-        alert(`Add quiz for video ${video}`)
-        ref3.current.click();
-        console.log("hererere: ", video);
-        setQuizVideo(video);
-    }
 
     const handleDltConfirm = (e)=>{
         e.preventDefault();
