@@ -4,6 +4,7 @@
   transition:0.5s;
   width: 100%;
   margin-top: 20px;
+  
 }
 .box1.active{
   background-color:#397485;

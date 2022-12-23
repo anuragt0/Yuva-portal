@@ -15,6 +15,9 @@ const UserSchema = mongoose.Schema({
         type: String,
         default: "user",
     },
+    city:{
+        type: String,
+    },
     password: {
         type: String,
         required: true

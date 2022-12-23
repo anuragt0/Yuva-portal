@@ -1,8 +1,10 @@
 import React, { useState, useContext } from 'react'
 import { Link, useNavigate } from "react-router-dom";
+import "../App.css"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import courseContext from '../context/CourseContext';
+import logo from "../yuva_logo2.png";
 
 const Login = (props) => {
     const navigate = useNavigate();
@@ -33,7 +35,7 @@ const Login = (props) => {
             //     autoClose: 1000
             // });
             setFromLogin(true);
-            navigate("/courses");
+            navigate("/profile");
                 
         
             // props.showAlert("Logged in succesfully", "success");
@@ -77,44 +79,47 @@ const Login = (props) => {
 
   return (
     <div>
-  <section className="vh-100">
-  <div className="container-fluid h-custom my-5">
-    <div className="row d-flex justify-content-center align-items-center h-100">
-      <div className="col-md-9 col-lg-6 col-xl-5">
-        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+  <section>
+  {/* <div className="container-fluid h-custom my-5"> */}
+    <div className=" pv " style={{display: "flex" , marginTop: "100px"}}>
+      <div className="col-md-9 col-lg-6 col-xl-5 left">
+        <img src={logo} style={{ borderRadius: "45px"}}
           className="img-fluid" alt="Sample image"/>
       </div>
 
-      <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-        <form className='my-5'>
+      <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1 logindiv right">
+        <form className='my-4' style={{padding:"20px" , paddingTop:"70px"}}>
+            <h3 style={{marginBottom: "27px", fontSize: "1.5em"}}>Sign in</h3>
           
-          <div className="form-outline mb-4">
-          <input type="email" className="form-control form-control-lg"  id="floatingInput" name='email' placeholder="Enter a valid email address" value={credentials.email} onChange={onChange}/>
-            <label className="form-label" htmlFor="floatingInput">Email</label>
+          <div className="form-outline mb-4" >
+          <input type="email"  style={{borderRadius:"0px" , fontSize:"25px"}}
+          className="form-control form-control-lg"  id="floatingInput" name='email' placeholder="Username" value={credentials.email} onChange={onChange}/>
+            {/* <label className="form-label" htmlFor="floatingInput">Email</label> */}
           </div>
 
           <div className="form-outline mb-3">
 
-            <input type="password" className="form-control form-control-lg" id="floatingPassword" name='password' placeholder="Enter Password" value={credentials.password} onChange={onChange}/>
-            <label className="form-label" htmlFor="floatingPassword">Password</label>
+            <input type="password" style={{borderRadius:"0px", fontSize:"25px"}} className="form-control form-control-lg" id="floatingPassword" name='password' placeholder="Password" value={credentials.password} onChange={onChange}/>
+            {/* <label className="form-label" htmlFor="floatingPassword">Password</label> */}
           </div>
 
-          <div className="d-flex justify-content-between align-items-center">
+          {/* <div className="d-flex justify-content-between align-items-center">
             
             <Link  className="text-body" to="/signup">Forgot password?</Link>
-          </div>
+          </div> */}
 
           <div className="text-center text-lg-start mt-4 pt-2">
-            <button type="button" className="btn btn-primary btn-lg" onClick={handleSubmit}
+            <button style={{borderRadius:"0px" ,width:"150px" , fontSize:"25px"}} 
+            type="button" className="btn btn-success btn-lg" onClick={handleSubmit}
               >Login</button>
-            <p className="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <Link to="/signup"
-                className="link-danger">Register</Link></p>
+            {/* <p className="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <Link to="/signup"
+                className="link-danger">Register</Link></p> */}
           </div>
 
         </form>
       </div>
     </div>
-  </div>
+  {/* </div> */}
  
 </section>
     <ToastContainer/>

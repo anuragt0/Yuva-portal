@@ -133,103 +133,7 @@
       margin-inline-start: 0px;
       margin-inline-end: 0px;
   }
-  /*.ul1{
-    grid-template-columns: repeat(12, minmax(0px, 1fr));
-      display: grid;
-      width: 100%;
-      column-gap: min(9.09091%, 1rem);
   
-  }
-  .li1{
-    grid-template-columns: minmax(0px, 1fr);
-      display: grid;
-      grid-column-end: span 3;
-      background-color: white;
-  }
-  .a1{
-    display: grid;
-    cursor: pointer;
-  }
-  .a2{
-        flex-direction: column;
-  }
-  .a3{
-    padding-right: 0px;
-    max-width: none;
-  
-  }
-  .span1{
-    margin: 0px 0px 0.75rem;
-      display: flex;
-      font-family: Suisse, Apercu, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-      font-size: 0.875rem;
-      text-transform: capitalize;
-  }
-  .h3{
-    font-weight: 700;
-      line-height: 1.1;
-      margin: 0px 0px 0.25rem;
-      font-size: 1.25rem;
-  }
-  .a4{
-    display: flex;
-      flex-wrap: wrap;
-      -webkit-box-align: center;
-      align-items: center;
-  }
-  .a5{
-    display: flex;
-      font-size: 0.875rem;
-      -webkit-box-align: center;
-      align-items: center;
-  }
-  .a6{
-    margin-right: 0.25rem;
-      margin-bottom: 0.0625rem;
-      border: 1px solid var(--color-secondary);
-      background: var(--color-navy);
-      display: inline-block;
-      vertical-align: middle;
-      width: 0.5rem;
-      height: 0.5rem;
-      border-radius: 0.5rem;
-  }
-  .span2{
-    font-size: inherit;
-  display: inline-block;
-  margin: 0;
-  }
-  .span3{
-    display: inline-block;
-      font-weight: 400;
-      line-height: 1.5;
-      font-size: 0.875rem;
-      margin: 0px 0px 0px 0.25rem;
-  }
-  b{
-    font-size: 700;
-  }
-  .span4{
-    font-size: inherit;
-      display: inline-block;
-      margin: 0px;
-      color: var(--color-gray-900);
-  }
-  
-  .a7{
-    background-color: var(--color-paleBlue);
-      position: absolute;
-      right: 0px;
-      bottom: 0px;
-  }
-  .span5{
-    display: inline-block;
-      font-weight: 700;
-      line-height: 1.1;
-      margin: 0px;
-      padding: 0.25rem 0.75rem;
-      font-size: 0.875rem;
-  }*/
   .cards{
     box-sizing: border-box;
     background-color:#10162F ;
@@ -252,3 +156,90 @@
       }
   
 
+      /* USER PROFILE */
+      /* body {
+        background: rgb(99, 39, 120)
+    } */
+    
+    .form-control:focus {
+        box-shadow: none;
+        border-color: #BA68C8
+    }
+    
+    .profile-button {
+        background: rgb(99, 39, 120);
+        box-shadow: none;
+        border: none
+    }
+    
+    .profile-button:hover {
+        background: #682773
+    }
+    
+    .profile-button:focus {
+        background: #682773;
+        box-shadow: none
+    }
+    
+    .profile-button:active {
+        background: #682773;
+        box-shadow: none
+    }
+    
+    .back:hover {
+        color: #682773;
+        cursor: pointer
+    }
+    
+    .labels {
+        font-size: 20px;
+        margin: 10px;
+    }
+    
+    .add-experience:hover {
+        background: #BA68C8;
+        color: #fff;
+        cursor: pointer;
+        border: solid 1px #BA68C8
+    }
+
+    .temp{
+        margin-left: 18%;
+        background-color: red;
+        border: 2px solid;
+        width:70%;
+        
+    }
+.logindiv{
+    /* border: 2px solid; */
+    height: 450px;
+    /* border-radius: 25px; */
+    padding: 30px;
+}
+.left{
+width:50%;
+/* background-color: blue; */
+margin-left: 0;
+/* border: 4px solid black; */
+}
+.right{
+width: 40%;
+height: 550px;
+/* margin-left: 55%; */
+background-color: #BFEAF5;
+border-radius: 20px;
+
+}
+.right >h3{
+font-size: 1.5em;
+}
+
+.profile{
+    margin: 20px;
+}
+.outerbox{
+    border: 2px solid;
+    margin: 3em;
+    padding: 2em;
+    
+}

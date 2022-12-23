@@ -1,6 +1,7 @@
 import React, { useEffect, useContext} from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../yuva_logo.png";
 
 import "../App.css";
 
@@ -50,8 +51,8 @@ const Navbar = () => {
 <section class="abc" style={{backgroundColor: "white", height: "58px"}}>
     <nav class="navbar navbar-expand-md navbar-dark" style={{paddingTop:"3.5px"}} >
 
-      <a class="navbar-brand p-0" href="#">
-        <h1 class="h1">LOGO HERE</h1>
+      <a class="navbar-brand p-0" href="/">
+        <h1 class="h1"><img src={logo} width={"35%"} alt="err" /></h1>
       </a>
 
 
@@ -77,7 +78,7 @@ const Navbar = () => {
           {
             !localStorage.getItem('token')?
                 <li class="nav-item" style={{ position: "absolute",right: "30px"}}>
-                <a class="nav-link" href="/login">LogIn/SignUp</a>
+                <a class="nav-link" href="/login">LogIn</a>
                 </li>
                 :
                 <>
@@ -91,8 +92,8 @@ const Navbar = () => {
                     </li>
                      </>
                 ):(<p></p>)}
-                <button className="mx-3" style={{height: "50px", position: "absolute", right: "120px"}} >
-                    <i className="fa-solid fa-user " ></i>
+                <button className="mx-3" style={{height: "50px", position: "absolute", right: "120px"}} onClick={()=>{navigate('/profile')}} >
+                     <i className="fa-solid fa-user " ></i>
                 </button>
                 <li class="nav-item" onClick={handleLogout} style={{position:"absolute", right: "60px"}}>
                 <a class="nav-link"  href="/login" onClick={handleLogout}>Logout</a>

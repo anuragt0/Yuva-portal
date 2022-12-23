@@ -15,6 +15,7 @@ import AdminVideos from './components/AdminVideos';
 import QuizAdmin from './components/QuizAdmin';
 import QuizUser from './components/QuizUser';
 import Instructions from './components/Instructions';
+import UserProfile from './components/UserProfile';
 import Footer from './components/Footer';
 
 
@@ -30,6 +31,7 @@ function App() {
                 <Route exact path="/login" element={<Login/>} />
                 <Route exact path="/signup" element={<Signup />} /> 
                 <Route exact path="/courses" element={<Courses />} /> 
+                <Route exact path="/profile" element={<UserProfile />} /> 
                 <Route exact path="/course/videos" element={<Videos />} /> 
                 <Route exact path="/course/video/player" element={<VideoPlayer />} /> 
                 <Route exact path="/course/video/player/quiz/instruction" element={<Instructions />} /> 

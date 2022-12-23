@@ -8,7 +8,6 @@ const { findOne } = require("../models/User");
 
 const router = express.Router();
 
-
 router.get('/getcourses', async (req,res)=>{
     const allCourses = await Course.find();
     res.json(allCourses);
