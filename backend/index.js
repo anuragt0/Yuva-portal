@@ -1,9 +1,8 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const connectToMongo = require('./db');
-const cors = require('cors');
-const dotenv = require('dotenv');
-dotenv.config({path: './config.env'});
+const connectToMongo = require("./db");
+const cors = require("cors");
+require("dotenv").config();
 app.use(cors());
 
 // to use req.body
@@ -11,11 +10,11 @@ app.use(express.json());
 
 connectToMongo();
 
-app.use('/api/auth', require('./routes/auth.js'));
+// app.use("/api/auth", require("./routes/auth.js"));
+// app.use("/api", require("./routes/others.js"));
 
-app.use('/api', require('./routes/others.js'));
+app.use("/api/user/auth", require("./routes/user.js"));
 
-
-app.listen(5000, ()=>{
-    console.log("Server is listening at port 5000");
-})
+app.listen(5000, () => {
+  console.log("Server is listening at port 5000");
+});

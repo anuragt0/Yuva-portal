@@ -17,7 +17,7 @@ const UserSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
-  userId: {
+  adminId: {
     type: String,
     required: true,
     unique: true,
@@ -27,37 +27,7 @@ const UserSchema = mongoose.Schema({
     required: true,
   },
 
-  activity: {
-    type: Object,
-    default: {},
-  },
-
-  region: {
-    type: String,
-  },
-  collegeName: {
-    type: String,
-  },
-  branch: {
-    type: String,
-  },
   phone: {
-    type: String,
-  },
-
-  addLine1: {
-    type: String,
-  },
-  addLine2: {
-    type: String,
-  },
-  city: {
-    type: String,
-  },
-  pincode: {
-    type: String,
-  },
-  country: {
     type: String,
   },
 });
