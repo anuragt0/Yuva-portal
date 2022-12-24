@@ -7,7 +7,7 @@ const CourseState = (props) => {
     const [videocontext, setVideoContext] = useState(null);
     const [adminCourse, setAdminCourse] = useState(null);
     const [quizVideoID, setQuizVideoID] = useState(null);
-    const [fromLogin, setFromLogin] = useState(false);
+    // const [fromLogin, setFromLogin] = useState(false);
     // console.log(CourseContext);
 
   return (
