@@ -9,11 +9,10 @@ const fetchUser = (req, res, next) => {
     return res.status(400).send({ error: statusText.TOKEN_NOT_FOUND });
   }
 
-  console.log("akfmksmnf");
-
   try {
     const data = jwt.verify(token, process.env.JWT_SECRET);
     req.mongoId = data.user.mongoId;
+    req.role = data.user.role;
     next();
   } catch (error) {
     console.log("hereeee", error);

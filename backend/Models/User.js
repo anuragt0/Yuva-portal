@@ -12,6 +12,7 @@ const UserSchema = mongoose.Schema({
     type: String,
   },
 
+  ////////////////////////
   email: {
     type: String,
     required: true,
@@ -27,6 +28,7 @@ const UserSchema = mongoose.Schema({
     required: true,
   },
 
+  //////////////////////
   activity: {
     type: Object,
     default: {},
@@ -45,6 +47,7 @@ const UserSchema = mongoose.Schema({
     type: String,
   },
 
+  //////////////////////////
   addLine1: {
     type: String,
   },
@@ -59,6 +62,16 @@ const UserSchema = mongoose.Schema({
   },
   country: {
     type: String,
+  },
+
+  ////////////////////////////
+  isPassReset: {
+    type: Boolean,
+    default: false,
+  },
+  isRegistered: {
+    type: Boolean,
+    default: false,
   },
 });
 const User = mongoose.model("user", UserSchema);

@@ -7,6 +7,9 @@ const statusText = {
   INVALID_TOKEN: "Invalid token",
   VERIFIED_TOKEN: "Token verified",
   REGISTERED_SUCCESS: "Registered successfully",
+
+  SUCCESS: "All good",
+  FAIL: "Failed",
 };
 
 module.exports = statusText;

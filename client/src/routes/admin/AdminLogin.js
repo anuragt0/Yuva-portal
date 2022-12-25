@@ -1,28 +1,24 @@
 import React, { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
-import "../App.css";
-import logo from "../yuva_logo2.png";
-import { SERVER_ORIGIN } from "../utilities/constants";
+import "../../App.css";
+import logo from "../../yuva_logo2.png";
+import { SERVER_ORIGIN } from "../../utilities/constants";
+
+const config = {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+};
 
 const Login = (props) => {
-  // const navigate = useNavigate();
-
-  const [creds, setCreds] = useState({ userId: "", password: "" });
-  const config = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
+  const [creds, setCreds] = useState({ adminId: "", password: "" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${SERVER_ORIGIN}/api/user/auth/login`, {
+      const response = await fetch(`${SERVER_ORIGIN}/api/admin/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +57,7 @@ const Login = (props) => {
               src={logo}
               style={{ borderRadius: "45px" }}
               className="img-fluid"
-              alt="Sample image"
+              alt="Sample-img"
             />
           </div>
 
@@ -79,9 +75,9 @@ const Login = (props) => {
                   style={{ borderRadius: "0px", fontSize: "25px" }}
                   className="form-control form-control-lg"
                   id="floatingInput"
-                  name="userId"
+                  name="adminId"
                   placeholder="Username"
-                  value={creds.userId}
+                  value={creds.adminId}
                   onChange={onChange}
                 />
                 {/* <label className="form-label" htmlFor="floatingInput">Email</label> */}
@@ -117,7 +113,7 @@ const Login = (props) => {
                   className="btn btn-success btn-lg"
                   onClick={handleSubmit}
                 >
-                  Login
+                  Login as Admin
                 </button>
                 {/* <p className="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <Link to="/signup"
                 className="link-danger">Register</Link></p> */}
@@ -127,7 +123,6 @@ const Login = (props) => {
         </div>
         {/* </div> */}
       </section>
-      <ToastContainer />
     </div>
   );
 };
