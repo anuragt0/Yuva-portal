@@ -15,7 +15,7 @@ connectToMongo();
 
 app.use("/api/user/auth", require("./routes/user.js"));
 
-app.use("/api/admin/auth", require("./routes/admin.js"));
+// app.use("/api/admin/auth", require("./routes/admin.js"));
 
 app.use("/api/public", require("./routes/public.js"));
 

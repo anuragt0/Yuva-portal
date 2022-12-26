@@ -12,7 +12,7 @@ const CourseState = (props) => {
 
   return (
 
-    <CourseContext.Provider value={{course, setCourse, videocontext, setVideoContext, adminCourse, setAdminCourse, quizVideoID, setQuizVideoID, fromLogin, setFromLogin}}>
+    <CourseContext.Provider value={{course, setCourse, videocontext, setVideoContext, adminCourse, setAdminCourse, quizVideoID, setQuizVideoID}}>
             {props.children}
     </CourseContext.Provider>
 
