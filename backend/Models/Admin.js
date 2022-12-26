@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
-const { Schema } = require("mongoose");
 
-const UserSchema = mongoose.Schema({
+const AdminSchema = mongoose.Schema({
   fName: {
     type: String,
   },
@@ -31,6 +30,6 @@ const UserSchema = mongoose.Schema({
     type: String,
   },
 });
-const User = mongoose.model("user", UserSchema);
-// User.createIndexes();
-module.exports = User;
+const Admin = mongoose.model("admin", AdminSchema);
+// Admin.createIndexes();
+module.exports = Admin;

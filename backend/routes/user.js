@@ -7,7 +7,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 // My middlewares
-const fetchUser = require("../middlewares/fetch-user");
+const fetchPerson = require("../middlewares/fetch-person");
 
 // My utilities
 const statusText = require("../utilities/status-text.js");
@@ -24,7 +24,7 @@ router.post("/dummy", async (req, res) => {
     req.body.password = newHashedPassword;
 
     await User.create(req.body);
-    res.status(400).json({ statusText: statusText.LOGIN_IN_SUCCESS });
+    res.status(200).json({ statusText: statusText.LOGIN_IN_SUCCESS });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
@@ -58,8 +58,9 @@ router.post("/login", async (req, res) => {
 
     // generate token
     const data = {
-      user: {
+      person: {
         mongoId: user._id,
+        role: "user",
       },
     };
 
@@ -74,14 +75,13 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// ROUTE 1: Create a User using: POST "/api/auth/createuser". No login required
-router.post("/update-user", fetchUser, async (req, res) => {
-  // now req contains mongoId
-  console.log("update");
+router.post("/update-user", fetchPerson, async (req, res) => {
+  const mongoId = req.mongoId;
+
   // todo: validation
   const regForm = req.body;
   try {
-    await User.findByIdAndUpdate(req.mongoId, regForm, { overwrite: false });
+    await User.findByIdAndUpdate(mongoId, regForm, { overwrite: false });
     res.status(200).json({ statusText: statusText.REGISTERED_SUCCESS });
   } catch (error) {
     console.error(error.message);
@@ -89,13 +89,15 @@ router.post("/update-user", fetchUser, async (req, res) => {
   }
 });
 
-router.post("/reset-password", fetchUser, async (req, res) => {
+router.post("/reset-password", fetchPerson, async (req, res) => {
   // user is already logged in, so we dont need userId
 
+  console.log(req.body);
   const { newPassword, currPassword } = req.body;
+  const mongoId = req.mongoId;
 
   try {
-    const user = await User.findOneById(req.mongoId);
+    const user = await User.findById(mongoId);
 
     const hashedPassword = user.password;
     const passwordCompare = await bcrypt.compare(currPassword, hashedPassword);
@@ -107,11 +109,13 @@ router.post("/reset-password", fetchUser, async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const newHashedPassword = await bcrypt.hash(newPassword, salt);
 
-    await User.findOneByIdAndUpdate(
-      mongoId,
+    await User.findByIdAndUpdate(
+      req.mongoId,
       { password: newHashedPassword },
       { overwrite: false }
     );
+
+    res.status(200).json({ error: statusText.PASS_RESET_SUCCESS });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
@@ -120,7 +124,7 @@ router.post("/reset-password", fetchUser, async (req, res) => {
 
 // ROUTE 2: Authenticate a User using: POST "/api/auth/login". No login required
 // ROUTE 3: Get loggedin User Details using: POST "/api/auth/getuser". Login required
-router.post("/verify-token", fetchUser, async (req, res) => {
+router.post("/verify-token", fetchPerson, async (req, res) => {
   try {
     const user = await User.findById(req.mongoId);
     return res
