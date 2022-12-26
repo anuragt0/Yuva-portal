@@ -3,16 +3,11 @@ import React, { useState, useContext } from "react";
 import "../../App.css";
 import logo from "../../yuva_logo2.png";
 import { SERVER_ORIGIN } from "../../utilities/constants";
-
-const config = {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-};
+import { useNavigate } from "react-router-dom";
 
 const Login = (props) => {
   const [creds, setCreds] = useState({ adminId: "", password: "" });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,12 +22,15 @@ const Login = (props) => {
       });
 
       const { statusText, token } = await response.json();
+
       console.log(statusText);
       console.log(token);
 
       if (token) {
-        // Save the auth token and redirect
+        // todo: Save the auth token and redirect
         localStorage.setItem("token", token);
+
+        navigate("/admin/services");
       }
     } catch (error) {
       console.log(error.message);
@@ -76,7 +74,7 @@ const Login = (props) => {
                   className="form-control form-control-lg"
                   id="floatingInput"
                   name="adminId"
-                  placeholder="Username"
+                  placeholder="Id"
                   value={creds.adminId}
                   onChange={onChange}
                 />

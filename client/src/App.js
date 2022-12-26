@@ -19,6 +19,8 @@ import UserProfile from "./components/UserProfile";
 import Footer from "./components/Footer";
 
 import AdminLogin from "./routes/admin/AdminLogin";
+import AdminServices from "./routes/admin/AdminServices";
+import AdminVerticals from "./routes/admin/AdminVerticals";
 
 function App() {
   return (
@@ -64,7 +66,9 @@ function App() {
               />
               {/* {/* <Route exact path="/profile" element={<UserProfile />} /> */}
 
-              <Route exact path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/services" element={<AdminServices />} />
+              <Route path="/admin/verticals" element={<AdminVerticals />} />
             </Routes>
           </div>
           {/* <Footer /> */}
