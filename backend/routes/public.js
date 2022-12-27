@@ -4,6 +4,7 @@ const router = express.Router();
 
 // My models
 const Vertical = require("../models/Vertical");
+const Course = require("../models/Course");
 const statusText = require("../utilities/status-text.js");
 
 router.get("/verticals/all", fetchPerson, async (req, res) => {
@@ -22,9 +23,16 @@ router.get("/verticals/all", fetchPerson, async (req, res) => {
   }
 });
 
-router.get("/courses/all", async (req, res) => {
+router.get("/verticals/:verticalId/courses/all", async (req, res) => {
+  const { verticalId } = req.params;
+
   try {
-    const allCourses = await Course.find();
+    const vertical = await Vertical.findById(verticalId);
+    // console.log(vertical);
+
+    const allCourses = await Course.find({ _id: { $in: vertical.courseIds } });
+    // console.log(allCourses);
+
     res
       .status(200)
       .json({ statusText: statusText.SUCCESS, allCourses: allCourses });

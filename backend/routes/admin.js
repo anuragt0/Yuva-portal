@@ -13,9 +13,11 @@ var jwt = require("jsonwebtoken");
 const statusText = require("../utilities/status-text.js");
 const fetchPerson = require("../middlewares/fetch-person");
 const Vertical = require("../models/Vertical");
+const Course = require("../models/Course");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+// create dummy admins
 router.post("/dummy", async (req, res) => {
   console.log(req);
 
@@ -98,5 +100,37 @@ router.post("/verticals/add", fetchPerson, async (req, res) => {
     res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
   }
 });
+
+router.post(
+  "/verticals/:verticalId/courses/add",
+  fetchPerson,
+  async (req, res) => {
+    if (req.role != "admin") {
+      return res.status(400).json({ error: statusText.INVALID_TOKEN });
+    }
+
+    // todo : validation
+    const { name, desc } = req.body;
+    const { verticalId } = req.params;
+
+    try {
+      const courseDoc = await Course.create(req.body);
+      // console.log(courseDoc);
+
+      const verticalDoc = await Vertical.findOneAndUpdate(
+        { _id: verticalId },
+        { $push: { courseIds: courseDoc._id } },
+        { new: true }
+      );
+
+      // console.log(verticalDoc); // new = true to return the updated doc
+
+      res.status(200).json({ statusText: statusText.COURSE_CREATE_SUCCESS });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    }
+  }
+);
 
 module.exports = router;

@@ -13,6 +13,7 @@ const statusText = {
   FAIL: "Failed",
 
   VERTICAL_CREATE_SUCCESS: "Vertical created successfully",
+  COURSE_CREATE_SUCCESS: "Course created successfully",
 };
 
 module.exports = statusText;

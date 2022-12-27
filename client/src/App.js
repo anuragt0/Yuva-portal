@@ -9,7 +9,7 @@ import VideoPlayer from "./components/VideoPlayer";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CourseState from "./context/CourseState";
 import Admin from "./components/Admin";
-import AdminCourses from "./components/AdminCourses";
+// import AdminCourses from "./components/AdminCourses";
 import AdminUsers from "./components/AdminUsers";
 import AdminVideos from "./components/AdminVideos";
 import QuizAdmin from "./components/QuizAdmin";
@@ -21,6 +21,9 @@ import Footer from "./components/Footer";
 import AdminLogin from "./routes/admin/AdminLogin";
 import AdminServices from "./routes/admin/AdminServices";
 import AdminVerticals from "./routes/admin/AdminVerticals";
+import AdminCourses from "./routes/admin/AdminCourses.jsx";
+import AdminUnits from "./routes/admin/AdminUnits";
+import AdminAddUnits from "./routes/admin/AdminAddUnit";
 
 function App() {
   return (
@@ -69,6 +72,21 @@ function App() {
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/services" element={<AdminServices />} />
               <Route path="/admin/verticals" element={<AdminVerticals />} />
+
+              <Route
+                path="/admin/verticals/:verticalId/courses/all"
+                element={<AdminCourses />}
+              />
+
+              <Route
+                path="/admin/verticals/:verticalId/courses/:courseId/units/all"
+                element={<AdminUnits />}
+              />
+
+              <Route
+                path="/admin/verticals/:verticalId/courses/:courseId/units/add"
+                element={<AdminAddUnits />}
+              />
             </Routes>
           </div>
           {/* <Footer /> */}

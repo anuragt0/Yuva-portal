@@ -9,7 +9,7 @@ const CourseSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  content: {
+  unitArr: {
     type: Array, // array of units
     default: [],
   },

@@ -1,22 +1,24 @@
 import React, { useEffect, useState, useRef } from "react";
 import "../../css/admin/admin-verticals.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
+// TODO
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
 
-const AdminVerticals = () => {
-  const url =
-    "https://images.unsplash.com/photo-1671989088481-e1e045dbdd20?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80";
-
-  const [allVerticals, setAllVerticals] = useState([]);
-  const [newVertical, setNewVertical] = useState({ name: "", desc: "" });
+const AdminUnits = () => {
+  const [allCourses, setAllCourses] = useState([]);
+  const [newCourse, setNewCourse] = useState({ name: "", desc: "" });
   const navigate = useNavigate();
+  const params = useParams();
 
   useEffect(() => {
-    async function getAllVerticals() {
+    async function getAllCourses() {
+      const { verticalId } = params;
+
       try {
         const response = await fetch(
-          `${SERVER_ORIGIN}/api/public/verticals/all`,
+          `${SERVER_ORIGIN}/api/public/verticals/${verticalId}/courses/all`,
           {
             method: "GET",
             headers: {
@@ -26,47 +28,54 @@ const AdminVerticals = () => {
           }
         );
 
-        const { statusText, allVerticals } = await response.json();
+        const { statusText, allCourses } = await response.json();
 
-        // console.log(statusText);
-        console.log(allVerticals);
+        console.log(statusText);
+        console.log(allCourses);
 
-        setAllVerticals(allVerticals);
+        setAllCourses(allCourses);
       } catch (error) {
         console.log(error.message);
       }
     }
 
-    getAllVerticals();
+    getAllCourses();
   }, []);
 
   const ref = useRef(null);
   const refClose = useRef(null);
 
-  async function openModal() {
-    console.log("skjfnskjnfdsf");
-    ref.current.click();
+  //  path="/admin/verticals/:verticalId/courses/:courseId/units/all"
+
+  async function redirectToAddUnitPage(e) {
+    const { verticalId, courseId } = params;
+
+    console.log(params);
+
+    navigate(`/admin/verticals/${verticalId}/courses/${courseId}/units/add`);
   }
 
   function onChange(e) {
-    setNewVertical({ ...newVertical, [e.target.name]: e.target.value });
-    console.log(newVertical);
+    setNewCourse({ ...newCourse, [e.target.name]: e.target.value });
+    // console.log(newCourse);
   }
 
-  async function handleAddVertical(e) {
+  async function handleAddCourse(e) {
     e.preventDefault();
+
+    const { verticalId } = params;
 
     // todo: validate input
     try {
       const response = await fetch(
-        `${SERVER_ORIGIN}/api/admin/auth/verticals/add`,
+        `${SERVER_ORIGIN}/api/admin/auth/verticals/${verticalId}/courses/add`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "auth-token": localStorage.getItem("token"),
           },
-          body: JSON.stringify(newVertical),
+          body: JSON.stringify(newCourse),
         }
       );
 
@@ -79,36 +88,33 @@ const AdminVerticals = () => {
     }
   }
 
-  async function handleAddOrViewCourses(e) {
-    const verticalId = e.target.id;
-    console.log(verticalId);
-    navigate(`/admin/verticals/${verticalId}/courses/all`);
+  async function handleAddOrViewUnits(e) {
+    const { verticalId } = params;
+    const courseId = e.target.id;
+
+    navigate(`/admin/verticals/${verticalId}/courses/${courseId}/units/all`);
   }
 
   return (
     <>
-      <button onClick={openModal}>+ Vertical</button>
+      <button onClick={redirectToAddUnitPage}>+ Unit</button>
       <section className="online">
         <div className="container">
           {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
           <div className="content grid2">
-            {allVerticals.map((vertical) => (
-              <div className="box" key={vertical._id}>
-                <div className="img">
-                  <img src={vertical.imgSrc} alt="sjfn" />
-                  {/* <img src={vertical.imgSrc} alt="" className="show" /> */}
-                </div>
-                <h1>{vertical.name}</h1>
-                <h1>{vertical.desc}</h1>
-                <span>{vertical.courseIds.length} Courses </span>
+            {allCourses.map((course) => (
+              <div className="box" key={course._id}>
+                <h1>{course.name}</h1>
+                <h1>{course.desc}</h1>
+                <span>{course.unitArr.length} Courses </span>
                 <br />
                 <button
                   className="btn btn-primary"
                   style={{ margin: "10px" }}
-                  id={vertical._id}
-                  onClick={handleAddOrViewCourses}
+                  id={course._id}
+                  onClick={handleAddOrViewUnits}
                 >
-                  + Add / View courses
+                  + Add / View units
                 </button>
                 <button className="btn btn-primary">- Delete</button>
               </div>
@@ -126,7 +132,6 @@ const AdminVerticals = () => {
       >
         Launch demo modal
       </button>
-
       <div
         className="modal fade"
         id="exampleModal2"
@@ -138,7 +143,7 @@ const AdminVerticals = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
-                Add a new vertical
+                Add a new course
               </h5>
               <button
                 type="button"
@@ -180,20 +185,6 @@ const AdminVerticals = () => {
                     required
                   />
                 </div>
-                <div className="mb-3">
-                  <label htmlFor="imgSrc" className="form-label">
-                    Image Source
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="imgSrc"
-                    name="imgSrc"
-                    onChange={onChange}
-                    minLength={5}
-                    required
-                  />
-                </div>
               </form>
             </div>
             <div className="modal-footer">
@@ -206,11 +197,11 @@ const AdminVerticals = () => {
                 Close
               </button>
               <button
-                onClick={handleAddVertical}
+                onClick={handleAddCourse}
                 type="button"
                 className="btn btn-primary"
               >
-                Add Vertical
+                Add course
               </button>
             </div>
           </div>
@@ -220,49 +211,4 @@ const AdminVerticals = () => {
   );
 };
 
-const online = [
-  {
-    cover: "./images/courses/climatechange.jpg",
-    hoverCover: "./images/courses/climatechange.jpg",
-    courseName: "CLIMATE CHANGE",
-    course: "25 Courses",
-  },
-  {
-    cover: "./images/courses/accessibility.jpg",
-    hoverCover: "./images/courses/accessibility.jpg",
-    courseName: "ACCESSIBILITY",
-    course: "25 Courses",
-  },
-  {
-    cover: "./images/courses/roadsafety.jpg",
-    hoverCover: "./images/courses/roadsafety.jpg",
-    courseName: "ROAD SAFETY",
-    course: "10 Courses",
-  },
-  {
-    cover: "./images/courses/ei.jpg",
-    hoverCover: "./images/courses/ei.jpg",
-    courseName: "ENTREPRENEURSHIP & INNOVATION",
-    course: "15 Courses",
-  },
-  {
-    cover: "./images/courses/nukkadnatak.jpg",
-    hoverCover: "./images/courses/nukkadnatak.jpg",
-    courseName: "MASOOM",
-    course: "30 Courses",
-  },
-  {
-    cover: "./images/courses/health.jpg",
-    hoverCover: "./images/courses/health.jpg",
-    courseName: "HEALTH",
-    course: "60 Courses",
-  },
-  {
-    cover: "./images/courses/learning.jpg",
-    hoverCover: "./images/courses/learning.jpg",
-    courseName: "LEARNING",
-    course: "10 Courses",
-  },
-];
-
-export default AdminVerticals;
+export default AdminUnits;
