@@ -14,6 +14,10 @@ const statusText = {
 
   VERTICAL_CREATE_SUCCESS: "Vertical created successfully",
   COURSE_CREATE_SUCCESS: "Course created successfully",
+  UNIT_ADD_SUCCESS: "Unit added successfully",
+
+  VERTICAL_DELETE_SUCCESS: "Vertical deleted successfully",
+  COURSE_DELETE_SUCCESS: "Course deleted successfully",
 };
 
 module.exports = statusText;

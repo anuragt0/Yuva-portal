@@ -19,7 +19,7 @@ const Course = require("../models/Course");
 
 // create dummy admins
 router.post("/dummy", async (req, res) => {
-//   console.log(req);
+  //   console.log(req);
 
   try {
     const salt = await bcrypt.genSalt(10);
@@ -37,12 +37,12 @@ router.post("/dummy", async (req, res) => {
 router.post("/login", async (req, res) => {
   // todo : validation
 
-//   console.log(req.body);
+  //   console.log(req.body);
 
   const adminId = req.body.adminId;
   const enteredPassword = req.body.password;
 
-//   console.log(adminId);
+  //   console.log(adminId);
 
   try {
     // match creds
@@ -134,5 +134,92 @@ router.post(
   }
 );
 
-module.exports = router;
+router.post(
+  "/verticals/:verticalId/courses/:courseId/units/add",
+  fetchPerson,
+  async (req, res) => {
+    if (req.role != "admin") {
+      return res.status(400).json({ error: statusText.INVALID_TOKEN });
+    }
 
+    // todo : validation
+    const unit = req.body;
+    const { courseId } = req.params;
+
+    try {
+      const courseDoc = await Course.findOneAndUpdate(
+        { _id: courseId },
+        { $push: { unitArr: unit } },
+        { new: true }
+      );
+
+      // console.log(courseDoc); // new = true to return the updated doc
+
+      res.status(200).json({ statusText: statusText.UNIT_ADD_SUCCESS });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    }
+  }
+);
+
+router.delete(
+  "/verticals/:verticalId/delete",
+  fetchPerson,
+  async (req, res) => {
+    if (req.role != "admin") {
+      return res.status(400).json({ error: statusText.INVALID_TOKEN });
+    }
+
+    // todo : validation
+    const { verticalId } = req.params;
+
+    try {
+      const verticalDoc = await Vertical.findByIdAndDelete(verticalId); // returns the doc just before deletion
+      // console.log(verticalDoc);
+
+      await Course.deleteMany({
+        _id: { $in: verticalDoc.courseIds },
+      });
+
+      res.status(200).json({ statusText: statusText.VERTICAL_DELETE_SUCCESS });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    }
+  }
+);
+
+router.delete(
+  "/verticals/:verticalId/courses/:courseId/delete",
+  fetchPerson,
+  async (req, res) => {
+    if (req.role != "admin") {
+      return res.status(400).json({ error: statusText.INVALID_TOKEN });
+    }
+
+    // todo : validation
+    const { verticalId, courseId } = req.params;
+
+    try {
+      const courseDoc = await Course.findByIdAndDelete(courseId);
+      // console.log(courseDoc);
+
+      const verticalDoc = await Vertical.updateOne(
+        { _id: verticalId },
+        {
+          $pull: {
+            courseIds: courseId,
+          },
+        }
+      );
+
+      res.status(200).json({ statusText: statusText.COURSE_DELETE_SUCCESS });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    }
+  }
+);
+
+module.exports = router;

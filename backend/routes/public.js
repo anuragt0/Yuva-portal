@@ -42,4 +42,27 @@ router.get("/verticals/:verticalId/courses/all", async (req, res) => {
   }
 });
 
+router.get(
+  "/verticals/:verticalId/courses/:courseId/units/all",
+  async (req, res) => {
+    // todo : validation
+    console.log("skdfn");
+
+    const { courseId } = req.params;
+
+    try {
+      const courseDoc = await Course.findById(courseId);
+
+      console.log(courseDoc); // new = true to return the updated doc
+
+      res
+        .status(200)
+        .json({ statusText: statusText.SUCCESS, allUnits: courseDoc.unitArr });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    }
+  }
+);
+
 module.exports = router;

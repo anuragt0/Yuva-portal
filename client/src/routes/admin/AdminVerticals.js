@@ -3,11 +3,9 @@ import "../../css/admin/admin-verticals.css";
 import { useNavigate } from "react-router-dom";
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
+import { refreshScreen } from "../../utilities/helper_functions";
 
 const AdminVerticals = () => {
-  const url =
-    "https://images.unsplash.com/photo-1671989088481-e1e045dbdd20?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80";
-
   const [allVerticals, setAllVerticals] = useState([]);
   const [newVertical, setNewVertical] = useState({ name: "", desc: "" });
   const navigate = useNavigate();
@@ -40,15 +38,16 @@ const AdminVerticals = () => {
     getAllVerticals();
   }, []);
 
+  //////////////////////////////// Add Vertical Modal ////////////////////////////////////////
+
   const ref = useRef(null);
   const refClose = useRef(null);
 
-  async function openModal() {
-    console.log("skjfnskjnfdsf");
+  async function openAddModal() {
     ref.current.click();
   }
 
-  function onChange(e) {
+  function onAddChange(e) {
     setNewVertical({ ...newVertical, [e.target.name]: e.target.value });
     console.log(newVertical);
   }
@@ -74,10 +73,13 @@ const AdminVerticals = () => {
       console.log(data);
 
       refClose.current.click();
+      // refreshScreen();
     } catch (error) {
       console.log(error.message);
     }
   }
+
+  //////////////////////////////////////////////////////////////////////////////////////////
 
   async function handleAddOrViewCourses(e) {
     const verticalId = e.target.id;
@@ -85,11 +87,132 @@ const AdminVerticals = () => {
     navigate(`/admin/verticals/${verticalId}/courses/all`);
   }
 
+  ////////////////////////////////////// Delete Vertical Modal ///////////////////////////////////////////////////
+  const ref2 = useRef(null);
+  const refClose2 = useRef(null);
+  const [toDeleteVerticalId, setToDeleteVerticalId] = useState("");
+  const [confirmText, setConfirmText] = useState("");
+
+  function openDeleteModal(e) {
+    ref2.current.click();
+    setToDeleteVerticalId(e.target.id);
+  }
+
+  function onConfirmTextChange(e) {
+    setConfirmText(e.target.value);
+  }
+
+  async function handleDeleteVertical() {
+    const verticalId = toDeleteVerticalId;
+    // todo: validate input
+    try {
+      const response = await fetch(
+        `${SERVER_ORIGIN}/api/admin/auth/verticals/${verticalId}/delete`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": localStorage.getItem("token"),
+          },
+        }
+      );
+
+      const { statusText } = await response.json();
+      console.log(statusText);
+
+      refClose2.current.click();
+      // refreshScreen();
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  const deleteModal = (
+    <>
+      <button
+        ref={ref2}
+        type="button"
+        className="btn btn-primary d-none"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal3"
+      >
+        Launch demo modal
+      </button>
+
+      <div
+        className="modal fade"
+        id="exampleModal3"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
+                Delete vertical
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                {/* <i className="fa-solid fa-xmark"></i> */}
+              </button>
+            </div>
+            <div className="modal-body">
+              {/* Form */}
+              <form className="my-3">
+                <div className="mb-3">
+                  <label htmlFor="name" className="form-label">
+                    Confirmation
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="confirm"
+                    name="confirm"
+                    minLength={3}
+                    required
+                    placeholder="Type 'Confirm' to delete"
+                    value={confirmText}
+                    onChange={onConfirmTextChange}
+                  />
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+                ref={refClose2}
+              >
+                Close
+              </button>
+              <button
+                onClick={handleDeleteVertical}
+                type="button"
+                className="btn btn-primary"
+                disabled={confirmText === "Confirm" ? false : true}
+              >
+                - Delete Vertical
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <>
-    <div style={{textAlign: "center", margin: "2%"}}>
-      <button onClick={openModal} className='btn btn-primary btn-lg'>+ Vertical</button>
-    </div>
+      <div style={{ textAlign: "center", margin: "2%" }}>
+        <button onClick={openAddModal} className="btn btn-primary btn-lg">
+          + Vertical
+        </button>
+      </div>
       <section className="online">
         <div className="container1">
           {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
@@ -112,7 +235,13 @@ const AdminVerticals = () => {
                 >
                   + Add / View courses
                 </button>
-                <button className="btn btn-primary">- Delete</button>
+                <button
+                  className="btn btn-primary"
+                  id={vertical._id}
+                  onClick={openDeleteModal}
+                >
+                  - Delete
+                </button>
               </div>
             ))}
           </div>
@@ -164,7 +293,7 @@ const AdminVerticals = () => {
                     id="name"
                     name="name"
                     minLength={3}
-                    onChange={onChange}
+                    onChange={onAddChange}
                     required
                   />
                 </div>
@@ -177,7 +306,7 @@ const AdminVerticals = () => {
                     className="form-control"
                     id="desc"
                     name="desc"
-                    onChange={onChange}
+                    onChange={onAddChange}
                     minLength={5}
                     required
                   />
@@ -191,7 +320,7 @@ const AdminVerticals = () => {
                     className="form-control"
                     id="imgSrc"
                     name="imgSrc"
-                    onChange={onChange}
+                    onChange={onAddChange}
                     minLength={5}
                     required
                   />
@@ -218,9 +347,10 @@ const AdminVerticals = () => {
           </div>
         </div>
       </div>
+
+      {deleteModal}
     </>
   );
 };
-
 
 export default AdminVerticals;
