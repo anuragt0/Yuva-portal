@@ -87,9 +87,11 @@ const AdminVerticals = () => {
 
   return (
     <>
-      <button onClick={openModal}>+ Vertical</button>
+    <div style={{textAlign: "center", margin: "2%"}}>
+      <button onClick={openModal} className='btn btn-primary btn-lg'>+ Vertical</button>
+    </div>
       <section className="online">
-        <div className="container">
+        <div className="container1">
           {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
           <div className="content grid2">
             {allVerticals.map((vertical) => (
@@ -146,7 +148,7 @@ const AdminVerticals = () => {
                 data-bs-dismiss="modal"
                 aria-label="Close"
               >
-                <i className="fa-solid fa-xmark"></i>
+                {/* <i className="fa-solid fa-xmark"></i> */}
               </button>
             </div>
             <div className="modal-body">
@@ -220,49 +222,5 @@ const AdminVerticals = () => {
   );
 };
 
-const online = [
-  {
-    cover: "./images/courses/climatechange.jpg",
-    hoverCover: "./images/courses/climatechange.jpg",
-    courseName: "CLIMATE CHANGE",
-    course: "25 Courses",
-  },
-  {
-    cover: "./images/courses/accessibility.jpg",
-    hoverCover: "./images/courses/accessibility.jpg",
-    courseName: "ACCESSIBILITY",
-    course: "25 Courses",
-  },
-  {
-    cover: "./images/courses/roadsafety.jpg",
-    hoverCover: "./images/courses/roadsafety.jpg",
-    courseName: "ROAD SAFETY",
-    course: "10 Courses",
-  },
-  {
-    cover: "./images/courses/ei.jpg",
-    hoverCover: "./images/courses/ei.jpg",
-    courseName: "ENTREPRENEURSHIP & INNOVATION",
-    course: "15 Courses",
-  },
-  {
-    cover: "./images/courses/nukkadnatak.jpg",
-    hoverCover: "./images/courses/nukkadnatak.jpg",
-    courseName: "MASOOM",
-    course: "30 Courses",
-  },
-  {
-    cover: "./images/courses/health.jpg",
-    hoverCover: "./images/courses/health.jpg",
-    courseName: "HEALTH",
-    course: "60 Courses",
-  },
-  {
-    cover: "./images/courses/learning.jpg",
-    hoverCover: "./images/courses/learning.jpg",
-    courseName: "LEARNING",
-    course: "10 Courses",
-  },
-];
 
 export default AdminVerticals;

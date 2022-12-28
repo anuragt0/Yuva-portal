@@ -89,15 +89,18 @@ const AdminCourses = () => {
 
   return (
     <>
-      <button onClick={openModal}>+ Course</button>
+      
+      <div style={{textAlign: "center", margin: "2%"}}>
+      <button onClick={openModal} className='btn btn-primary btn-lg'>+ Courses</button>
+    </div>
       <section className="online">
         <div className="container">
           {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
           <div className="content grid2">
             {allCourses.map((course) => (
               <div className="box" key={course._id}>
-                <h1>{course.name}</h1>
-                <h1>{course.desc}</h1>
+                <h2>{course.name}</h2>
+                <h5>{course.desc}</h5>
                 <span>{course.unitArr.length} Courses </span>
                 <br />
                 <button
@@ -143,7 +146,6 @@ const AdminCourses = () => {
                 data-bs-dismiss="modal"
                 aria-label="Close"
               >
-                <i className="fa-solid fa-xmark"></i>
               </button>
             </div>
             <div className="modal-body">
