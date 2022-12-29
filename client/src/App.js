@@ -1,13 +1,20 @@
 import "./App.css";
 import Navbar from "./components/Navbar";
-import Home from "./components/Home";
-import Login from "./components/Login";
+
+import UserHome from "./routes/user/UserHome";
+import UserLogin from "./routes/user/UserLogin";
+import UserVerticals from "./routes/user/UserVerticals";
+import UserCourses from "./routes/user/UserCourses";
+import UserUnits from "./routes/user/UserUnits";
+import UserSingleUnit from "./routes/user/UserSingleUnit";
+
 import Signup from "./components/Signup";
 import Courses from "./components/Courses";
 import Videos from "./components/Videos";
 import VideoPlayer from "./components/VideoPlayer";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CourseState from "./context/CourseState";
+
 import Admin from "./components/Admin";
 // import AdminCourses from "./components/AdminCourses";
 import AdminUsers from "./components/AdminUsers";
@@ -33,8 +40,24 @@ function App() {
           <Navbar />
           <div className="container">
             <Routes>
-              <Route exact path="/" element={<Home />} />
-              <Route exact path="/login" element={<Login />} />
+              <Route exact path="/user/login" element={<UserLogin />} />{" "}
+              <Route exact path="/user" element={<UserHome />} />
+              <Route exact path="/user/verticals" element={<UserVerticals />} />
+              <Route
+                exact
+                path="/user/verticals/:verticalId/courses/all"
+                element={<UserCourses />}
+              />
+              <Route
+                exact
+                path="/user/verticals/:verticalId/courses/:courseId/units/all"
+                element={<UserUnits />}
+              />
+              <Route
+                exact
+                path="/user/verticals/:verticalId/courses/:courseId/units/:unitId"
+                element={<UserSingleUnit />}
+              />
               <Route exact path="/signup" element={<Signup />} />
               <Route exact path="/courses" element={<Courses />} />
               <Route exact path="/profile" element={<UserProfile />} />
@@ -68,21 +91,17 @@ function App() {
                 element={<QuizAdmin />}
               />
               {/* {/* <Route exact path="/profile" element={<UserProfile />} /> */}
-
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/services" element={<AdminServices />} />
               <Route path="/admin/verticals" element={<AdminVerticals />} />
-
               <Route
                 path="/admin/verticals/:verticalId/courses/all"
                 element={<AdminCourses />}
               />
-
               <Route
                 path="/admin/verticals/:verticalId/courses/:courseId/units/all"
                 element={<AdminUnits />}
               />
-
               <Route
                 path="/admin/verticals/:verticalId/courses/:courseId/units/add"
                 element={<AdminAddUnits />}

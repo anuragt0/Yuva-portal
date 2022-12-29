@@ -14,6 +14,7 @@ const statusText = require("../utilities/status-text.js");
 const fetchPerson = require("../middlewares/fetch-person");
 const Vertical = require("../models/Vertical");
 const Course = require("../models/Course");
+const { default: mongoose } = require("mongoose");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +34,8 @@ router.post("/dummy", async (req, res) => {
     res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
   }
 });
+
+//////////////////////////////////////// LOGIN ////////////////////////////////////////////////
 
 router.post("/login", async (req, res) => {
   // todo : validation
@@ -81,6 +84,10 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
   }
 });
+
+///////////////////////////////////////////// All //////////////////////////////////////////
+
+///////////////////////////////////////////// ADD ///////////////////////////////////////////
 
 router.post("/verticals/add", fetchPerson, async (req, res) => {
   // todo : validation
@@ -163,6 +170,8 @@ router.post(
   }
 );
 
+//////////////////////////////////////// DELETE //////////////////////////////////////////
+
 router.delete(
   "/verticals/:verticalId/delete",
   fetchPerson,
@@ -200,6 +209,9 @@ router.delete(
 
     // todo : validation
     const { verticalId, courseId } = req.params;
+    console.log(courseId);
+    const objectCourseId = mongoose.Types.ObjectId(courseId); // imp to convert to string to objectId
+    console.log(objectCourseId);
 
     try {
       const courseDoc = await Course.findByIdAndDelete(courseId);
@@ -209,12 +221,46 @@ router.delete(
         { _id: verticalId },
         {
           $pull: {
-            courseIds: courseId,
+            courseIds: { $in: [objectCourseId] },
           },
         }
       );
 
+      console.log(verticalDoc);
+
       res.status(200).json({ statusText: statusText.COURSE_DELETE_SUCCESS });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    }
+  }
+);
+
+router.delete(
+  "/verticals/:verticalId/courses/:courseId/units/:unitId/delete",
+  fetchPerson,
+  async (req, res) => {
+    if (req.role != "admin") {
+      return res.status(400).json({ error: statusText.INVALID_TOKEN });
+    }
+
+    // todo : validation
+    const { verticalId, courseId, unitId } = req.params;
+    const objectUnitId = mongoose.Types.ObjectId(unitId);
+
+    try {
+      const courseDoc = await Course.updateOne(
+        { _id: courseId },
+        {
+          $pull: {
+            unitArr: { _id: objectUnitId },
+          },
+        }
+      );
+
+      console.log(courseDoc);
+
+      res.status(200).json({ statusText: statusText.UNIT_DELETE_SUCCESS });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });

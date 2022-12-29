@@ -3,25 +3,20 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import "../App.css";
-import logo from "../yuva_logo2.png";
-import { SERVER_ORIGIN } from "../utilities/constants";
+import "../../App.css";
+import logo from "../../yuva_logo2.png";
+import { SERVER_ORIGIN } from "../../utilities/constants";
 
-const Login = (props) => {
-  // const navigate = useNavigate();
-
+const UserLogin = (props) => {
   const [creds, setCreds] = useState({ userId: "", password: "" });
-  const config = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setIsLoading(true);
       const response = await fetch(`${SERVER_ORIGIN}/api/user/auth/login`, {
         method: "POST",
         headers: {
@@ -31,12 +26,16 @@ const Login = (props) => {
       });
 
       const { statusText, token } = await response.json();
-      console.log(statusText);
+      //   console.log(statusText);
       console.log(token);
 
+      setIsLoading(false);
+
       if (token) {
-        // Save the auth token and redirect
         localStorage.setItem("token", token);
+        navigate("/user"); // redirect to Home Page
+      } else {
+        // throw some error
       }
     } catch (error) {
       console.log(error.message);
@@ -61,7 +60,7 @@ const Login = (props) => {
               src={logo}
               style={{ borderRadius: "45px" }}
               className="img-fluid"
-              alt="Sample image"
+              alt="Sample"
             />
           </div>
 
@@ -112,13 +111,16 @@ const Login = (props) => {
                     borderRadius: "0px",
                     width: "150px",
                     fontSize: "25px",
+                    backgroundColor: isLoading ? "red" : "green",
                   }}
                   type="button"
                   className="btn btn-success btn-lg"
                   onClick={handleSubmit}
+                  disabled={isLoading === true}
                 >
                   Login
                 </button>
+
                 {/* <p className="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <Link to="/signup"
                 className="link-danger">Register</Link></p> */}
               </div>
@@ -132,4 +134,4 @@ const Login = (props) => {
   );
 };
 
-export default Login;
+export default UserLogin;

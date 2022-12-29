@@ -18,6 +18,7 @@ const statusText = {
 
   VERTICAL_DELETE_SUCCESS: "Vertical deleted successfully",
   COURSE_DELETE_SUCCESS: "Course deleted successfully",
+  UNIT_DELETE_SUCCESS: "Unit deleted successfully",
 };
 
 module.exports = statusText;

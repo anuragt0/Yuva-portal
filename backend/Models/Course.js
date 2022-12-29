@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { UnitSchema } = require("./Unit");
 
 const CourseSchema = mongoose.Schema({
   name: {
@@ -10,7 +11,7 @@ const CourseSchema = mongoose.Schema({
     required: true,
   },
   unitArr: {
-    type: Array, // array of units
+    type: [UnitSchema], // array of units
     default: [],
   },
 });

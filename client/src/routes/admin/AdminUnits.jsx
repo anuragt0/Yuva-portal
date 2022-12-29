@@ -5,7 +5,10 @@ import { useNavigate, useParams } from "react-router-dom";
 // TODO
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
-import { youtubeParser } from "../../utilities/helper_functions";
+import {
+  youtubeParser,
+  getVideoThumbnail,
+} from "../../utilities/helper_functions";
 
 const AdminUnits = () => {
   const [allUnits, setAllUnits] = useState([]);
@@ -42,12 +45,137 @@ const AdminUnits = () => {
     getAllUnits();
   }, []);
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   async function redirectToAddUnitPage(e) {
     const { verticalId, courseId } = params;
     // console.log(params);
 
     navigate(`/admin/verticals/${verticalId}/courses/${courseId}/units/add`);
   }
+
+  /////////////////////////////////////// Delete Course Modal //////////////////////////////////////////////////
+
+  const ref = useRef(null);
+  const refClose = useRef(null);
+  const [toDeleteUnitId, setToDeleteUnitId] = useState("");
+  const [confirmText, setConfirmText] = useState("");
+
+  function onConfirmTextChange(e) {
+    setConfirmText(e.target.value);
+  }
+
+  function openDeleteModal(e) {
+    ref.current.click();
+    setToDeleteUnitId(e.target.id);
+  }
+
+  async function handleDeleteUnit() {
+    const { verticalId, courseId } = params;
+    const unitId = toDeleteUnitId;
+    // console.log(courseId);
+
+    // todo: validate input
+    try {
+      const response = await fetch(
+        `${SERVER_ORIGIN}/api/admin/auth/verticals/${verticalId}/courses/${courseId}/units/${unitId}/delete`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": localStorage.getItem("token"),
+          },
+        }
+      );
+
+      const { statusText } = await response.json();
+      console.log(statusText);
+
+      refClose.current.click();
+      // refreshScreen();
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  const deleteModal = (
+    <>
+      <button
+        ref={ref}
+        type="button"
+        className="btn btn-primary d-none"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal3"
+      >
+        Launch demo modal
+      </button>
+
+      <div
+        className="modal fade"
+        id="exampleModal3"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
+                Delete Unit
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                {/* <i className="fa-solid fa-xmark"></i> */}
+              </button>
+            </div>
+            <div className="modal-body">
+              {/* Form */}
+              <form className="my-3">
+                <div className="mb-3">
+                  <label htmlFor="name" className="form-label">
+                    Confirmation
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="confirm"
+                    name="confirm"
+                    minLength={3}
+                    required
+                    placeholder="Type 'Confirm' to delete"
+                    value={confirmText}
+                    onChange={onConfirmTextChange}
+                  />
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+                ref={refClose}
+              >
+                Close
+              </button>
+              <button
+                onClick={handleDeleteUnit}
+                type="button"
+                className="btn btn-primary"
+                disabled={confirmText === "Confirm" ? false : true}
+              >
+                - Delete course
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <>
@@ -64,8 +192,7 @@ const AdminUnits = () => {
           {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
           <div className="content grid2">
             {allUnits.map((unit) => {
-              const vdoCode = youtubeParser(unit.video.vdoSrc);
-              const vdoThumbnail = `https://img.youtube.com/vi/${vdoCode}/hqdefault.jpg`;
+              const vdoThumbnail = getVideoThumbnail(unit.video.vdoSrc);
 
               return (
                 <div className="box" key={unit._id}>
@@ -78,13 +205,21 @@ const AdminUnits = () => {
                   <span>{unit.activities.length} Activities</span>
                   <span>{unit.quiz.length} Question</span>
                   <br />
-                  <button className="btn btn-primary">- Delete</button>
+                  <button
+                    className="btn btn-primary"
+                    id={unit._id}
+                    onClick={openDeleteModal}
+                  >
+                    - Delete
+                  </button>
                 </div>
               );
             })}
           </div>
         </div>
       </section>
+
+      {deleteModal}
     </>
   );
 };

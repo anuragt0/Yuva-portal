@@ -5,8 +5,15 @@ function youtubeParser(vdoSrc) {
   return match && match[7].length == 11 ? match[7] : false;
 }
 
+function getVideoThumbnail(vdoSrc) {
+  const vdoCode = youtubeParser(vdoSrc);
+  const vdoThumbnail = `https://img.youtube.com/vi/${vdoCode}/hqdefault.jpg`;
+
+  return vdoThumbnail;
+}
+
 function refreshScreen() {
   window.location.reload();
 }
 
-export { youtubeParser, refreshScreen };
+export { youtubeParser, refreshScreen, getVideoThumbnail };
