@@ -4,7 +4,7 @@ const statusText = require("../utilities/status-text.js");
 
 const fetchPerson = (req, res, next) => {
   const token = req.header("auth-token");
-  // console.log(token);
+  console.log(token);
   if (!token) {
     return res.status(400).send({ error: statusText.TOKEN_NOT_FOUND });
   }
@@ -17,7 +17,7 @@ const fetchPerson = (req, res, next) => {
     next();
   } catch (error) {
     console.log("hereeee", error);
-    res.status(400).send({ error: statusText.INVALID_TOKEN });
+    res.status(401).send({ error: statusText.INVALID_TOKEN });
   }
 };
 

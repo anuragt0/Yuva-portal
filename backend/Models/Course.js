@@ -17,5 +17,5 @@ const CourseSchema = mongoose.Schema({
 });
 
 const Course = mongoose.model("course", CourseSchema);
-// User.createIndexes();
+// Course.createIndexes();
 module.exports = Course;

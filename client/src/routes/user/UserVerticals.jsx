@@ -32,15 +32,32 @@ const UserVerticals = () => {
           }
         );
 
-        const { statusText, allVerticals } = await response.json();
+        const { statusText, data } = await response.json();
+        console.log(response);
+        console.log(data);
 
-        // console.log(statusText);
-        console.log(allVerticals);
+        if (response.status >= 400 && response.status < 600) {
+          if (response.status === 401) {
+            navigate("/user/login");
+          } else if (response.status === 403) {
+            if (!data.isPassReset) {
+              navigate("/user/reset-password");
+            } else if (!data.isRegistered) {
+              navigate("/user/register");
+            }
+          } else {
+            alert("We were not able pls try again");
+            // todo: toast notify
+          }
+        } else if (response.ok && response.status) {
+          setAllVerticals(data.allVerticals);
+        } else {
+        }
 
-        setAllVerticals(allVerticals);
         setIsLoading(false);
       } catch (error) {
         console.log(error.message);
+        console.log("In catch");
         setIsLoading(false);
       }
     }

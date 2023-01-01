@@ -96,18 +96,28 @@ router.post("/update-user", fetchPerson, async (req, res) => {
 router.post("/reset-password", fetchPerson, async (req, res) => {
   // user is already logged in, so we dont need userId
 
+  console.log(req.originalUrl);
+
+  if (req.role != "user") {
+    return res.status(401).json({ error: statusText.INVALID_TOKEN });
+  }
+
   console.log(req.body);
   const { newPassword, currPassword } = req.body;
   const mongoId = req.mongoId;
 
   try {
-    const user = await User.findById(mongoId);
+    const userDoc = await User.findById(mongoId);
 
-    const hashedPassword = user.password;
+    if (userDoc.isPassReset) {
+      return res.status(403).json({ error: statusText.PASS_RESET_SUCCESS });
+    }
+
+    const hashedPassword = userDoc.password;
     const passwordCompare = await bcrypt.compare(currPassword, hashedPassword);
 
     if (!passwordCompare) {
-      return res.status(400).json({ error: statusText.INVALID_CREDS });
+      return res.status(401).json({ error: statusText.INVALID_CREDS });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -115,7 +125,7 @@ router.post("/reset-password", fetchPerson, async (req, res) => {
 
     await User.findByIdAndUpdate(
       req.mongoId,
-      { password: newHashedPassword },
+      { password: newHashedPassword, isPassReset: true },
       { overwrite: false }
     );
 
@@ -146,19 +156,45 @@ router.get("/verticals/all", fetchPerson, async (req, res) => {
   // todo: verify role, reason: a student can paste the url on browser and potray himself as an admin
   // same route for both admin and user
 
+  // console.log(req.originalUrl);
+
   if (req.role != "user") {
-    return res.status(400).json({ error: statusText.INVALID_TOKEN });
+    return res.status(401).json({ error: statusText.INVALID_TOKEN });
   }
 
   try {
+    const userMongoId = req.mongoId;
+    const userDoc = await User.findById(userMongoId, {
+      isPassReset: 1,
+      isRegistered: 1,
+      _id: 0,
+    });
+
+    if (!userDoc) {
+    }
+
+    console.log(userDoc);
+
+    if (!userDoc.isPassReset || !userDoc.isRegistered) {
+      return res.status(403).json({
+        statusText: statusText.SUCCESS,
+        data: {
+          isPassReset: userDoc.isPassReset,
+          isRegistered: userDoc.isRegistered,
+        },
+      });
+    }
+
     const allVerticals = await Vertical.find();
-    console.log(allVerticals);
-    res
-      .status(200)
-      .json({ statusText: statusText.SUCCESS, allVerticals: allVerticals });
+    // console.log(allVerticals);
+
+    res.status(200).json({
+      statusText: statusText.SUCCESS,
+      data: { allVerticals: allVerticals },
+    });
   } catch (error) {
     console.log(error);
-    res.status(400).json({ statusText: statusText.FAIL });
+    res.status(500).json({ statusText: statusText.FAIL });
   }
 });
 

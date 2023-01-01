@@ -7,6 +7,8 @@ import UserVerticals from "./routes/user/UserVerticals";
 import UserCourses from "./routes/user/UserCourses";
 import UserUnits from "./routes/user/UserUnits";
 import UserSingleUnit from "./routes/user/UserSingleUnit";
+import UserResetPass from "./routes/user/UserResetPass";
+import UserRegis from "./routes/user/UserRegis";
 
 import Signup from "./components/Signup";
 import Courses from "./components/Courses";
@@ -42,7 +44,11 @@ function App() {
             <Routes>
               <Route exact path="/user/login" element={<UserLogin />} />{" "}
               <Route exact path="/user" element={<UserHome />} />
-              <Route exact path="/user/verticals" element={<UserVerticals />} />
+              <Route
+                exact
+                path="/user/verticals/all"
+                element={<UserVerticals />}
+              />
               <Route
                 exact
                 path="/user/verticals/:verticalId/courses/all"
@@ -58,6 +64,12 @@ function App() {
                 path="/user/verticals/:verticalId/courses/:courseId/units/:unitId"
                 element={<UserSingleUnit />}
               />
+              <Route
+                exact
+                path="/user/reset-password"
+                element={<UserResetPass />}
+              />
+              <Route exact path="/user/register" element={<UserRegis />} />
               <Route exact path="/signup" element={<Signup />} />
               <Route exact path="/courses" element={<Courses />} />
               <Route exact path="/profile" element={<UserProfile />} />
@@ -93,7 +105,7 @@ function App() {
               {/* {/* <Route exact path="/profile" element={<UserProfile />} /> */}
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/services" element={<AdminServices />} />
-              <Route path="/admin/verticals" element={<AdminVerticals />} />
+              <Route path="/admin/verticals/all" element={<AdminVerticals />} />
               <Route
                 path="/admin/verticals/:verticalId/courses/all"
                 element={<AdminCourses />}
