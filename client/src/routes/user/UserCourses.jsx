@@ -33,12 +33,35 @@ const UserCourses = () => {
           }
         );
 
-        const { statusText, allCourses } = await response.json();
+        const result = await response.json();
+        console.log(response);
+        console.log(result);
 
-        console.log(statusText);
-        // console.log(allCourses);
+        if (response.status >= 400 && response.status < 600) {
+          if (response.status === 401) {
+            if (!("isLoggedIn" in result) || result.isLoggedIn === false) {
+              // redirect to login page, navigate("/user/login");
+              console.log("go to login");
+            }
+          } else if (response.status === 403) {
+            if (result.userDoc.isPassReset === false) {
+              // redirect to login page, navigate("/user/login");
+              console.log("go to reset password");
+            } else if (result.userDoc.isRegistered === false) {
+              // redirect to login page, navigate("/user/login");
+              console.log("go to registration page");
+            }
+          } else {
+            alert("Internal server error"); // todo: toast notify
+          }
+        } else if (response.ok && response.status === 200) {
+          setAllCourses(result.allCourses);
+          // we also have userDoc here
+          console.log(result.userDoc);
+        } else {
+          // for future
+        }
 
-        setAllCourses(allCourses);
         setIsLoading(false);
       } catch (error) {
         console.log(error.message);

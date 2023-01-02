@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,6 +15,56 @@ const UserResetPass = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const canVisitPage = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          `${SERVER_ORIGIN}/api/user/auth/verify-token`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "auth-token": localStorage.getItem("token"),
+            },
+          }
+        );
+
+        const result = await response.json();
+        // console.log(response);
+
+        console.log(result);
+
+        setIsLoading(false);
+
+        if (response.status >= 400 && response.status < 600) {
+          if (response.status === 401) {
+            if (!("isLoggedIn" in result) || result.isLoggedIn === false) {
+              // redirect to login page, navigate("/user/login");
+              console.log("go to login");
+            }
+          } else {
+            alert("Internal server error"); // todo: toast notify
+          }
+        } else if (response.ok && response.status === 200) {
+          if (result.userDoc.isPassReset) {
+            if (result.userDoc.isRegistered) {
+              console.log("go to home");
+            } else {
+              console.log("go to registration");
+            }
+          }
+        } else {
+          // for future
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    canVisitPage();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,26 +83,38 @@ const UserResetPass = () => {
         }
       );
 
-      const { statusText } = await response.json();
-      //   console.log(response);
-      console.log(statusText);
+      const result = await response.json();
+      // console.log(response);
 
-      console.log(response);
+      console.log(result);
+
+      setIsLoading(false);
 
       if (response.status >= 400 && response.status < 600) {
         if (response.status === 401) {
-          navigate("/user/login");
+          if (!("isLoggedIn" in result) || result.isLoggedIn === false) {
+            // redirect to login page, navigate("/user/login");
+            console.log("go to login");
+          } else if (
+            !("isCurrPasswordIncorrect" in result) ||
+            result.isCurrPasswordIncorrect === true
+          ) {
+            // redirect to login page, navigate("/user/login");
+            console.log("current pass incorrect, pls retry");
+          }
         } else if (response.status === 403) {
-          navigate("/user");
+          if (!("isPassReset" in result) || result.isPassReset === true) {
+            // redirect to login page, navigate("/user/login");
+            console.log("go to home");
+          }
         } else {
-          alert("We were not able pls try again");
-          // todo: toast notify
+          alert("Internal server error"); // todo: toast notify
         }
       } else if (response.ok && response.status === 200) {
-        navigate("/user/login");
+        console.log("go to home");
       } else {
+        // for future
       }
-      setIsLoading(false);
     } catch (error) {
       console.log(error.message);
     }

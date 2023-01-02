@@ -27,31 +27,17 @@ const UserVerticals = () => {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "auth-token": localStorage.getItem("token"),
             },
           }
         );
 
-        const { statusText, data } = await response.json();
-        console.log(response);
-        console.log(data);
+        const { statusText, allVerticals } = await response.json();
+        // console.log(response);
 
-        if (response.status >= 400 && response.status < 600) {
-          if (response.status === 401) {
-            navigate("/user/login");
-          } else if (response.status === 403) {
-            if (!data.isPassReset) {
-              navigate("/user/reset-password");
-            } else if (!data.isRegistered) {
-              navigate("/user/register");
-            }
-          } else {
-            alert("We were not able pls try again");
-            // todo: toast notify
-          }
-        } else if (response.ok && response.status) {
-          setAllVerticals(data.allVerticals);
+        if (response.ok && response.status === 200) {
+          setAllVerticals(allVerticals);
         } else {
+          console.log("Internal server error");
         }
 
         setIsLoading(false);
