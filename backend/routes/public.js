@@ -1,5 +1,5 @@
 const express = require("express");
-const fetchPerson = require("../middlewares/fetch-person");
+const { fetchPerson } = require("../middlewares/fetch-person");
 const router = express.Router();
 
 // My models

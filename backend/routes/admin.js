@@ -7,18 +7,16 @@ const Admin = require("../models/Admin");
 const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 // My middlewares
-// const fetchPerson = require("../middlewares/fetch-person");
 
 // My utilities
 const statusText = require("../utilities/status-text.js");
-const fetchPerson = require("../middlewares/fetch-person");
+const { fetchPerson } = require("../middlewares/fetch-person");
 const Vertical = require("../models/Vertical");
 const Course = require("../models/Course");
 const { default: mongoose } = require("mongoose");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-// create dummy admins
 router.post("/dummy", async (req, res) => {
   //   console.log(req);
 
@@ -85,9 +83,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
-///////////////////////////////////////////// All //////////////////////////////////////////
+/////////////////////////////////////////// All //////////////////////////////////////////
 
-///////////////////////////////////////////// ADD ///////////////////////////////////////////
+/////////////////////////////////////////// ADD ///////////////////////////////////////////
 
 router.post("/verticals/add", fetchPerson, async (req, res) => {
   // todo : validation

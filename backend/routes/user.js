@@ -9,11 +9,18 @@ const Course = require("../models/Course");
 const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 // My middlewares
-const fetchPerson = require("../middlewares/fetch-person");
+const {
+  fetchPerson,
+  isUser,
+  isAdmin,
+  arePrereqSatisfied,
+} = require("../middlewares/fetch-person");
 
 // My utilities
 const statusText = require("../utilities/status-text.js");
 const { removeListener } = require("../models/User");
+
+// ! Dont bind data to req, bind them to res, change this at all routes and middlewares reference: https://stackoverflow.com/questions/18875292/passing-variables-to-the-next-middleware-using-next-in-express-js
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -79,118 +86,104 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/update-user", fetchPerson, async (req, res) => {
+router.post("/register", fetchPerson, isUser, async (req, res) => {
+  // console.log(req.originalUrl);
   const mongoId = req.mongoId;
 
   // todo: validation
   const regForm = req.body;
+
   try {
-    await User.findByIdAndUpdate(mongoId, regForm, { overwrite: false });
-    res.status(200).json({ statusText: statusText.REGISTERED_SUCCESS });
+    const userDoc = await User.findById(mongoId);
+
+    if (userDoc.isRegistered) {
+      return res.status(403).json({
+        statusText: statusText.REGISTERED_ALREADY,
+        isRegistered: true,
+      });
+    }
+
+    await User.findByIdAndUpdate(
+      mongoId,
+      { ...regForm, isRegistered: true },
+      { overwrite: false }
+    );
+    res.status(200).json({ statusText: statusText.REGISTRATION_SUCCESS });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
   }
 });
 
-router.post("/reset-password", fetchPerson, async (req, res) => {
+router.post("/reset-password", fetchPerson, isUser, async (req, res) => {
   // user is already logged in, so we dont need userId
+  // console.log(req.originalUrl);
 
-  console.log(req.originalUrl);
-
-  if (req.role != "user") {
-    return res.status(401).json({ error: statusText.INVALID_TOKEN });
-  }
-
-  console.log(req.body);
-  const { newPassword, currPassword } = req.body;
+  const { currPassword, newPassword } = req.body;
   const mongoId = req.mongoId;
 
   try {
     const userDoc = await User.findById(mongoId);
 
     if (userDoc.isPassReset) {
-      return res.status(403).json({ error: statusText.PASS_RESET_SUCCESS });
+      return res
+        .status(403)
+        .json({ statusText: statusText.PASS_RESET_ALREADY, isPassReset: true });
     }
 
     const hashedPassword = userDoc.password;
     const passwordCompare = await bcrypt.compare(currPassword, hashedPassword);
 
     if (!passwordCompare) {
-      return res.status(401).json({ error: statusText.INVALID_CREDS });
+      return res.status(401).json({
+        statusText: statusText.CURRENT_PASS_INCORRECT,
+        isCurrPasswordIncorrect: true,
+      });
     }
 
     const salt = await bcrypt.genSalt(10);
     const newHashedPassword = await bcrypt.hash(newPassword, salt);
 
     await User.findByIdAndUpdate(
-      req.mongoId,
+      mongoId,
       { password: newHashedPassword, isPassReset: true },
       { overwrite: false }
     );
 
-    res.status(200).json({ error: statusText.PASS_RESET_SUCCESS });
+    res.status(200).json({ statusText: statusText.PASS_RESET_SUCCESS });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    res.status(500).json({ statusText: statusText.INTERNAL_SERVER_ERROR });
   }
 });
 
-// ROUTE 2: Authenticate a User using: POST "/api/auth/login". No login required
-// ROUTE 3: Get loggedin User Details using: POST "/api/auth/getuser". Login required
-router.post("/verify-token", fetchPerson, async (req, res) => {
+router.post("/verify-token", fetchPerson, isUser, async (req, res) => {
+  // console.log(req.originalUrl);
+
   try {
-    const user = await User.findById(req.mongoId);
+    const userDoc = await User.findById(req.mongoId);
     return res
       .status(200)
-      .json({ userDoc: user, statusText: statusText.VERIFIED_TOKEN });
+      .json({ statusText: statusText.VERIFIED_TOKEN, userDoc: userDoc });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    res.status(500).json({ statusText: statusText.INTERNAL_SERVER_ERROR });
   }
 });
 
 /////////////////////////////////////// All ///////////////////////////////////////////////
 
-router.get("/verticals/all", fetchPerson, async (req, res) => {
+router.get("/verticals/all", async (req, res) => {
   // todo: verify role, reason: a student can paste the url on browser and potray himself as an admin
-  // same route for both admin and user
-
   // console.log(req.originalUrl);
 
-  if (req.role != "user") {
-    return res.status(401).json({ error: statusText.INVALID_TOKEN });
-  }
-
   try {
-    const userMongoId = req.mongoId;
-    const userDoc = await User.findById(userMongoId, {
-      isPassReset: 1,
-      isRegistered: 1,
-      _id: 0,
-    });
-
-    if (!userDoc) {
-    }
-
-    console.log(userDoc);
-
-    if (!userDoc.isPassReset || !userDoc.isRegistered) {
-      return res.status(403).json({
-        statusText: statusText.SUCCESS,
-        data: {
-          isPassReset: userDoc.isPassReset,
-          isRegistered: userDoc.isRegistered,
-        },
-      });
-    }
-
     const allVerticals = await Vertical.find();
     // console.log(allVerticals);
 
     res.status(200).json({
       statusText: statusText.SUCCESS,
-      data: { allVerticals: allVerticals },
+      allVerticals: allVerticals,
     });
   } catch (error) {
     console.log(error);
@@ -201,11 +194,9 @@ router.get("/verticals/all", fetchPerson, async (req, res) => {
 router.get(
   "/verticals/:verticalId/courses/all",
   fetchPerson,
+  isUser,
+  arePrereqSatisfied,
   async (req, res) => {
-    if (req.role != "user") {
-      return res.status(400).json({ error: statusText.INVALID_TOKEN });
-    }
-
     const { verticalId } = req.params;
 
     try {
@@ -217,9 +208,11 @@ router.get(
       });
       // console.log(allCourses.length);
 
-      res
-        .status(200)
-        .json({ statusText: statusText.SUCCESS, allCourses: allCourses });
+      res.status(200).json({
+        statusText: statusText.SUCCESS,
+        allCourses: allCourses,
+        userDoc: req.userDoc,
+      });
     } catch (error) {
       // console.log(error);
       res.status(400).json({ statusText: statusText.FAIL });
