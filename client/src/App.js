@@ -9,6 +9,7 @@ import UserUnits from "./routes/user/UserUnits";
 import UserSingleUnit from "./routes/user/UserSingleUnit";
 import UserResetPass from "./routes/user/UserResetPass";
 import UserRegis from "./routes/user/UserRegis";
+import UserQuiz from "./routes/user/UserQuiz";
 
 import Signup from "./components/Signup";
 import Courses from "./components/Courses";
@@ -66,6 +67,11 @@ function App() {
                 exact
                 path="/user/verticals/:verticalId/courses/:courseId/units/:unitId"
                 element={<UserSingleUnit />}
+              />
+              <Route
+                exact
+                path="/user/verticals/:verticalId/courses/:courseId/units/:unitId/quiz"
+                element={<UserQuiz />}
               />
               <Route
                 exact

@@ -23,7 +23,7 @@ const HomePage = () => {
         );
 
         const { statusText, allVerticals } = await response.json();
-        // console.log(response);
+        console.log(response);
 
         if (response.ok && response.status === 200) {
           setAllVerticals(allVerticals);
@@ -96,7 +96,7 @@ const HomePage = () => {
               className="img"
               src={img}
               alt="img"
-              style={{ height: "350px", marginLeft: "25%" }}
+              style={{ width: "100%", marginLeft: "0" }}
             />
           </div>
         </div>
@@ -106,7 +106,7 @@ const HomePage = () => {
 
       {/* SECTION 2 */}
       <section id="verticles">
-        <div id="verticleHeading" style={{textAlign:"center"}}>
+        <div id="verticleHeading" style={{ textAlign: "center" }}>
           <h1>
             Curated <span style={{ color: "#0A2647" }}>verticles</span> designed
             specially for you!
@@ -130,7 +130,7 @@ const HomePage = () => {
                   <br />
                   <button
                     className="btn btn-primary"
-                    style={{ margin: "10px"}}
+                    style={{ margin: "10px" }}
                     id={vertical._id}
                     onClick={handleViewCourses}
                   >

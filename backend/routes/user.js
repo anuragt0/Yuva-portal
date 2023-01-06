@@ -18,7 +18,6 @@ const {
 
 // My utilities
 const statusText = require("../utilities/status-text.js");
-const { removeListener } = require("../models/User");
 
 // ! Dont bind data to req, bind them to res, change this at all routes and middlewares reference: https://stackoverflow.com/questions/18875292/passing-variables-to-the-next-middleware-using-next-in-express-js
 
@@ -241,6 +240,76 @@ router.get(
       res
         .status(200)
         .json({ statusText: statusText.SUCCESS, allUnits: courseDoc.unitArr });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    }
+  }
+);
+
+router.get(
+  "/verticals/:verticalId/courses/:courseId/units/:unitId",
+  fetchPerson,
+  isUser,
+  arePrereqSatisfied,
+  async (req, res) => {
+    // todo : validation
+    console.log(req.originalUrl);
+
+    const { courseId, unitId } = req.params;
+
+    try {
+      const proj = {
+        _id: 0,
+        unitArr: 1,
+      };
+
+      const courseDoc = await Course.findById(courseId, proj);
+      console.log(courseDoc.unitArr.length);
+
+      let unit = null;
+      courseDoc.unitArr.forEach((singleUnit) => {
+        if (singleUnit._id == unitId) {
+          unit = singleUnit;
+        }
+      });
+
+      res.status(200).json({ error: statusText.SUCCESS, unit: unit });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    }
+  }
+);
+
+router.get(
+  "/verticals/:verticalId/courses/:courseId/units/:unitId/quiz",
+  fetchPerson,
+  isUser,
+  arePrereqSatisfied,
+  async (req, res) => {
+    // todo : validation, make a middleware isEligibleToTakeQuiz
+    console.log(req.originalUrl);
+
+    const { courseId, unitId } = req.params;
+
+    try {
+      const proj = {
+        _id: 0,
+        unitArr: 1,
+      };
+
+      const courseDoc = await Course.findById(courseId, proj);
+      console.log(courseDoc.unitArr.length);
+
+      let unit = null;
+      courseDoc.unitArr.forEach((singleUnit) => {
+        if (singleUnit._id == unitId) {
+          unit = singleUnit;
+        }
+      });
+
+      res.status(200).json({ error: statusText.SUCCESS, quiz: unit.quiz });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
