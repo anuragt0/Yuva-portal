@@ -34,6 +34,8 @@ import AdminCourses from "./routes/admin/AdminCourses.jsx";
 import AdminUnits from "./routes/admin/AdminUnits";
 import AdminAddUnits from "./routes/admin/AdminAddUnit";
 
+import HomePage from "./testing/home/HomePage";
+
 function App() {
   return (
     <>
@@ -42,8 +44,9 @@ function App() {
           <Navbar />
           <div className="container">
             <Routes>
+              <Route exact path="/testing/home" element={<HomePage />} />{" "}
               <Route exact path="/user/login" element={<UserLogin />} />{" "}
-              <Route exact path="/user" element={<UserHome />} />
+              <Route exact path="/user" element={<HomePage />} />
               <Route
                 exact
                 path="/user/verticals/all"

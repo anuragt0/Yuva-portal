@@ -68,6 +68,7 @@ const UserResetPass = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(creds);
 
     try {
       setIsLoading(true);
@@ -192,7 +193,7 @@ const UserResetPass = () => {
                   type="button"
                   className="btn btn-success btn-lg"
                   onClick={handleSubmit}
-                  disabled={isLoading === true}
+                //   disabled={isLoading === true}
                 >
                   Reset
                 </button>

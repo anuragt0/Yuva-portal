@@ -216,9 +216,9 @@ const AdminVerticals = () => {
       <section className="online">
         <div className="container1">
           {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
-          <div className="content grid2">
+          <div className="content grid2 row">
             {allVerticals.map((vertical) => (
-              <div className="box" key={vertical._id}>
+              <div className="box col w-200" key={vertical._id}>
                 <div className="img">
                   <img src={vertical.imgSrc} alt="sjfn" />
                   {/* <img src={vertical.imgSrc} alt="" className="show" /> */}

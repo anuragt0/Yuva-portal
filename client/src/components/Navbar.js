@@ -48,7 +48,7 @@ const Navbar = () => {
           class="navbar navbar-expand-md navbar-dark"
           style={{ paddingTop: "3.5px" }}
         >
-          <a class="navbar-brand p-0" href="/">
+          <a class="navbar-brand p-0" href="/user">
             <h1 class="h1">
               <img src={logo} width={"35%"} alt="err" />
             </h1>
@@ -66,7 +66,7 @@ const Navbar = () => {
           <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav ml-auto" style={{ paddingRight: "30px" }}>
               <li class="nav-item">
-                <a class="nav-link" href="/">
+                <a class="nav-link" href="/user">
                   Home
                 </a>
               </li>
@@ -76,8 +76,8 @@ const Navbar = () => {
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/courses">
-                  Courses
+                <a class="nav-link" href="#verticles">
+                  Verticles
                 </a>
               </li>
               <li class="nav-item">
@@ -129,7 +129,7 @@ const Navbar = () => {
                     onClick={handleLogout}
                     style={{ position: "absolute", right: "60px" }}
                   >
-                    <a class="nav-link" href="/login" onClick={handleLogout}>
+                    <a class="nav-link" href="/user/login" onClick={handleLogout}>
                       Logout
                     </a>
                   </li>

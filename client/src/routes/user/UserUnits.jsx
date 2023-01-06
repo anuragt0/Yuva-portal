@@ -93,12 +93,12 @@ const UserUnits = () => {
       <section className="online">
         <div className="container">
           {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
-          <div className="content grid2">
+          <div className="content grid2 row">
             {allUnits.map((unit) => {
               const vdoThumbnail = getVideoThumbnail(unit.video.vdoSrc);
 
               return (
-                <div className="box" key={unit._id}>
+                <div className="box col" key={unit._id}>
                   <div className="img">
                     <img src={vdoThumbnail} alt="sjfn" />
                     {/* <img src={vertical.imgSrc} alt="" className="show" /> */}

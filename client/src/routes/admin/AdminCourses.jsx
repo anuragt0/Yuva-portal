@@ -225,9 +225,9 @@ const AdminCourses = () => {
       <section className="online">
         <div className="container">
           {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
-          <div className="content grid2">
+          <div className="content grid2 row">
             {allCourses.map((course) => (
-              <div className="box" key={course._id}>
+              <div className="box col" key={course._id}>
                 <h2>{course.name}</h2>
                 <h5>{course.desc}</h5>
                 <span>{course.unitArr.length} Units </span>
