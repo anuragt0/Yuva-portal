@@ -44,6 +44,7 @@ router.post("/dummy", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   // todo : validation
+  console.log(req.originalUrl);
 
   console.log(req.body);
 
@@ -53,7 +54,7 @@ router.post("/login", async (req, res) => {
     // match creds
     const user = await User.findOne({ userId: userId });
     if (!user) {
-      return res.status(400).json({ error: statusText.INVALID_CREDS });
+      return res.status(401).json({ statusText: statusText.INVALID_CREDS });
     }
 
     const hashedPassword = user.password;
@@ -64,7 +65,7 @@ router.post("/login", async (req, res) => {
     );
 
     if (!passwordCompare) {
-      return res.status(400).json({ error: statusText.INVALID_CREDS });
+      return res.status(401).json({ error: statusText.INVALID_CREDS });
     }
 
     // generate token
@@ -95,6 +96,8 @@ router.post("/register", fetchPerson, isUser, async (req, res) => {
 
   try {
     const userDoc = await User.findById(mongoId);
+
+    // ! you can also make a check for isPassReset here, but some checking is already being done at other places, to prevent someone to register before pass reset
 
     if (userDoc.isRegistered) {
       return res.status(403).json({
@@ -223,13 +226,10 @@ router.get(
 router.get(
   "/verticals/:verticalId/courses/:courseId/units/all",
   fetchPerson,
+  isUser,
+  arePrereqSatisfied,
   async (req, res) => {
     // todo : validation
-    console.log("skdfn");
-
-    if (req.role != "user") {
-      return res.status(400).json({ error: statusText.INVALID_TOKEN });
-    }
 
     const { courseId } = req.params;
 

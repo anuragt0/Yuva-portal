@@ -37,12 +37,32 @@ const UserUnits = () => {
           }
         );
 
-        const { statusText, allUnits } = await response.json();
+        console.log(response);
+        const result = await response.json();
+        // console.log(response);
+        console.log(result);
 
-        console.log(statusText);
-        console.log(allUnits);
-
-        setAllUnits(allUnits);
+        if (response.status >= 400 && response.status < 600) {
+          if (response.status === 401) {
+            if (!("isLoggedIn" in result) || result.isLoggedIn === false) {
+              console.log("go to login");
+            }
+          } else if (response.status === 403) {
+            if (result.userDoc.isPassReset === false) {
+              console.log("go to reset password");
+            } else if (result.userDoc.isRegistered === false) {
+              console.log("go to registration page");
+            }
+          } else {
+            alert("Internal server error"); // todo: toast notify
+          }
+        } else if (response.ok && response.status === 200) {
+          setAllUnits(result.allUnits);
+          // we also have userDoc here
+          console.log(result.userDoc);
+        } else {
+          // for future
+        }
 
         setIsLoading(false);
       } catch (error) {

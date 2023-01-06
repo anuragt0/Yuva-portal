@@ -15,7 +15,8 @@ const statusText = {
 
   SUCCESS: "All good",
   FAIL: "Failed",
-  PREREQ_NOT_SATISFIED: "Password not reset or not registered",
+  PREREQ_NOT_SATISFIED:
+    "Prerequisites not satisfied - Password not reset or not registered",
 
   VERTICAL_CREATE_SUCCESS: "Vertical created successfully",
   COURSE_CREATE_SUCCESS: "Course created successfully",

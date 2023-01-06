@@ -34,21 +34,18 @@ const UserCourses = () => {
         );
 
         const result = await response.json();
-        console.log(response);
+        // console.log(response);
         console.log(result);
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
             if (!("isLoggedIn" in result) || result.isLoggedIn === false) {
-              // redirect to login page, navigate("/user/login");
               console.log("go to login");
             }
           } else if (response.status === 403) {
             if (result.userDoc.isPassReset === false) {
-              // redirect to login page, navigate("/user/login");
               console.log("go to reset password");
             } else if (result.userDoc.isRegistered === false) {
-              // redirect to login page, navigate("/user/login");
               console.log("go to registration page");
             }
           } else {

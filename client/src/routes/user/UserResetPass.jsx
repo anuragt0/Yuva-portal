@@ -36,8 +36,6 @@ const UserResetPass = () => {
 
         console.log(result);
 
-        setIsLoading(false);
-
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
             if (!("isLoggedIn" in result) || result.isLoggedIn === false) {
@@ -58,6 +56,8 @@ const UserResetPass = () => {
         } else {
           // for future
         }
+
+        setIsLoading(false);
       } catch (error) {
         console.log(error.message);
       }
@@ -88,23 +88,19 @@ const UserResetPass = () => {
 
       console.log(result);
 
-      setIsLoading(false);
-
       if (response.status >= 400 && response.status < 600) {
         if (response.status === 401) {
           if (!("isLoggedIn" in result) || result.isLoggedIn === false) {
-            // redirect to login page, navigate("/user/login");
             console.log("go to login");
           } else if (
             !("isCurrPasswordIncorrect" in result) ||
             result.isCurrPasswordIncorrect === true
           ) {
-            // redirect to login page, navigate("/user/login");
+            // redirect to login page
             console.log("current pass incorrect, pls retry");
           }
         } else if (response.status === 403) {
           if (!("isPassReset" in result) || result.isPassReset === true) {
-            // redirect to login page, navigate("/user/login");
             console.log("go to home");
           }
         } else {
@@ -115,6 +111,8 @@ const UserResetPass = () => {
       } else {
         // for future
       }
+
+      setIsLoading(false);
     } catch (error) {
       console.log(error.message);
     }

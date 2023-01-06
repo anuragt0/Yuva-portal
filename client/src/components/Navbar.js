@@ -10,7 +10,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/user/login");
   };
 
   // const showUserProfile = ()=>{
@@ -90,7 +90,7 @@ const Navbar = () => {
                   class="nav-item"
                   style={{ position: "absolute", right: "30px" }}
                 >
-                  <a class="nav-link" href="/login">
+                  <a class="nav-link" href="/user/login">
                     LogIn
                   </a>
                 </li>
