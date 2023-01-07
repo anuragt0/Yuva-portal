@@ -16,4 +16,15 @@ function refreshScreen() {
   window.location.reload();
 }
 
-export { youtubeParser, refreshScreen, getVideoThumbnail };
+function roundOffDecimalPlaces(num, places) {
+  let power = Math.pow(10, places);
+
+  return Math.round(num * power) / power;
+}
+
+export {
+  youtubeParser,
+  refreshScreen,
+  getVideoThumbnail,
+  roundOffDecimalPlaces,
+};

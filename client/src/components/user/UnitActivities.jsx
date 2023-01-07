@@ -1,7 +1,7 @@
 import React from "react";
 
 const UnitActivities = (props) => {
-  console.log(props);
+  // console.log(props);
   return (
     <>
       <div style={{ border: "2px solid green" }}>

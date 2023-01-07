@@ -66,4 +66,17 @@ const arePrereqSatisfied = async (req, res, next) => {
   next();
 };
 
-module.exports = { fetchPerson, isUser, isAdmin, arePrereqSatisfied };
+// ! check whether the user is eligible to take quiz, this is imp in cases when user directly copy pastes the url of the quiz page and tries to submit it
+const isEligibleToTakeQuiz = async (req, res, next) => {
+  next();
+
+  // todo: complete the logic for eligibility check (like if the user has enough video watch time)
+};
+
+module.exports = {
+  fetchPerson,
+  isUser,
+  isAdmin,
+  arePrereqSatisfied,
+  isEligibleToTakeQuiz,
+};

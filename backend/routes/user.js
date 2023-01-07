@@ -14,6 +14,7 @@ const {
   isUser,
   isAdmin,
   arePrereqSatisfied,
+  isEligibleToTakeQuiz,
 } = require("../middlewares/fetch-person");
 
 // My utilities
@@ -287,6 +288,7 @@ router.get(
   fetchPerson,
   isUser,
   arePrereqSatisfied,
+  isEligibleToTakeQuiz,
   async (req, res) => {
     // todo : validation, make a middleware isEligibleToTakeQuiz
     console.log(req.originalUrl);
@@ -310,6 +312,135 @@ router.get(
       });
 
       res.status(200).json({ error: statusText.SUCCESS, quiz: unit.quiz });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    }
+  }
+);
+
+router.post(
+  "/verticals/:verticalId/courses/:courseId/units/:unitId/quiz/submit",
+  fetchPerson,
+  isUser,
+  arePrereqSatisfied,
+  isEligibleToTakeQuiz,
+  async (req, res) => {
+    // todo : validation, make a middleware isEligibleToTakeQuiz
+    // console.log(req.originalUrl);
+
+    const { courseId, unitId } = req.params;
+    const { percent } = req.body;
+
+    try {
+      const proj = {
+        _id: 0,
+        activity: 1,
+      };
+
+      const userDoc = await User.findById(req.mongoId);
+
+      if (userDoc.activity === undefined) {
+        /* Impossible Case: by this point we are sure that userDoc.activity contains the key for this particular unit's activity
+      because a user can visit the quiz page only if the watch time of video of that particular unit is high enough */
+
+        console.log("null");
+        let newActivityObj = {};
+        newActivityObj[`unit${unitId}`] = {
+          video: 0,
+          activities: [],
+          quizPercent: percent,
+        };
+
+        userDoc.activity = newActivityObj;
+      } else {
+        // todo: check whether the quizPercent is already >= 75
+        userDoc.activity[`unit${unitId}`].quizPercent = percent;
+
+        console.log("not null");
+      }
+
+      userDoc.markModified["activity"];
+
+      //! always use a callback with save method
+      userDoc.save((err, savedDoc) => {
+        if (err) {
+          console.log(err);
+        } else {
+          // console.log(savedDoc.activity);
+        }
+      });
+
+      const savedDoc = await User.findById(req.mongoId);
+      console.log(savedDoc.activity);
+
+      res.status(200).json({ statusText: statusText.SUCCESS });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    }
+  }
+);
+
+router.post(
+  "/verticals/:verticalId/courses/:courseId/units/:unitId/video/update-progress",
+  fetchPerson,
+  isUser,
+  arePrereqSatisfied,
+  async (req, res) => {
+    // todo:
+    console.log(req.originalUrl);
+
+    const { courseId, unitId } = req.params;
+    const { watchTimeInPercent } = req.body;
+    console.log(typeof watchTimeInPercent);
+
+    try {
+      const proj = {
+        _id: 0,
+        activities: 1,
+      };
+
+      const userDoc = await User.findById(req.mongoId);
+
+      if (userDoc.activity === undefined) {
+        /* Impossible Case: by this point we are sure that userDoc.activity contains the key for this particular unit's activity
+        because a user can visit the quiz page only if the watch time of video of that particular unit is high enough */
+
+        console.log("null");
+        let newActivityObj = {};
+        newActivityObj[`unit${unitId}`] = {
+          video: {
+            watchTimeInPercent: watchTimeInPercent,
+          },
+          activities: [],
+          quizPercent: 0,
+        };
+
+        userDoc.activity = newActivityObj;
+      } else {
+        // todo: check whether the quizPercent is already >= 75
+        userDoc.activity[`unit${unitId}`].video.watchTimeInPercent +=
+          watchTimeInPercent;
+
+        console.log("not null");
+      }
+
+      //! always use a callback with save method
+      userDoc.markModified["activity"];
+      userDoc.save((err, savedDoc) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("kajndkjnad");
+          // console.log(savedDoc.activity);
+        }
+      });
+
+      const savedDoc = await User.findById(req.mongoId);
+      console.log(savedDoc.activity);
+
+      res.status(200).json({ statusText: statusText.SUCCESS });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });

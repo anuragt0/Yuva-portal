@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { redirect, useNavigate, useParams } from "react-router-dom";
 
 import VideoPlayer from "../../components/user/VideoPlayer";
 import UnitText from "../../components/user/UnitText";
 import { SERVER_ORIGIN } from "../../utilities/constants";
 import UnitActivities from "../../components/user/UnitActivities";
+import { roundOffDecimalPlaces } from "../../utilities/helper_functions";
+
+// todo: a user must not be able to leave any question unanswered in the quiz
 
 const UserQuiz = () => {
   const [quiz, setQuiz] = useState([]);
@@ -32,7 +35,7 @@ const UserQuiz = () => {
         );
 
         const result = await response.json();
-        // console.log(result);
+        console.log(result);
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
@@ -50,7 +53,7 @@ const UserQuiz = () => {
           }
         } else if (response.ok && response.status === 200) {
           setQuiz(result.quiz);
-          console.log(result.quiz);
+          // console.log(result.quiz);
 
           let initialResponse = [];
           for (var counter = 0; counter < result.quiz.length; counter++) {
@@ -77,18 +80,82 @@ const UserQuiz = () => {
     getQuiz();
   }, []);
 
-  function handleSubmitQuiz() {}
+  async function handleSubmitQuiz() {
+    // calculating the result
+    let correctRespCnt = 0; // count of correct responses
+
+    for (let quizIndex = 0; quizIndex < quiz.length; quizIndex++) {
+      let isRespCorrect = true;
+      /* if default value is true, then this handles all the cases including the edge case when the user doesnot enter
+      any response for a question, then it would be correct only if all the options of that question are false */
+
+      for (let optIndex = 0; optIndex < 4; optIndex++) {
+        isRespCorrect =
+          isRespCorrect &&
+          quiz[quizIndex][`isOption${optIndex + 1}Checked`] ===
+            response[quizIndex][`isOption${optIndex + 1}Checked`];
+      }
+
+      correctRespCnt += isRespCorrect;
+    }
+
+    let percent = (correctRespCnt * 100) / quiz.length;
+
+    percent = roundOffDecimalPlaces(percent, 2); // round off to two decimal places
+    console.log(percent);
+
+    // submitting result to server
+    const { verticalId, courseId, unitId } = params;
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        `${SERVER_ORIGIN}/api/user/auth/verticals/${verticalId}/courses/${courseId}/units/${unitId}/quiz/submit`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify({ percent: percent }),
+        }
+      );
+
+      const result = await response.json();
+      console.log(result);
+
+      if (response.status >= 400 && response.status < 600) {
+        if (response.status === 401) {
+          if (!("isLoggedIn" in result) || result.isLoggedIn === false) {
+            console.log("go to login");
+          }
+        } else {
+          console.log("Internal server error"); // todo: toast notify, dont redirect, allow user to re-press submit button
+        }
+      } else if (response.ok && response.status === 200) {
+        console.log("go to unit page");
+        const { verticalId, courseId, unitId } = params;
+
+        navigate(
+          `/user/verticals/${verticalId}/courses/${courseId}/units/${unitId}`
+        );
+      } else {
+        // for future
+      }
+
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error.message);
+      setIsLoading(false);
+    }
+  }
 
   function handleResponseChange(isChecked, quizIndex, optIndex) {
     setResponse((prevResponse) => {
-      console.log(prevResponse);
-
       let newResponse = prevResponse;
-      //   console.log(quizIndex + 1, optIndex + 1);
-
       newResponse[quizIndex][`isOption${optIndex + 1}Checked`] = isChecked;
+      // console.log(newResponse);
 
-      console.log(newResponse);
       return newResponse;
     });
   }
@@ -122,6 +189,10 @@ const UserQuiz = () => {
                   <input
                     className="form-check-input"
                     type="checkbox"
+                    id={quizIndex * 11 + optIndex + 1}
+                    value={
+                      response[quizIndex][`isOption${optIndex + 1}Checked`]
+                    }
                     onChange={(e) => {
                       handleResponseChange(
                         e.target.checked,
@@ -129,7 +200,6 @@ const UserQuiz = () => {
                         optIndex
                       );
                     }}
-                    id={quizIndex * 99 + optIndex + 1}
                   />
                   <label>{option}</label>
                 </div>

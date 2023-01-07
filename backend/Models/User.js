@@ -31,7 +31,6 @@ const UserSchema = mongoose.Schema({
   //////////////////////
   activity: {
     type: Object,
-    default: {},
   },
 
   region: {
