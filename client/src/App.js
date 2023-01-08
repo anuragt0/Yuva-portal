@@ -36,6 +36,8 @@ import AdminUnits from "./routes/admin/AdminUnits";
 import AdminAddUnits from "./routes/admin/AdminAddUnit";
 
 import HomePage from "./testing/home/HomePage";
+import Header from "./testing/navbar/Header";
+// import Instructions from "./components/Instructions";
 
 function App() {
   return (
@@ -46,6 +48,7 @@ function App() {
           <div className="container">
             <Routes>
               <Route exact path="/testing/home" element={<HomePage />} />{" "}
+              <Route exact path="/testing/instructions" element={<Instructions />} />{" "}
               <Route exact path="/user/login" element={<UserLogin />} />{" "}
               <Route exact path="/user" element={<HomePage />} />
               <Route

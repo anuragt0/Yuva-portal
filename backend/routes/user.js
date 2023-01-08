@@ -389,11 +389,11 @@ router.post(
   arePrereqSatisfied,
   async (req, res) => {
     // todo:
-    console.log(req.originalUrl);
+    // console.log(req.originalUrl);
 
     const { courseId, unitId } = req.params;
     const { watchTimeInPercent } = req.body;
-    console.log(typeof watchTimeInPercent);
+    // console.log(typeof watchTimeInPercent);
 
     try {
       const proj = {
@@ -401,44 +401,75 @@ router.post(
         activities: 1,
       };
 
-      const userDoc = await User.findById(req.mongoId);
+      let userDoc = await User.findById(req.mongoId);
+      console.log("before: ", userDoc.activity);
+      let temp = "user"+unitId;
 
-      if (userDoc.activity === undefined) {
-        /* Impossible Case: by this point we are sure that userDoc.activity contains the key for this particular unit's activity
-        because a user can visit the quiz page only if the watch time of video of that particular unit is high enough */
+    //   let insideDoc = {"video": }
+    // userDoc.activity.temp.video
 
-        console.log("null");
-        let newActivityObj = {};
-        newActivityObj[`unit${unitId}`] = {
-          video: {
-            watchTimeInPercent: watchTimeInPercent,
-          },
-          activities: [],
-          quizPercent: 0,
-        };
-
-        userDoc.activity = newActivityObj;
-      } else {
-        // todo: check whether the quizPercent is already >= 75
-        userDoc.activity[`unit${unitId}`].video.watchTimeInPercent +=
-          watchTimeInPercent;
-
-        console.log("not null");
+      let updateData = {
+        [`activity${temp}[video]`] :  watchTimeInPercent
       }
 
-      //! always use a callback with save method
-      userDoc.markModified["activity"];
-      userDoc.save((err, savedDoc) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("kajndkjnad");
-          // console.log(savedDoc.activity);
-        }
-      });
+      let updatedUserDoc = await User.findOneAndUpdate({_id: req.mongoId},{
+        $set:{updateData}
+      }, {new:true});
+      console.log(updatedUserDoc.activity);
 
-      const savedDoc = await User.findById(req.mongoId);
-      console.log(savedDoc.activity);
+
+    //   if (userDoc.activity === undefined) {
+    //     //This is the first ever video user is watching, there is no activity in userDoc
+    //     console.log("null");
+    //     let newActivityObj = {};
+    //     newActivityObj[`unit${unitId}`] = {
+    //       "video": {
+    //         watchTimeInPercent: watchTimeInPercent,
+    //       },
+    //       activities: [],
+    //       quizPercent: 0,
+    //     };
+
+    //     userDoc.activity = newActivityObj;
+    //     // console.log("here: ", userDoc.activity);
+    //   }
+    //   else if(userDoc.activity[`unit${unitId}`]===undefined){
+    //     console.log("here");
+    //     userDoc.activity[`unit${unitId}`]={
+    //         "video": {
+    //             watchTimeInPercent: watchTimeInPercent,
+    //           },
+    //           activities: [],
+    //           quizPercent: 0,
+    //     }
+    //     console.log(userDoc);
+    //   }
+    //   else {
+    //     // todo: check whether the quizPercent is already >= 75
+    //     // console.log(userDoc.activity);
+    //     let temp = "unit"+unitId;
+    //     console.log(temp);
+    //     console.log("here1234: ",userDoc.activity);
+    //     userDoc.activity[`unit${unitId}`]["video"].watchTimeInPercent +=
+    //       watchTimeInPercent;
+
+    //     console.log("not null");
+    //   }
+
+      //! always use a callback with save method
+    //   console.log("before save:", userDoc.activity);
+    //   await userDoc.markModified["activity"];
+    //   userDoc.save((err, savedDoc) => {
+    //     if (err) {
+    //       console.log(err);
+    //     } else {
+    //     //   console.log("kajndkjnad");
+    //       console.log("userDoc.save: ",savedDoc.activity);
+    //     }
+    //   });
+
+    //   const savedDoc = await User.findById(req.mongoId);
+    //   console.log("after save: ", savedDoc.activity);
 
       res.status(200).json({ statusText: statusText.SUCCESS });
     } catch (error) {

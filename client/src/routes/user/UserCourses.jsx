@@ -35,7 +35,7 @@ const UserCourses = () => {
 
         const result = await response.json();
         // console.log(response);
-        console.log(result);
+        // console.log(result);
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
@@ -54,7 +54,7 @@ const UserCourses = () => {
         } else if (response.ok && response.status === 200) {
           setAllCourses(result.allCourses);
           // we also have userDoc here
-          console.log(result.userDoc);
+          console.log("UserDoc from all courses",result.userDoc);
         } else {
           // for future
         }

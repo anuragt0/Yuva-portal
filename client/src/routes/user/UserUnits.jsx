@@ -37,10 +37,10 @@ const UserUnits = () => {
           }
         );
 
-        console.log(response);
+        // console.log(response);
         const result = await response.json();
         // console.log(response);
-        console.log(result);
+        console.log("From units/all:",result);
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
@@ -58,8 +58,6 @@ const UserUnits = () => {
           }
         } else if (response.ok && response.status === 200) {
           setAllUnits(result.allUnits);
-          // we also have userDoc here
-          console.log(result.userDoc);
         } else {
           // for future
         }

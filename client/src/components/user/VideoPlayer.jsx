@@ -16,6 +16,7 @@ const VideoPlayer = (props) => {
   let totalDurationInSec = 0;
 
   function handleDuration(duration) {
+    console.log("handle duration");
     totalDurationInSec = duration;
   }
 
@@ -28,7 +29,7 @@ const VideoPlayer = (props) => {
       startTimeInSec = endTimeInSec;
     }
 
-    console.log(watchTimeInSec);
+    // console.log(watchTimeInSec);
   }
 
   function handlePlay() {
@@ -66,7 +67,7 @@ const VideoPlayer = (props) => {
       );
 
       const result = await response.json();
-      // console.log(response);
+      console.log("Watch response: ", result);
 
       if (response.status >= 400 && response.status < 600) {
         if (response.status === 401) {
