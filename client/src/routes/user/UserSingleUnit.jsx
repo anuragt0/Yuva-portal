@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import VideoPlayer from "../../components/user/VideoPlayer";
+import Instructions from "../../components/Instructions";
+
 import UnitText from "../../components/user/UnitText";
 import { SERVER_ORIGIN } from "../../utilities/constants";
 import UnitActivities from "../../components/user/UnitActivities";
@@ -12,6 +14,8 @@ const UserSingleUnit = () => {
     text: "",
     activities: [],
   });
+  const [isGetCertBtnDisabled, setIsGetCertBtnDisabled] = useState(true);
+
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
@@ -43,16 +47,24 @@ const UserSingleUnit = () => {
               console.log("go to login");
             }
           } else if (response.status === 403) {
-            if (result.userDoc.isPassReset === false) {
-              console.log("go to reset password");
-            } else if (result.userDoc.isRegistered === false) {
-              console.log("go to registration page");
-            }
+            if (result.userDoc)
+              if (result.userDoc.isPassReset === false) {
+                console.log("go to reset password");
+              } else if (result.userDoc.isRegistered === false) {
+                console.log("go to registration page");
+              }
           } else {
             alert("Internal server error"); // todo: toast notify
           }
         } else if (response.ok && response.status === 200) {
           setUnit(result.unit);
+
+          console.log(result.quizPercent);
+          const CERTIFICATE_GENERATION_CUT_OFF_IN_PERCENT = 65;
+          if (result.quizPercent >= CERTIFICATE_GENERATION_CUT_OFF_IN_PERCENT) {
+            setIsGetCertBtnDisabled(false);
+          }
+
           // we also have userDoc here
         } else {
           // for future
@@ -75,7 +87,9 @@ const UserSingleUnit = () => {
       `/user/verticals/${verticalId}/courses/${courseId}/units/${unitId}/quiz`
     );
   }
-
+  function handleStartQuizClick() {
+    console.log("kjfnkwejnefkjwfkjnwkjfnwek");
+  }
   return (
     <div style={{ marginBottom: "150px" }}>
       {unit.video !== null ? <VideoPlayer video={unit.video} /> : null}
@@ -85,6 +99,13 @@ const UserSingleUnit = () => {
       ) : null}
       <button className="btn my-5 btn-success" onClick={handleOpenQuizClick}>
         Open Quiz
+      </button>
+      <button
+        className="btn my-5 btn-success"
+        onClick={handleStartQuizClick}
+        disabled={isGetCertBtnDisabled === true ? true : false}
+      >
+        Get Certificate
       </button>
     </div>
   );

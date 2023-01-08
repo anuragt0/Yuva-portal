@@ -17,6 +17,8 @@ const statusText = {
   FAIL: "Failed",
   PREREQ_NOT_SATISFIED:
     "Prerequisites not satisfied - Password not reset or not registered",
+  NOT_ELIGIBLE_TO_TAKE_QUIZ:
+    "Not eligible to take quiz - watch time less than required",
 
   VERTICAL_CREATE_SUCCESS: "Vertical created successfully",
   COURSE_CREATE_SUCCESS: "Course created successfully",
