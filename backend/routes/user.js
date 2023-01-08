@@ -258,14 +258,15 @@ router.get(
     console.log(req.originalUrl);
 
     const { courseId, unitId } = req.params;
+    const mongoId = req.mongoId;
 
     try {
-      const proj = {
+      const courseProj = {
         _id: 0,
         unitArr: 1,
       };
 
-      const courseDoc = await Course.findById(courseId, proj);
+      const courseDoc = await Course.findById(courseId, courseProj);
       console.log(courseDoc.unitArr.length);
 
       let unit = null;
@@ -275,7 +276,26 @@ router.get(
         }
       });
 
-      res.status(200).json({ error: statusText.SUCCESS, unit: unit });
+      const userProj = {
+        _id: 0,
+        activity: 1,
+      };
+
+      const userDoc = await User.findById(mongoId, userProj);
+
+      let quizPercent = -1;
+      if (
+        userDoc.activity !== undefined &&
+        userDoc.activity[`unit${unitId}`] !== undefined
+      ) {
+        quizPercent = userDoc.activity[`unit${unitId}`].quizPercent;
+      }
+
+      res.status(200).json({
+        error: statusText.SUCCESS,
+        unit: unit,
+        quizPercent: quizPercent,
+      });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
@@ -294,14 +314,15 @@ router.get(
     console.log(req.originalUrl);
 
     const { courseId, unitId } = req.params;
+    const mongoId = req.mongoId;
 
     try {
-      const proj = {
+      const courseProj = {
         _id: 0,
         unitArr: 1,
       };
 
-      const courseDoc = await Course.findById(courseId, proj);
+      const courseDoc = await Course.findById(courseId, courseProj);
       console.log(courseDoc.unitArr.length);
 
       let unit = null;
@@ -311,7 +332,19 @@ router.get(
         }
       });
 
-      res.status(200).json({ error: statusText.SUCCESS, quiz: unit.quiz });
+      let userProj = {
+        _id: 0,
+        activity: 1,
+      };
+
+      const userDoc = await User.findById(mongoId, userProj);
+
+      res.status(200).json({
+        error: statusText.SUCCESS,
+        quiz: unit.quiz,
+        isEligibleToTakeQuiz: true,
+        quizPercent: userDoc.activity[`unit${unitId}`].quizPercent,
+      });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
@@ -330,49 +363,39 @@ router.post(
     // console.log(req.originalUrl);
 
     const { courseId, unitId } = req.params;
-    const { percent } = req.body;
+    const { quizPercent } = req.body;
+    const mongoId = req.mongoId;
 
     try {
-      const proj = {
-        _id: 0,
-        activity: 1,
-      };
+      const userDoc = await User.findById(mongoId);
 
-      const userDoc = await User.findById(req.mongoId);
-
+      // use this method only to check a key in an object
       if (userDoc.activity === undefined) {
-        /* Impossible Case: by this point we are sure that userDoc.activity contains the key for this particular unit's activity
-      because a user can visit the quiz page only if the watch time of video of that particular unit is high enough */
-
-        console.log("null");
-        let newActivityObj = {};
-        newActivityObj[`unit${unitId}`] = {
-          video: 0,
-          activities: [],
-          quizPercent: percent,
-        };
-
-        userDoc.activity = newActivityObj;
-      } else {
-        // todo: check whether the quizPercent is already >= 75
-        userDoc.activity[`unit${unitId}`].quizPercent = percent;
-
-        console.log("not null");
+        userDoc["activity"] = {};
       }
 
-      userDoc.markModified["activity"];
+      const unitKey = `unit${unitId}`;
+      if (userDoc.activity[unitKey] === undefined) {
+        userDoc.activity[unitKey] = {
+          video: { watchTimeInPercent: 0 },
+          activities: [],
+          quizPercent: -1,
+        };
+      }
 
-      //! always use a callback with save method
-      userDoc.save((err, savedDoc) => {
-        if (err) {
-          console.log(err);
-        } else {
-          // console.log(savedDoc.activity);
-        }
-      });
+      // always update by creating a new doc for activity out of the previous one
 
-      const savedDoc = await User.findById(req.mongoId);
-      console.log(savedDoc.activity);
+      const QUIZ_CUT_OFF_IN_PERCENT = 75; // check cutoff on quiz submit only, the user can always see the quiz page (except watchtime criteria)
+      if (userDoc.activity[unitKey].quizPercent < QUIZ_CUT_OFF_IN_PERCENT) {
+        userDoc.activity[unitKey].quizPercent = quizPercent;
+
+        const updatedDoc = await User.findByIdAndUpdate(mongoId, userDoc, {
+          new: true,
+        });
+        console.log(updatedDoc);
+      } else {
+        console.log("No update in Quiz percent, as its already >=75");
+      }
 
       res.status(200).json({ statusText: statusText.SUCCESS });
     } catch (error) {
@@ -388,57 +411,32 @@ router.post(
   isUser,
   arePrereqSatisfied,
   async (req, res) => {
-    // todo:
-    console.log(req.originalUrl);
-
     const { courseId, unitId } = req.params;
     const { watchTimeInPercent } = req.body;
-    console.log(typeof watchTimeInPercent);
+    const mongoId = req.mongoId;
 
     try {
-      const proj = {
-        _id: 0,
-        activities: 1,
-      };
-
-      const userDoc = await User.findById(req.mongoId);
+      const userDoc = await User.findById(mongoId);
 
       if (userDoc.activity === undefined) {
-        /* Impossible Case: by this point we are sure that userDoc.activity contains the key for this particular unit's activity
-        because a user can visit the quiz page only if the watch time of video of that particular unit is high enough */
-
-        console.log("null");
-        let newActivityObj = {};
-        newActivityObj[`unit${unitId}`] = {
-          video: {
-            watchTimeInPercent: watchTimeInPercent,
-          },
-          activities: [],
-          quizPercent: 0,
-        };
-
-        userDoc.activity = newActivityObj;
-      } else {
-        // todo: check whether the quizPercent is already >= 75
-        userDoc.activity[`unit${unitId}`].video.watchTimeInPercent +=
-          watchTimeInPercent;
-
-        console.log("not null");
+        userDoc["activity"] = {};
       }
 
-      //! always use a callback with save method
-      userDoc.markModified["activity"];
-      userDoc.save((err, savedDoc) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("kajndkjnad");
-          // console.log(savedDoc.activity);
-        }
-      });
+      const unitKey = `unit${unitId}`;
+      if (userDoc.activity[unitKey] === undefined) {
+        userDoc.activity[unitKey] = {
+          video: { watchTimeInPercent: 0 },
+          activities: [],
+          quizPercent: -1,
+        };
+      }
 
-      const savedDoc = await User.findById(req.mongoId);
-      console.log(savedDoc.activity);
+      userDoc.activity[unitKey].video.watchTimeInPercent += watchTimeInPercent;
+
+      const updatedDoc = await User.findByIdAndUpdate(mongoId, userDoc, {
+        new: true,
+      });
+      console.log(updatedDoc);
 
       res.status(200).json({ statusText: statusText.SUCCESS });
     } catch (error) {

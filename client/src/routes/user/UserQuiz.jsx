@@ -4,23 +4,31 @@ import { redirect, useNavigate, useParams } from "react-router-dom";
 import VideoPlayer from "../../components/user/VideoPlayer";
 import UnitText from "../../components/user/UnitText";
 import { SERVER_ORIGIN } from "../../utilities/constants";
-import UnitActivities from "../../components/user/UnitActivities";
-import { roundOffDecimalPlaces } from "../../utilities/helper_functions";
+import {
+  roundOffDecimalPlaces,
+  refreshScreen,
+} from "../../utilities/helper_functions";
+import Instructions from "../../components/Instructions";
 
 // todo: a user must not be able to leave any question unanswered in the quiz
 
 const UserQuiz = () => {
   const [quiz, setQuiz] = useState([]);
-  const [response, setResponse] = useState([]);
+  const [storedResult, setStoredResult] = useState(-1);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [response, setResponse] = useState([]);
+  const [result, setResult] = useState(0);
+  const [isEligibleToTakeQuiz, setIsEligibleToTakeQuiz] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [showResult, setShowResult] = useState(false);
+  // no need for loader, as instruction element is instantly visible on page visit
+
   const navigate = useNavigate();
   const params = useParams();
 
   useEffect(() => {
     async function getQuiz() {
       const { verticalId, courseId, unitId } = params;
-      setIsLoading(true);
 
       try {
         const response = await fetch(
@@ -43,16 +51,23 @@ const UserQuiz = () => {
               console.log("go to login");
             }
           } else if (response.status === 403) {
-            if (result.userDoc.isPassReset === false) {
+            if (result.isEligibleToTakeQuiz === false) {
+              // console.log("flase");
+              setIsEligibleToTakeQuiz(false);
+            } else if (result.userDoc.isPassReset === false) {
               console.log("go to reset password");
             } else if (result.userDoc.isRegistered === false) {
               console.log("go to registration page");
             }
+            // isPassReset and isRegistered 'if' statement wont ever hit because isEligibleToTakeQuiz is true only if video watch time is greater than a certain minimum and a user can watch vdo only if isPrerequisitesSatisfied
           } else {
             alert("Internal server error"); // todo: toast notify
           }
         } else if (response.ok && response.status === 200) {
           setQuiz(result.quiz);
+          setStoredResult(result.quizPercent);
+          setIsEligibleToTakeQuiz(true);
+
           // console.log(result.quiz);
 
           let initialResponse = [];
@@ -69,11 +84,8 @@ const UserQuiz = () => {
         } else {
           // for future
         }
-
-        setIsLoading(false);
       } catch (error) {
         console.log(error.message);
-        setIsLoading(false);
       }
     }
 
@@ -99,14 +111,17 @@ const UserQuiz = () => {
       correctRespCnt += isRespCorrect;
     }
 
-    let percent = (correctRespCnt * 100) / quiz.length;
+    let quizPercent = (correctRespCnt * 100) / quiz.length;
 
-    percent = roundOffDecimalPlaces(percent, 2); // round off to two decimal places
-    console.log(percent);
+    quizPercent = roundOffDecimalPlaces(quizPercent, 2); // round off to two decimal places
+    console.log(quizPercent);
+
+    setResult(quizPercent);
+    setShowQuiz(false);
+    setShowResult(true);
 
     // submitting result to server
     const { verticalId, courseId, unitId } = params;
-    setIsLoading(true);
 
     try {
       const response = await fetch(
@@ -117,7 +132,7 @@ const UserQuiz = () => {
             "Content-Type": "application/json",
             "auth-token": localStorage.getItem("token"),
           },
-          body: JSON.stringify({ percent: percent }),
+          body: JSON.stringify({ quizPercent: quizPercent }),
         }
       );
 
@@ -136,17 +151,14 @@ const UserQuiz = () => {
         console.log("go to unit page");
         const { verticalId, courseId, unitId } = params;
 
-        navigate(
-          `/user/verticals/${verticalId}/courses/${courseId}/units/${unitId}`
-        );
+        // navigate(
+        //   `/user/verticals/${verticalId}/courses/${courseId}/units/${unitId}`
+        // );
       } else {
         // for future
       }
-
-      setIsLoading(false);
     } catch (error) {
       console.log(error.message);
-      setIsLoading(false);
     }
   }
 
@@ -160,57 +172,132 @@ const UserQuiz = () => {
     });
   }
 
+  function handleStartQuizClick() {
+    setShowQuiz(true);
+  }
+
+  const resultElement = (
+    <>
+      <p>{result}</p>
+      <button className="btn btn-success" onClick={refreshScreen}>
+        Retake quiz
+      </button>
+    </>
+  );
+
+  const instructionsElement = (
+    <>
+      <div>
+        <h3>Instructions:</h3>
+        <ul style={{ fontSize: "1.2rem" }}>
+          <li>
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit
+            et repudiandae temporibus quos quo aspernatur debitis tempora
+            consequuntur unde quia veritatis natus numquam eos repellendus vero
+            quas, saepe expedita at eligendi fugiat sint culpa. Libero
+            temporibus, voluptatem officia sed rem magnam! Delectus fuga nisi,
+            aspernatur cupiditate officia asperiores maiores magnam.
+          </li>
+          <li>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta, hic
+            quibusdam repellat quisquam tempora nisi dolor sunt. Accusamus sed
+            aliquam repudiandae magnam, soluta possimus consectetur, aut ad rem,
+            optio maxime.
+          </li>
+          <li>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Harum,
+            voluptates doloribus sequi blanditiis nisi necessitatibus dolor
+            aperiam? Laborum atque animi molestias voluptas amet enim sint.
+          </li>
+        </ul>
+      </div>
+
+      <div style={{ textAlign: "center" }}>
+        <button
+          className="btn btn-primary"
+          onClick={handleStartQuizClick}
+          disabled={!isEligibleToTakeQuiz ? true : false}
+        >
+          Start
+        </button>
+
+        <p>
+          {storedResult === -1
+            ? "You never took this quiz before"
+            : `Your latest quiz score is ${storedResult}%`}
+        </p>
+      </div>
+    </>
+  );
+
+  const quizElement =
+    quiz.length === 0 ? (
+      <p>EMPTY QUIZ</p>
+    ) : (
+      <div
+        id="quiz"
+        name="quiz"
+        style={{
+          marginTop: "80px",
+          fontSize: "20px",
+          border: "2px solid blue",
+        }}
+      >
+        {quiz.map((quizObject, quizIndex) => {
+          let options = [];
+          options.push(quizObject.option1);
+          options.push(quizObject.option2);
+          options.push(quizObject.option3);
+          options.push(quizObject.option4);
+
+          return (
+            <div
+              key={quizIndex}
+              style={{ backgroundColor: "#90EE90", margin: "10px" }}
+            >
+              <p>
+                {quizIndex + 1}. {quizObject.question}
+              </p>
+
+              {options.map((option, optIndex) => {
+                return (
+                  <div key={optIndex} style={{ display: "block" }}>
+                    <span>{optIndex + 1}</span>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id={quizIndex * 11 + optIndex + 1}
+                      value={
+                        response[quizIndex][`isOption${optIndex + 1}Checked`]
+                      }
+                      onChange={(e) => {
+                        handleResponseChange(
+                          e.target.checked,
+                          quizIndex,
+                          optIndex
+                        );
+                      }}
+                    />
+                    <label>{option}</label>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+
+        <button onClick={handleSubmitQuiz}>Submit Quiz</button>
+      </div>
+    );
+
   return (
-    <div
-      id="quiz"
-      name="quiz"
-      style={{ marginTop: "80px", fontSize: "20px", border: "2px solid blue" }}
-    >
-      {quiz.map((quizObject, quizIndex) => {
-        let options = [];
-        options.push(quizObject.option1);
-        options.push(quizObject.option2);
-        options.push(quizObject.option3);
-        options.push(quizObject.option4);
-
-        return (
-          <div
-            key={quizIndex}
-            style={{ backgroundColor: "#90EE90", margin: "10px" }}
-          >
-            <p>
-              {quizIndex + 1}. {quizObject.question}
-            </p>
-
-            {options.map((option, optIndex) => {
-              return (
-                <div key={optIndex} style={{ display: "block" }}>
-                  <span>{optIndex + 1}</span>
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id={quizIndex * 11 + optIndex + 1}
-                    value={
-                      response[quizIndex][`isOption${optIndex + 1}Checked`]
-                    }
-                    onChange={(e) => {
-                      handleResponseChange(
-                        e.target.checked,
-                        quizIndex,
-                        optIndex
-                      );
-                    }}
-                  />
-                  <label>{option}</label>
-                </div>
-              );
-            })}
-          </div>
-        );
-      })}
-
-      <button onClick={handleSubmitQuiz}>Submit Quiz</button>
-    </div>
+    <>
+      {showQuiz
+        ? quizElement
+        : showResult
+        ? resultElement
+        : instructionsElement}
+    </>
   );
 };
 

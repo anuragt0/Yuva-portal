@@ -68,9 +68,23 @@ const arePrereqSatisfied = async (req, res, next) => {
 
 // ! check whether the user is eligible to take quiz, this is imp in cases when user directly copy pastes the url of the quiz page and tries to submit it
 const isEligibleToTakeQuiz = async (req, res, next) => {
-  next();
+  const { unitId } = req.params;
+  const userDoc = await User.findById(req.mongoId);
 
-  // todo: complete the logic for eligibility check (like if the user has enough video watch time)
+  const unitKey = `unit${unitId}`;
+  const MIN_WATCH_TIME_IN_PERCENT = 2;
+
+  if (
+    userDoc.activity[unitKey].video.watchTimeInPercent <
+    MIN_WATCH_TIME_IN_PERCENT
+  ) {
+    return res.status(403).json({
+      statusText: statusText.NOT_ELIGIBLE_TO_TAKE_QUIZ,
+      isEligibleToTakeQuiz: false,
+    });
+  }
+
+  next();
 };
 
 module.exports = {

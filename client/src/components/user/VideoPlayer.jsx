@@ -15,33 +15,41 @@ const VideoPlayer = (props) => {
   let startTimeInSec;
   let totalDurationInSec = 0;
 
+  // get the total duration of the video
   function handleDuration(duration) {
     totalDurationInSec = duration;
   }
 
+  // the current position of the seek-point in seconds wrt 0, runs every seconds
   function handleProgress(state) {
     seekPointInSec = state.playedSeconds;
 
-    if (seekPointInSec >= totalDurationInSec - 10) {
-      let endTimeInSec = performance.now() / 1000;
-      watchTimeInSec += endTimeInSec - startTimeInSec;
-      startTimeInSec = endTimeInSec;
+    if (seekPointInSec < totalDurationInSec - 10) {
+      // handlePause function will handle this
+      return;
     }
 
-    console.log(watchTimeInSec);
+    let endTimeInSec = performance.now() / 1000;
+    watchTimeInSec = endTimeInSec - startTimeInSec;
+    startTimeInSec = endTimeInSec;
+
+    updateVdoProgress();
   }
 
+  // this function runs when the play button is pressed and also when the vdo starts to run for the first time
   function handlePlay() {
     startTimeInSec = performance.now() / 1000;
   }
 
+  // this function runs when the pause button is pressed and doesnot run when the vdo stops at the last
   function handlePause() {
     if (seekPointInSec >= totalDurationInSec - 10) {
       // handleProgress function will handle this
+      return;
     }
 
     let endTimeInSec = performance.now() / 1000;
-    watchTimeInSec += endTimeInSec - startTimeInSec;
+    watchTimeInSec = endTimeInSec - startTimeInSec;
 
     updateVdoProgress();
   }
@@ -50,7 +58,7 @@ const VideoPlayer = (props) => {
     const { verticalId, courseId, unitId } = params;
     let watchTimeInPercent = (watchTimeInSec * 100) / totalDurationInSec;
     watchTimeInPercent = roundOffDecimalPlaces(watchTimeInPercent, 2);
-    // console.log(typeof watchTimeInPercent);
+    console.log(watchTimeInPercent);
 
     try {
       const response = await fetch(
