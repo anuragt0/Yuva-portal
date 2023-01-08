@@ -82,6 +82,7 @@ const UserSingleUnit = () => {
 
   function handleOpenQuizClick() {
     const { verticalId, courseId, unitId } = params;
+    // asdfasdfasdf
 
     navigate(
       `/user/verticals/${verticalId}/courses/${courseId}/units/${unitId}/quiz`
