@@ -194,10 +194,10 @@ const AdminVerticals = () => {
               <button
                 onClick={handleDeleteVertical}
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-danger"
                 disabled={confirmText === "Confirm" ? false : true}
               >
-                - Delete Vertical
+                Delete Vertical
               </button>
             </div>
           </div>
@@ -208,9 +208,18 @@ const AdminVerticals = () => {
 
   return (
     <>
+    <div style={{textAlign:"center", margin:"5% 0" }}>
+        <h1>Verticals</h1>
+    </div>
+    <div style={{textAlign:"left", margin:"5% 0"}}>
+        <h3 > <i class="fa-solid fa-arrow-right"></i> Every verticals related information is available on this page. </h3>
+        <h3> <i class="fa-solid fa-arrow-right"></i> You can View/Add/Delete any vertical.</h3>
+        <p style={{fontSize:"140%"}}> Note: Deleting a vertical is irreversible. Do it at your own risk. </p>
+    </div>
+
       <div style={{ textAlign: "center", margin: "2%" }}>
         <button onClick={openAddModal} className="btn btn-primary btn-lg">
-          + Vertical
+          Add a new vertical
         </button>
       </div>
       <section className="online">
@@ -233,14 +242,14 @@ const AdminVerticals = () => {
                   id={vertical._id}
                   onClick={handleAddOrViewCourses}
                 >
-                  + Add / View courses
+                  Add / View courses
                 </button>
                 <button
-                  className="btn btn-primary"
+                  className="btn btn-danger"
                   id={vertical._id}
                   onClick={openDeleteModal}
                 >
-                  - Delete
+                  Delete vertical
                 </button>
               </div>
             ))}

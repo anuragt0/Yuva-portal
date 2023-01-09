@@ -288,6 +288,7 @@ const UserQuiz = () => {
           options.push(quizObject.option3);
           options.push(quizObject.option4);
 
+
           return (
             <div
               key={quizIndex}

@@ -194,10 +194,10 @@ const AdminCourses = () => {
               <button
                 onClick={handleDeleteCourse}
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-danger"
                 disabled={confirmText === "Confirm" ? false : true}
               >
-                - Delete course
+                 Delete course
               </button>
             </div>
           </div>
@@ -219,7 +219,7 @@ const AdminCourses = () => {
     <>
       <div style={{ textAlign: "center", margin: "2%" }}>
         <button onClick={openModal} className="btn btn-primary btn-lg">
-          + Courses
+          Add a new Course
         </button>
       </div>
       <section className="online">
@@ -238,14 +238,14 @@ const AdminCourses = () => {
                   id={course._id}
                   onClick={handleAddOrViewUnits}
                 >
-                  + Add / View units
+                   Add / View units
                 </button>
                 <button
-                  className="btn btn-primary"
+                  className="btn btn-danger"
                   id={course._id}
                   onClick={openDeleteModal}
                 >
-                  - Delete
+                  Delete course
                 </button>
               </div>
             ))}

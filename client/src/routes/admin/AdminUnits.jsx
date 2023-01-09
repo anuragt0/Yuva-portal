@@ -165,10 +165,10 @@ const AdminUnits = () => {
               <button
                 onClick={handleDeleteUnit}
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-danger"
                 disabled={confirmText === "Confirm" ? false : true}
               >
-                - Delete course
+                Delete unit
               </button>
             </div>
           </div>
@@ -184,7 +184,7 @@ const AdminUnits = () => {
           onClick={redirectToAddUnitPage}
           className="btn btn-primary btn-lg"
         >
-          + Unit
+          Add a new Unit
         </button>
       </div>
       <section className="online">
@@ -195,24 +195,27 @@ const AdminUnits = () => {
               const vdoThumbnail = getVideoThumbnail(unit.video.vdoSrc);
 
               return (
+                <>
+
                 <div className="box col" key={unit._id}>
-                  <div className="img">
-                    <img src={vdoThumbnail} alt="sjfn" />
-                    {/* <img src={vertical.imgSrc} alt="" className="show" /> */}
-                  </div>
-                  <span>1 Video</span>
-                  <span>1 Text</span>
-                  <span>{unit.activities.length} Activities</span>
-                  <span>{unit.quiz.length} Question</span>
-                  <br />
-                  <button
-                    className="btn btn-primary"
+              <div className="img">
+                <img src={vdoThumbnail} alt="sjfn" />
+              </div>
+              <h1>{unit.video.title}</h1>
+              <h1>{unit.video.desc}</h1>
+              <span style={{margin:"10px"}}>{unit.activities.length} Activities </span>
+              <span>{unit.quiz.length} Quizzes </span>
+              <br />
+              <button
+                    className="btn btn-danger"
                     id={unit._id}
                     onClick={openDeleteModal}
+                    style={{ margin: "20px" }}
                   >
-                    - Delete
+                    Delete unit
                   </button>
-                </div>
+            </div> 
+                </>
               );
             })}
           </div>
