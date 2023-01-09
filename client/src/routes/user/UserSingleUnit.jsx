@@ -17,6 +17,7 @@ const UserSingleUnit = () => {
   const [isGetCertBtnDisabled, setIsGetCertBtnDisabled] = useState(true);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [videoInfo, setVideoInfo] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
 
@@ -39,7 +40,8 @@ const UserSingleUnit = () => {
 
         const result = await response.json();
         // console.log(response);
-        // console.log(result.unit.activities);
+        console.log(result.unit.video);
+        setVideoInfo(result.unit.video);
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
@@ -92,22 +94,84 @@ const UserSingleUnit = () => {
     console.log("kjfnkwejnefkjwfkjnwkjfnwek");
   }
   return (
-    <div style={{ marginBottom: "150px" }}>
-      {unit.video !== null ? <VideoPlayer video={unit.video} /> : null}
-      <UnitText text={unit.text} />
-      {unit.activities !== null ? (
-        <UnitActivities activities={unit.activities} />
-      ) : null}
-      <button className="btn my-5 btn-success" onClick={handleOpenQuizClick}>
-        Open Quiz
-      </button>
-      <button
-        className="btn my-5 btn-success"
-        onClick={handleStartQuizClick}
-        disabled={isGetCertBtnDisabled === true ? true : false}
+    <div style={{ margin: "3%" }}>
+      <div
+        style={{ textAlign: "center", fontFamily: "Montserrat", margin: "5%" }}
       >
-        Get Certificate
-      </button>
+        <h3>Title: </h3>
+        <h1 style={{ color: "#0A2647" }}>{videoInfo.title}</h1>
+      </div>
+      <div style={{ marginBottom: "150px" }}>
+        {unit.video !== null ? <VideoPlayer video={unit.video} /> : null}
+        <div
+          style={{ textAlign: "left", fontFamily: "Montserrat", margin: "5%" }}
+        >
+          <h3>Description: </h3>
+          <h2 style={{ color: "#0A2647" }}>{videoInfo.desc}</h2>
+        </div>
+        <hr />
+        <div
+          style={{ textAlign: "left", fontFamily: "Montserrat", margin: "5%" }}
+        >
+          <h2>Text to read: </h2>
+        </div>
+        <UnitText text={unit.text} />
+        <hr />
+        <div
+          style={{ textAlign: "left", fontFamily: "Montserrat", margin: "5%" }}
+        >
+          <h2>Fun activities: </h2>
+        </div>
+        {unit.activities !== null ? (
+          <UnitActivities activities={unit.activities} />
+        ) : null}
+
+        <hr />
+
+        <div className="quiz">
+          <div
+            style={{
+              textAlign: "left",
+              fontFamily: "Montserrat",
+              margin: "5%",
+            }}
+          >
+            <h2>Quiz: </h2>
+          </div>
+          <h5>
+            Note: Watch atleast 50% of the video to unlock the quiz. <br />{" "}
+            (Kindly refresh the page after watching video to unlock the quiz.)
+          </h5>
+          <button
+            className="btn my-5 btn-success"
+            onClick={handleOpenQuizClick}
+          >
+            Open Quiz
+          </button>
+        </div>
+
+        <div className="certificate">
+        <div
+            style={{
+              textAlign: "left",
+              fontFamily: "Montserrat",
+              margin: "5%",
+            }}
+          >
+            <h2>Get certificate: </h2>
+          </div>
+          <h5>
+            Note: To get the certificate you have to score atleast 65% in the quiz.
+          </h5>
+          <button
+            className="btn my-5 btn-success"
+            onClick={handleStartQuizClick}
+            disabled={isGetCertBtnDisabled === true ? true : false}
+          >
+            Get Certificate
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
