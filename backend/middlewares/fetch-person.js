@@ -74,7 +74,8 @@ const isEligibleToTakeQuiz = async (req, res, next) => {
   const unitKey = `unit${unitId}`;
   const MIN_WATCH_TIME_IN_PERCENT = 2;
 
-  if (
+  if ( 
+    userDoc.activity===undefined || userDoc.activity[unitKey]===undefined||
     userDoc.activity[unitKey].video.watchTimeInPercent <
     MIN_WATCH_TIME_IN_PERCENT
   ) {
