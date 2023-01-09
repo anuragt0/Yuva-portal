@@ -15,11 +15,14 @@ const UserSingleUnit = () => {
     activities: [],
   });
   const [isGetCertBtnDisabled, setIsGetCertBtnDisabled] = useState(true);
+  const [isQuizButtonEnable, setIsQuizButtonEnable] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [videoInfo, setVideoInfo] = useState(false);
   const navigate = useNavigate();
+
   const params = useParams();
+  
 
   useEffect(() => {
     async function getUnit() {
@@ -40,8 +43,9 @@ const UserSingleUnit = () => {
 
         const result = await response.json();
         // console.log(response);
-        console.log(result.unit.video);
+        console.log(result);
         setVideoInfo(result.unit.video);
+        setIsQuizButtonEnable(result.isEligibleToTakeQuiz);
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
@@ -90,7 +94,7 @@ const UserSingleUnit = () => {
       `/user/verticals/${verticalId}/courses/${courseId}/units/${unitId}/quiz`
     );
   }
-  function handleStartQuizClick() {
+  function handleGetCertificate() {
     console.log("kjfnkwejnefkjwfkjnwkjfnwek");
   }
   return (
@@ -138,13 +142,22 @@ const UserSingleUnit = () => {
           >
             <h2>Quiz: </h2>
           </div>
+          {
+            !isQuizButtonEnable?<h5>
+          Note: Watch atleast 50% of the video to unlock the quiz. <br /> 
+           (Kindly refresh the page after watching video to unlock the quiz.)
+          </h5>:
           <h5>
-            Note: Watch atleast 50% of the video to unlock the quiz. <br />{" "}
-            (Kindly refresh the page after watching video to unlock the quiz.)
+          Quiz has been unlocked click the button below to take quiz
+            
           </h5>
+          }
+          {/* ``Quiz has been unlocked click the button below to take quiz */}
+            
           <button
             className="btn my-5 btn-success"
             onClick={handleOpenQuizClick}
+            disabled={!isQuizButtonEnable}
           >
             Open Quiz
           </button>
@@ -160,12 +173,17 @@ const UserSingleUnit = () => {
           >
             <h2>Get certificate: </h2>
           </div>
-          <h5>
+          {
+            isGetCertBtnDisabled?<h5>
             Note: To get the certificate you have to score atleast 65% in the quiz.
+          </h5>:<h5 >
+            ***Congratulations! your certificate has been generated. Click on below button to download your certificate.***
           </h5>
+          }
+          
           <button
             className="btn my-5 btn-success"
-            onClick={handleStartQuizClick}
+            onClick={handleGetCertificate}
             disabled={isGetCertBtnDisabled === true ? true : false}
           >
             Get Certificate

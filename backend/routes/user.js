@@ -282,7 +282,13 @@ router.get(
         activity: 1,
       };
 
+      const MIN_WATCH_TIME_IN_PERCENT = 2;
+      let isEligibleToTakeQuiz = false;
+
       const userDoc = await User.findById(mongoId, userProj);
+      if(userDoc.activity && userDoc.activity[`unit${unitId}`] && userDoc.activity[`unit${unitId}`].video.watchTimeInPercent>=MIN_WATCH_TIME_IN_PERCENT){
+        isEligibleToTakeQuiz = true;
+      }
 
       let quizPercent = -1;
       if (
@@ -293,9 +299,10 @@ router.get(
       }
 
       res.status(200).json({
-        error: statusText.SUCCESS,
+        statusText: statusText.SUCCESS,
         unit: unit,
         quizPercent: quizPercent,
+        isEligibleToTakeQuiz: isEligibleToTakeQuiz
       });
     } catch (error) {
       console.error(error.message);
@@ -312,7 +319,7 @@ router.get(
   isEligibleToTakeQuiz,
   async (req, res) => {
     // todo : validation, make a middleware isEligibleToTakeQuiz
-    console.log(req.originalUrl);
+    // console.log(req.originalUrl);
 
     const { courseId, unitId } = req.params;
     const mongoId = req.mongoId;
@@ -324,7 +331,7 @@ router.get(
       };
 
       const courseDoc = await Course.findById(courseId, courseProj);
-      console.log(courseDoc.unitArr.length);
+    //   console.log(courseDoc.unitArr.length);
 
       let unit = null;
       courseDoc.unitArr.forEach((singleUnit) => {

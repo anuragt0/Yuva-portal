@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { redirect, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import Countdown from 'react-countdown';
 
-import VideoPlayer from "../../components/user/VideoPlayer";
-import UnitText from "../../components/user/UnitText";
 import { SERVER_ORIGIN } from "../../utilities/constants";
 import {
   roundOffDecimalPlaces,
   refreshScreen,
 } from "../../utilities/helper_functions";
-import Instructions from "../../components/Instructions";
 
 // todo: a user must not be able to leave any question unanswered in the quiz
 
@@ -25,6 +23,18 @@ const UserQuiz = () => {
 
   const navigate = useNavigate();
   const params = useParams();
+  const TEST_DURATION_IN_MINUTES = 10;
+
+  //FOR COUNTDOWN COMPONENT
+  const renderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      // Render a completed state
+      document.getElementById("quizSubmitButton").click();
+    } else {
+      // Render a countdown
+      return <span>{minutes}:{seconds}</span>;
+    }
+  };
 
   useEffect(() => {
     async function getQuiz() {
@@ -178,16 +188,25 @@ const UserQuiz = () => {
 
   const resultElement = (
     <>
-      <p>{result}</p>
+    <div style={{textAlign:"center", marginTop:"10%"}}>
+      <p style={{fontSize:"150%"}}>Quiz has been submitted successfully!</p>
+      <p style={{fontSize:"150%", fontFamily:"Merriweather"}}>Your score: {result}%</p>
+
+      <p style={{fontSize:"150%"}}>{result>65?`Congratulations! You have unlocked the certificate.`:`Note: You have to score atleast 65% to pass the test`}</p>
       <button className="btn btn-success" onClick={refreshScreen}>
         Retake quiz
       </button>
+      </div>
     </>
   );
 
   const instructionsElement = (
     <>
-      <div>
+    
+      <div style={{margin:"4% 0"}}>
+      <div style={{textAlign:"right"}}>
+        <p style={{fontSize:"150%"}}>Total duration: {TEST_DURATION_IN_MINUTES} minutes</p>
+      </div>
         <h3>Instructions:</h3>
         <ul style={{ fontSize: "1.2rem" }}>
           <li>
@@ -208,6 +227,12 @@ const UserQuiz = () => {
             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Harum,
             voluptates doloribus sequi blanditiis nisi necessitatibus dolor
             aperiam? Laborum atque animi molestias voluptas amet enim sint.
+          </li>
+          <li>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur aliquam nesciunt eum reprehenderit voluptate corrupti possimus, nobis rem quasi voluptatum quidem obcaecati officia illo at maxime laudantium, autem et modi quam quaerat fuga! Ducimus itaque hic nulla rerum ipsam voluptates ad rem ipsum qui iusto.
+          </li>
+          <li>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. A consequatur esse fugiat cupiditate magni ab facilis dolorem porro molestiae beatae.
           </li>
         </ul>
       </div>
@@ -232,17 +257,30 @@ const UserQuiz = () => {
 
   const quizElement =
     quiz.length === 0 ? (
-      <p>EMPTY QUIZ</p>
+      <p>There are currently no questions in this quiz. Kindly revisit the page later.</p>
     ) : (
+        <>
+        <p style={{fontSize:"150%", fontFamily:"Merriweather", margin:"5% 0"}}><i class="fa-regular fa-clock"></i> All the best! Quiz has been started. Tick the correct answers before the timer runs out.</p>
+
+        
+
       <div
         id="quiz"
         name="quiz"
         style={{
-          marginTop: "80px",
-          fontSize: "20px",
-          border: "2px solid blue",
+          marginTop: "5%",
+          fontSize: "140%",
         }}
       >
+      <div id="timer" style={{textAlign:"right"}}>
+            Time remaining : 
+            {/* 10 minute = 10000*6*10 miliseconds */}
+            <span style={{marginLeft:"1%", fontFamily:"Merriweather"}}>
+            <Countdown date={Date.now() + 10000*6*10}
+                renderer={renderer}
+             />
+            </span>
+        </div>
         {quiz.map((quizObject, quizIndex) => {
           let options = [];
           options.push(quizObject.option1);
@@ -253,7 +291,7 @@ const UserQuiz = () => {
           return (
             <div
               key={quizIndex}
-              style={{ backgroundColor: "#90EE90", margin: "10px" }}
+              style={{ margin: "10px" }}
             >
               <p>
                 {quizIndex + 1}. {quizObject.question}
@@ -262,9 +300,9 @@ const UserQuiz = () => {
               {options.map((option, optIndex) => {
                 return (
                   <div key={optIndex} style={{ display: "block" }}>
-                    <span>{optIndex + 1}</span>
+                    <span>{optIndex + 1} . </span>
                     <input
-                      className="form-check-input"
+                      className="form-check-input mx-3"
                       type="checkbox"
                       id={quizIndex * 11 + optIndex + 1}
                       value={
@@ -285,9 +323,11 @@ const UserQuiz = () => {
             </div>
           );
         })}
+        <div style={{textAlign:"center", margin:"5%"}}>
+            <button id="quizSubmitButton" className="btn btn-success" onClick={handleSubmitQuiz}>Submit Quiz</button>
+        </div>
 
-        <button onClick={handleSubmitQuiz}>Submit Quiz</button>
-      </div>
+      </div></>
     );
 
   return (
