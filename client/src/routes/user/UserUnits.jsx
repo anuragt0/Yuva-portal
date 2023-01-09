@@ -17,6 +17,7 @@ import Loader from "../../components/common/Loader";
 const UserUnits = () => {
   const [allUnits, setAllUnits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [courseInfo, setCourseInfo] = useState({name:"", desc:""});
   const navigate = useNavigate();
   const params = useParams();
 
@@ -41,6 +42,7 @@ const UserUnits = () => {
         const result = await response.json();
         // console.log(response);
         console.log("From units/all:",result);
+        setCourseInfo(result.courseDoc)
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
@@ -87,6 +89,10 @@ const UserUnits = () => {
 
   const element = (
     <>
+    <div style={{textAlign:"center", fontFamily:"Montserrat", margin:"5%"}}>
+        <h1>{courseInfo.name}</h1>
+        <h2>{courseInfo.desc}</h2>
+    </div>
       <div style={{ textAlign: "center", margin: "2%" }}></div>
       <section className="online">
         <div className="container">
@@ -96,25 +102,28 @@ const UserUnits = () => {
               const vdoThumbnail = getVideoThumbnail(unit.video.vdoSrc);
 
               return (
+                <>  
+
                 <div className="box col" key={unit._id}>
-                  <div className="img">
-                    <img src={vdoThumbnail} alt="sjfn" />
-                    {/* <img src={vertical.imgSrc} alt="" className="show" /> */}
-                  </div>
-                  <span>1 Video</span>
-                  <span>1 Text</span>
-                  <span>{unit.activities.length} Activities</span>
-                  <span>{unit.quiz.length} Question</span>
-                  <br />
-                  <button
-                    className="btn btn-primary"
-                    style={{ margin: "10px" }}
-                    id={unit._id}
-                    onClick={handleViewUnit}
-                  >
-                    View unit
-                  </button>
-                </div>
+              <div className="img">
+                <img src={vdoThumbnail} alt="sjfn" />
+              </div>
+              <h1>{unit.video.name}</h1>
+              <h1>{unit.video.desc}</h1>
+              <span style={{margin:"10px"}}>{unit.activities.length} Activities </span>
+              <span>{unit.quiz.length} Quizzes </span>
+              <br />
+              <button
+                className="btn btn-primary"
+                style={{ margin: "20px" }}
+                id={unit._id}
+                onClick={handleViewUnit}
+                >
+                View unit
+                </button>
+            </div> 
+                
+                </>
               );
             })}
           </div>

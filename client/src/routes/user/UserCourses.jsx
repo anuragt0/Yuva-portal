@@ -13,6 +13,7 @@ import Loader from "../../components/common/Loader";
 const UserCourses = () => {
   const [allCourses, setAllCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [verticalInfo, setVerticalInfo] = useState({name:"", desc:""});
   const navigate = useNavigate();
   const params = useParams();
 
@@ -36,6 +37,7 @@ const UserCourses = () => {
         const result = await response.json();
         // console.log(response);
         // console.log(result);
+        setVerticalInfo(result.verticalDoc);
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
@@ -84,6 +86,11 @@ const UserCourses = () => {
   const loader = <Loader />;
 
   const element = (
+    <>
+    <div style={{textAlign:"center", fontFamily:"Montserrat", margin:"5%"}}>
+        <h1>{verticalInfo.name}</h1>
+        <h2>{verticalInfo.desc}</h2>
+    </div>
     <section style={{fontFamily:"'Merriweather', serif"}} className="online">
       <div className="container">
         {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
@@ -107,6 +114,7 @@ const UserCourses = () => {
         </div>
       </div>
     </section>
+    </>
   );
 
   return <>{isLoading ? loader : element}</>;

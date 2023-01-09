@@ -51,6 +51,7 @@ function App() {
               <Route exact path="/testing/instructions" element={<Instructions />} />{" "}
               <Route exact path="/user/login" element={<UserLogin />} />{" "}
               <Route exact path="/user" element={<HomePage />} />
+              <Route exact path="/" element={<HomePage />} />
               <Route
                 exact
                 path="/user/verticals/all"

@@ -215,6 +215,7 @@ router.get(
         statusText: statusText.SUCCESS,
         allCourses: allCourses,
         userDoc: req.userDoc,
+        verticalDoc: {name:vertical.name, desc: vertical.desc}
       });
     } catch (error) {
       // console.log(error);
@@ -240,7 +241,7 @@ router.get(
 
       res
         .status(200)
-        .json({ statusText: statusText.SUCCESS, allUnits: courseDoc.unitArr });
+        .json({ statusText: statusText.SUCCESS, allUnits: courseDoc.unitArr, courseDoc:{name:courseDoc.name, desc: courseDoc.desc} });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });

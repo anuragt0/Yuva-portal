@@ -59,6 +59,10 @@ const UserVerticals = () => {
 
   const loader = <Loader />;
   const element = (
+    <>
+        <div style={{textAlign:"center", fontFamily:"Montserrat", margin:"5%"}}>
+        <h1>Curated Verticals designed for you!</h1>
+        </div>
     <section className="online">
       <div className="container1">
         {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
@@ -86,6 +90,7 @@ const UserVerticals = () => {
         </div>
       </div>
     </section>
+    </>
   );
 
   return <>{isLoading ? loader : element}</>;
