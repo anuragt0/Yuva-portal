@@ -1,0 +1,44 @@
+.outer-div {
+  width: 100%;
+  padding: 0px 70px;
+  /* border: 2px solid red; */
+}
+
+.heading {
+  font-size: 36px;
+  font-family: var(--font-family-1);
+  text-align: center;
+  font-weight: 600;
+  /* border: 2px solid black; */
+}
+
+.form-input {
+  border-radius: 6px;
+  border: 1.5px solid grey;
+  width: 100%;
+  display: block;
+  /* margin: auto; */
+  margin: 10px auto 10px auto;
+  height: 44px;
+  padding: 10px;
+}
+
+.form-btn {
+  border-radius: 6px;
+  border: none;
+  width: 100%;
+  background-color: #0d5e9c;
+  display: block;
+  margin: auto;
+  height: 44px;
+  font-weight: 600;
+  color: white;
+  margin-top: 40px;
+}
+
+.forgot-pass-text {
+  margin-top: 26px;
+  text-align: center;
+  font-family: var(--font-family-1);
+  color: grey;
+}

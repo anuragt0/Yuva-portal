@@ -1,0 +1,10 @@
+.user-login-outer-div {
+  margin-top: 100px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.user-login-yuva-img {
+  width: 90%;
+  padding-top: 10%;
+}

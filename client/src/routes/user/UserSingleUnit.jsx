@@ -22,7 +22,6 @@ const UserSingleUnit = () => {
   const navigate = useNavigate();
 
   const params = useParams();
-  
 
   useEffect(() => {
     async function getUnit() {
@@ -142,18 +141,16 @@ const UserSingleUnit = () => {
           >
             <h2>Quiz: </h2>
           </div>
-          {
-            !isQuizButtonEnable?<h5>
-          Note: Watch atleast 50% of the video to unlock the quiz. <br /> 
-           (Kindly refresh the page after watching video to unlock the quiz.)
-          </h5>:
-          <h5>
-          Quiz has been unlocked click the button below to take quiz
-            
-          </h5>
-          }
+          {!isQuizButtonEnable ? (
+            <h5>
+              Note: Watch atleast 50% of the video to unlock the quiz. <br />
+              (Kindly refresh the page after watching video to unlock the quiz.)
+            </h5>
+          ) : (
+            <h5>Quiz has been unlocked click the button below to take quiz</h5>
+          )}
           {/* ``Quiz has been unlocked click the button below to take quiz */}
-            
+
           <button
             className="btn my-5 btn-success"
             onClick={handleOpenQuizClick}
@@ -164,7 +161,7 @@ const UserSingleUnit = () => {
         </div>
 
         <div className="certificate">
-        <div
+          <div
             style={{
               textAlign: "left",
               fontFamily: "Montserrat",
@@ -173,14 +170,18 @@ const UserSingleUnit = () => {
           >
             <h2>Get certificate: </h2>
           </div>
-          {
-            isGetCertBtnDisabled?<h5>
-            Note: To get the certificate you have to score atleast 65% in the quiz.
-          </h5>:<h5 >
-            ***Congratulations! your certificate has been generated. Click on below button to download your certificate.***
-          </h5>
-          }
-          
+          {isGetCertBtnDisabled ? (
+            <h5>
+              Note: To get the certificate you have to score atleast 65% in the
+              quiz.
+            </h5>
+          ) : (
+            <h5>
+              ***Congratulations! your certificate has been generated. Click on
+              below button to download your certificate.***
+            </h5>
+          )}
+
           <button
             className="btn my-5 btn-success"
             onClick={handleGetCertificate}

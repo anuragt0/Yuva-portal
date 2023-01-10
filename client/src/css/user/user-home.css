@@ -1,0 +1,60 @@
+.user-home-outer-div {
+  margin-top: 80px;
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  margin-bottom: 120px;
+}
+
+.user-home-yuva-img {
+  width: 100%;
+}
+
+.user-home-landing-heading {
+  font-size: 45px;
+  font-family: "Montserrat";
+  color: #2a3e78;
+  font-weight: 600;
+  margin: 0;
+}
+
+.user-home-landing-subheading {
+  font-size: 25px;
+  font-family: var(--font-family-1);
+  font-weight: 500;
+  margin: 10px 0 30px 0;
+}
+
+.user-home-landing-desc {
+  font-size: 18px;
+  font-family: var(--font-family-1);
+  color: black;
+}
+
+.user-home-landing-btn-1,
+.user-home-landing-btn-2 {
+  border-radius: 6px;
+  border: none;
+  width: 40%;
+  display: inline;
+  margin-right: 5%;
+  height: 44px;
+  font-weight: 600;
+  color: white;
+  margin-top: 40px;
+}
+
+.user-home-landing-btn-1 {
+  background-color: #0d5e9c;
+}
+
+.user-home-landing-btn-1:hover {
+  background-color: #ec4812;
+}
+
+.user-home-landing-btn-2 {
+  background-color: green;
+}
+
+.user-home-landing-btn-2:hover {
+  background-color: #ec4812;
+}

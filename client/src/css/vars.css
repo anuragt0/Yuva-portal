@@ -1,0 +1,9 @@
+:root {
+  --dark-purple: #131022;
+  --font-family-1: "Rubik";
+  --green: green;
+}
+
+body.div {
+  margin: 0;
+}

@@ -3,17 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import "../../App.css";
+import "../../css/user/user-login.css";
 import logo from "../../yuva_logo2.png";
 import { SERVER_ORIGIN } from "../../utilities/constants";
+import { LoginForm } from "../../components/common/LoginForm";
 
-const UserLogin = (props) => {
+const UserLogin = () => {
   const [creds, setCreds] = useState({ userId: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    // e.preventDefault();
 
     try {
       setIsLoading(true);
@@ -50,86 +51,25 @@ const UserLogin = (props) => {
     // console.log(creds);
   };
 
+  const updateCreds = (e) => {
+    setCreds((prevCreds) => {
+      const newCreds = { ...prevCreds, [e.target.name]: e.target.value };
+      console.log(newCreds);
+
+      return newCreds;
+    });
+  };
+
   return (
-    <div>
-      <section>
-        {/* <div className="container-fluid h-custom my-5"> */}
-        <div className=" pv " style={{ display: "flex", marginTop: "100px" }}>
-          <div className="col-md-9 col-lg-6 col-xl-5 left">
-            <img
-              src={logo}
-              style={{ borderRadius: "45px" }}
-              className="img-fluid"
-              alt="Sample"
-            />
-          </div>
-
-          <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1 logindiv right">
-            <form
-              className="my-4"
-              style={{ padding: "20px", paddingTop: "70px" }}
-            >
-              <h3 style={{ marginBottom: "27px", fontSize: "1.5em" }}>
-                Sign in
-              </h3>
-
-              <div className="form-outline mb-4">
-                <input
-                  style={{ borderRadius: "0px", fontSize: "25px" }}
-                  className="form-control form-control-lg"
-                  id="floatingInput"
-                  name="userId"
-                  placeholder="Username"
-                  value={creds.userId}
-                  onChange={onChange}
-                />
-                {/* <label className="form-label" htmlFor="floatingInput">Email</label> */}
-              </div>
-
-              <div className="form-outline mb-3">
-                <input
-                  type="password"
-                  style={{ borderRadius: "0px", fontSize: "25px" }}
-                  className="form-control form-control-lg"
-                  id="floatingPassword"
-                  name="password"
-                  placeholder="Password"
-                  value={creds.password}
-                  onChange={onChange}
-                />
-                {/* <label className="form-label" htmlFor="floatingPassword">Password</label> */}
-              </div>
-
-              {/* <div className="d-flex justify-content-between align-items-center">
-            
-            <Link  className="text-body" to="/signup">Forgot password?</Link>
-          </div> */}
-
-              <div className="text-center text-lg-start mt-4 pt-2">
-                <button
-                  style={{
-                    borderRadius: "0px",
-                    width: "150px",
-                    fontSize: "25px",
-                    backgroundColor: isLoading ? "red" : "green",
-                  }}
-                  type="button"
-                  className="btn btn-success btn-lg"
-                  onClick={handleSubmit}
-                  disabled={isLoading === true}
-                >
-                  Login
-                </button>
-
-                {/* <p className="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <Link to="/signup"
-                className="link-danger">Register</Link></p> */}
-              </div>
-            </form>
-          </div>
-        </div>
-        {/* </div> */}
-      </section>
-      <ToastContainer />
+    <div className="user-login-outer-div">
+      {/* <ToastContainer /> */}
+      <img src={logo} alt="yuva-big-logo" className="user-login-yuva-img"></img>
+      <LoginForm
+        userId={creds.userId}
+        password={creds.password}
+        onChange={updateCreds}
+        onClick={handleSubmit}
+      />
     </div>
   );
 };
