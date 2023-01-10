@@ -36,7 +36,7 @@ import AdminUnits from "./routes/admin/AdminUnits";
 import AdminAddUnits from "./routes/admin/AdminAddUnit";
 
 import HomePage from "./routes/user/UserHome";
-import Header from "./testing/navbar/Header";
+// import Header from "./testing/navbar/Header";
 // import Instructions from "./components/Instructions";
 
 function App() {
