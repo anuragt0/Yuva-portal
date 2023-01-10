@@ -157,10 +157,11 @@ router.post(
         { $push: { unitArr: unit } },
         { new: true }
       );
+      
 
       // console.log(courseDoc); // new = true to return the updated doc
 
-      res.status(200).json({ statusText: statusText.UNIT_ADD_SUCCESS });
+      res.status(200).json({ statusText: statusText.UNIT_ADD_SUCCESS});
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });

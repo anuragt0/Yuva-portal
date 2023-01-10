@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../css/admin/admin-verticals.css";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams } from "react-router-dom";
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
 
@@ -50,34 +50,40 @@ function TextInput(props) {
 
 function ActivityInput(props) {
   return (
-    <div className="form-inline">
-      <label>Name</label>
-      <input
-        type="text"
-        name="activity"
-        value={props.value || ""}
-        onChange={(e) => props.handleActivityChange(props.index, e)}
-      />
-      <button
-        type="button"
-        className="button remove"
-        onClick={() => props.deleteActivity(props.index)}
-      >
-        Remove
-      </button>
-    </div>
+    <>
+      <div class="input-group my-3">
+        <input
+          type="text"
+          class="form-control"
+          id={props.id}
+          placeholder="Enter activity"
+          aria-describedby="basic-addon2"
+          value={props.value || ""}
+          onChange={(e) => props.handleActivityChange(props.index, e)}
+        />
+        <div class="input-group-append">
+          <button
+            class="btn btn-outline-danger"
+            type="button"
+            onClick={() => props.deleteActivity(props.index)}
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    </>
   );
 }
 
 function AddActivityBtn(props) {
   return (
-    <div className="button-section">
+    <div className="button-section my-5" style={{ textAlign: "center" }}>
       <button
-        className="button add"
+        className="button add btn btn-primary"
         type="button"
         onClick={() => props.addActivity()}
       >
-        Add
+        Add activity
       </button>
     </div>
   );
@@ -87,101 +93,143 @@ function AddActivityBtn(props) {
 function QuizInput(props) {
   return (
     <div className="form-inline">
-      <label>Question</label>
-      <input
-        type="text"
-        name="question"
-        value={props.quizItem.question || ""}
-        onChange={(e) => props.handleQuestionChange(props.index, e)}
-      />
-      <br />
+      <div class="form-group my-5">
+        <label for="question">Question</label>
+        <input
+          type="text"
+          class="form-control"
+          id="question"
+          placeholder="Enter Question"
+          name="question"
+          value={props.quizItem.question || ""}
+          onChange={(e) => props.handleQuestionChange(props.index, e)}
+        />
+      </div>
+      <div className="options">
+        <div className="option1 my-3">
+          <div style={{ display: "block" }}>
+            <span>{1} . </span>
+            <input
+              className="form-check-input mx-3"
+              type="checkbox"
+              name="isOption1Checked"
+              value={props.quizItem.isOption1Checked || false}
+              onChange={(e) => props.handleQuestionChange(props.index, e)}
+            />
+            <label>
+              <input
+                type="text"
+                name="option1"
+                placeholder="Option 1"
+                value={props.quizItem.option1 || ""}
+                onChange={(e) => props.handleQuestionChange(props.index, e)}
+              />
+            </label>
+          </div>
+        </div>
 
-      <label>1</label>
-      <input
-        type="checkbox"
-        name="isOption1Checked"
-        value={props.quizItem.isOption1Checked || false}
-        onChange={(e) => props.handleQuestionChange(props.index, e)}
-      />
-      <input
-        type="text"
-        name="option1"
-        value={props.quizItem.option1 || ""}
-        onChange={(e) => props.handleQuestionChange(props.index, e)}
-      />
+        <div className="option2 my-3">
+          <div style={{ display: "block" }}>
+            <span>{2} . </span>
+            <input
+              className="form-check-input mx-3"
+              type="checkbox"
+              name="isOption2Checked"
+              value={props.quizItem.isOption2Checked || false}
+              onChange={(e) => props.handleQuestionChange(props.index, e)}
+            />
+            <label>
+              <input
+                type="text"
+                name="option2"
+                value={props.quizItem.option2 || ""}
+                placeholder="Option 2"
+                onChange={(e) => props.handleQuestionChange(props.index, e)}
+              />
+            </label>
+          </div>
+        </div>
 
-      <label>2</label>
-      <input
-        type="checkbox"
-        name="isOption2Checked"
-        value={props.quizItem.isOption2Checked || false}
-        onChange={(e) => props.handleQuestionChange(props.index, e)}
-      />
-      <input
-        type="text"
-        name="option2"
-        value={props.quizItem.option2 || ""}
-        onChange={(e) => props.handleQuestionChange(props.index, e)}
-      />
+        <div className="option3 my-3">
+          <div style={{ display: "block" }}>
+            <span>{3} . </span>
+            <input
+              className="form-check-input mx-3"
+              type="checkbox"
+              name="isOption3Checked"
+              value={props.quizItem.isOption3Checked || false}
+              onChange={(e) => props.handleQuestionChange(props.index, e)}
+            />
+            <label>
+              <input
+                type="text"
+                name="option3"
+                value={props.quizItem.option3 || ""}
+                placeholder="Option 3"
+                onChange={(e) => props.handleQuestionChange(props.index, e)}
+              />
+            </label>
+          </div>
+        </div>
 
-      <label>3</label>
-      <input
-        type="checkbox"
-        name="isOption3Checked"
-        value={props.quizItem.isOption3Checked || false}
-        onChange={(e) => props.handleQuestionChange(props.index, e)}
-      />
-      <input
-        type="text"
-        name="option3"
-        value={props.quizItem.option3 || ""}
-        onChange={(e) => props.handleQuestionChange(props.index, e)}
-      />
+        <div className="option4 my-3">
+        <div style={{ display: "block" }}>
+            <span>{4} . </span>
+            <input
+              className="form-check-input mx-3"
+              type="checkbox"
+              name="isOption4Checked"
+              value={props.quizItem.isOption4Checked || false}
+              onChange={(e) => props.handleQuestionChange(props.index, e)}
+            />
+            <label>
+              <input
+                type="text"
+                name="option4"
+                value={props.quizItem.option4 || ""}
+                placeholder="Option 4"
+                onChange={(e) => props.handleQuestionChange(props.index, e)}
+              />
+            </label>
+          </div>
 
-      <label>4</label>
-      <input
-        type="checkbox"
-        name="isOption4Checked"
-        value={props.quizItem.isOption4Checked || false}
-        onChange={(e) => props.handleQuestionChange(props.index, e)}
-      />
-      <input
-        type="text"
-        name="option4"
-        value={props.quizItem.option4 || ""}
-        onChange={(e) => props.handleQuestionChange(props.index, e)}
-      />
-      <button
-        type="button"
-        className="button remove"
-        onClick={() => props.deleteQuestion(props.index)}
-      >
-        Remove
-      </button>
-      <br />
-      <br />
-      <br />
+          
+        </div>
+      </div>
+      <div className="my-5">
+        <button
+            type="button"
+            className="remove btn btn-outline-danger"
+            onClick={() => props.deleteQuestion(props.index)}
+        >
+            Remove this question
+        </button>
+      </div>
+
     </div>
   );
 }
 
 function AddQuestionBtn(props) {
   return (
-    <div className="button-section">
+    <div className="button-section my-5" style={{ textAlign: "center" }}>
       <button
-        className="button add"
+        className="button add btn btn-primary"
         type="button"
         onClick={() => props.addQuestion()}
       >
-        Add
+        Add new question
       </button>
     </div>
   );
 }
 
 const AdminAddUnit = () => {
+    const navigate = useNavigate();
   const params = useParams();
   const [video, setVideo] = useState({ title: "", desc: "", vdoSrc: "" });
+  const [disableAddUnitBtn, setDisableAddUnitBtn] = useState(false);
+  //   const [courseInfo, setCourseInfo] = useState({ name: "", desc: "" });
 
   function onVideoChange(e) {
     setVideo((prevVideo) => {
@@ -286,6 +334,7 @@ const AdminAddUnit = () => {
   };
 
   async function handleAddUnit() {
+    setDisableAddUnitBtn(true);
     const { verticalId, courseId } = params;
     console.log(params);
     try {
@@ -310,6 +359,8 @@ const AdminAddUnit = () => {
 
       const data = await response.json();
       console.log(data);
+
+      navigate(`/admin/verticals/${verticalId}/courses/${courseId}/units/all`);
     } catch (error) {
       console.log(error.message);
     }
@@ -317,7 +368,16 @@ const AdminAddUnit = () => {
 
   return (
     <>
-      <h1>Video</h1>
+      <div className="my-5">
+        <h1>Adding a new unit for course: </h1>
+      </div>
+      <hr className="my-5" />
+      <div>
+        <h3>Add video:</h3>
+        <p style={{ fontSize: "140%" }}>
+          Please enter the information of the video you want to upload!
+        </p>
+      </div>
       <VideoInput
         name="title"
         id="title"
@@ -342,8 +402,14 @@ const AdminAddUnit = () => {
         value={video.vdoSrc}
         onChange={onVideoChange}
       />
+      <hr className="my-5" />
+      <div>
+        <h3>Add text to read:</h3>
+        <p style={{ fontSize: "140%" }}>
+          Please write the reading content for this unit below.
+        </p>
+      </div>
 
-      <h1>Text</h1>
       <TextInput
         name="text"
         id="text"
@@ -353,7 +419,14 @@ const AdminAddUnit = () => {
         onChange={onTextChange}
       />
 
-      <h1>Activity</h1>
+      <hr className="my-5" />
+      <div>
+        <h3>Add Activities for this unit:</h3>
+        <p style={{ fontSize: "140%" }}>
+          Please enter the activity fields for users.
+        </p>
+      </div>
+
       <>
         <AddActivityBtn addActivity={addActivity} />
         <br />
@@ -368,11 +441,16 @@ const AdminAddUnit = () => {
           />
         ))}
       </>
+      <hr className="my-5" />
+      <div>
+        <h3>Add Quiz questions for this unit:</h3>
+        <p style={{ fontSize: "140%" }}>
+          Please enter the questions with its options and correct answers below.
+        </p>
+      </div>
 
-      <h1>Quiz</h1>
       <>
         <AddQuestionBtn addQuestion={addQuestion} />
-        <br />
 
         {quiz.map((quizItem, index) => (
           <QuizInput
@@ -385,7 +463,13 @@ const AdminAddUnit = () => {
         ))}
       </>
 
-      <button onClick={handleAddUnit}>+ Add Unit</button>
+      <hr className="my-5" />
+
+      <div className="my-5" style={{ textAlign: "center" }}>
+        <button disabled={disableAddUnitBtn} className="btn btn-success btn-lg" onClick={handleAddUnit}>
+          Add Unit
+        </button>
+      </div>
     </>
   );
 };
