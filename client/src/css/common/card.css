@@ -44,7 +44,9 @@
 
 .card-count {
   font-family: var(--font-family-1);
-  font-weight: 600;
+  color: gray;
+  font-weight: 550;
+  font-size: 0.8rem;
 }
 
 .card-view-btn {

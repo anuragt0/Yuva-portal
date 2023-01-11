@@ -10,6 +10,10 @@ import {
 
 // My components
 import Loader from "../../components/common/Loader";
+import Card from "../../components/common/Card";
+
+// My css
+import "../../css/user/user-units.css";
 
 //! If allVerticals is empty, then it will throw an error when using map function on an empty array because the accessed fields like vertical.name/vertical.desc will not be present, so make a check
 //! make handleAddView Courses/Verticals/Units functions non async
@@ -17,7 +21,7 @@ import Loader from "../../components/common/Loader";
 const UserUnits = () => {
   const [allUnits, setAllUnits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [courseInfo, setCourseInfo] = useState({name:"", desc:""});
+  const [courseInfo, setCourseInfo] = useState({ name: "", desc: "" });
   const navigate = useNavigate();
   const params = useParams();
 
@@ -41,8 +45,8 @@ const UserUnits = () => {
         // console.log(response);
         const result = await response.json();
         // console.log(response);
-        console.log("From units/all:",result);
-        setCourseInfo(result.courseDoc)
+        console.log("From units/all:", result);
+        setCourseInfo(result.courseDoc);
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
@@ -76,9 +80,9 @@ const UserUnits = () => {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  function handleViewUnit(e) {
+  function handleViewUnit(unitId) {
     const { verticalId, courseId } = params;
-    const unitId = e.target.id;
+    console.log(unitId);
 
     navigate(
       `/user/verticals/${verticalId}/courses/${courseId}/units/${unitId}`
@@ -89,41 +93,29 @@ const UserUnits = () => {
 
   const element = (
     <>
-    <div style={{textAlign:"center", fontFamily:"Montserrat", margin:"5%"}}>
+      <div
+        style={{ textAlign: "center", fontFamily: "Montserrat", margin: "5%" }}
+      >
         <h1>{courseInfo.name}</h1>
         <h2>{courseInfo.desc}</h2>
-    </div>
+      </div>
       <div style={{ textAlign: "center", margin: "2%" }}></div>
-      <section className="online">
-        <div className="container">
-          {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
-          <div className="content grid2 row">
+
+      <section id="units">
+        <div className="user-unit-grid-div">
+          <div className="row">
             {allUnits.map((unit) => {
               const vdoThumbnail = getVideoThumbnail(unit.video.vdoSrc);
+              unit.vdoThumbnail = vdoThumbnail;
 
               return (
-                <>  
-
-                <div className="box col" key={unit._id}>
-              <div className="img">
-                <img src={vdoThumbnail} alt="sjfn" />
-              </div>
-              <h1>{unit.video.name}</h1>
-              <h1>{unit.video.desc}</h1>
-              <span style={{margin:"10px"}}>{unit.activities.length} Activities </span>
-              <span>{unit.quiz.length} Quizzes </span>
-              <br />
-              <button
-                className="btn btn-primary"
-                style={{ margin: "20px" }}
-                id={unit._id}
-                onClick={handleViewUnit}
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12"
+                  style={{ padding: "10px" }}
+                  key={unit._id}
                 >
-                View unit
-                </button>
-            </div> 
-                
-                </>
+                  <Card data={unit} type="unit" onClick={handleViewUnit} />
+                </div>
               );
             })}
           </div>

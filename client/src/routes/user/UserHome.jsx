@@ -42,8 +42,7 @@ const HomePage = () => {
     getAllVerticals();
   }, []);
 
-  function handleViewCourses(e) {
-    const verticalId = e.target.id;
+  function handleViewCourses(verticalId) {
     console.log(verticalId);
     navigate(`/user/verticals/${verticalId}/courses/all`);
   }
@@ -87,7 +86,11 @@ const HomePage = () => {
                 style={{ padding: "10px" }}
                 key={vertical._id}
               >
-                <Card vertical={vertical} />
+                <Card
+                  data={vertical}
+                  type="vertical"
+                  onClick={handleViewCourses}
+                />
               </div>
             ))}
           </div>

@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
-import "../../css/admin/admin-verticals.css";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
 
 // My components
 import Loader from "../../components/common/Loader";
+import Card from "../../components/common/Card";
+
+// My css
 
 //! If allVerticals is empty, then it will throw an error when using map function on an empty array because the accessed fields like vertical.name/vertical.desc will not be present, so make a check
 //! make handleAddView Courses/Verticals/Units functions non async
@@ -13,7 +15,7 @@ import Loader from "../../components/common/Loader";
 const UserCourses = () => {
   const [allCourses, setAllCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [verticalInfo, setVerticalInfo] = useState({name:"", desc:""});
+  const [verticalInfo, setVerticalInfo] = useState({ name: "", desc: "" });
   const navigate = useNavigate();
   const params = useParams();
 
@@ -56,7 +58,7 @@ const UserCourses = () => {
         } else if (response.ok && response.status === 200) {
           setAllCourses(result.allCourses);
           // we also have userDoc here
-          console.log("UserDoc from all courses",result.userDoc);
+          console.log("UserDoc from all courses", result.userDoc);
         } else {
           // for future
         }
@@ -73,10 +75,8 @@ const UserCourses = () => {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  function handleViewUnits(e) {
-    // console.log("skjfnskf");
+  function handleViewUnits(courseId) {
     const { verticalId } = params;
-    const courseId = e.target.id;
 
     console.log(courseId);
 
@@ -87,33 +87,38 @@ const UserCourses = () => {
 
   const element = (
     <>
-    <div style={{textAlign:"center", fontFamily:"Montserrat", margin:"5%"}}>
-        <h1>{verticalInfo.name}</h1>
-        <h2>{verticalInfo.desc}</h2>
-    </div>
-    <section style={{fontFamily:"'Merriweather', serif"}} className="online">
-      <div className="container">
-        {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
-        <div className="content grid2 row">
-          {allCourses.map((course) => (
-            <div className="box col" key={course._id}>
-              <h2 style={{color:"#735F32"}} ><b> {course.name}</b></h2>
-              <h5>{course.desc}</h5>
-              <span>{course.unitArr.length} Units </span>
-              <br />
-              <button
-                className="btn btn-primary"
-                style={{ margin: "10px" }}
-                id={course._id}
-                onClick={handleViewUnits}
-              >
-                View units
-              </button>
-            </div>
-          ))}
-        </div>
+      <div
+        style={{
+          border: "1px solid lightgray",
+          borderRadius: "10px",
+          textAlign: "center",
+          fontFamily: "Montserrat",
+          // margin: "5%",
+          width: "100%",
+          padding: "20px",
+          marginBottom: "10px",
+          backgroundColor: "#C2DCFE",
+          color: "#253858",
+        }}
+      >
+        <h1 style={{ fontWeight: "700" }}>{verticalInfo.name}</h1>
+        <h2 style={{ fontFamily: "Merriweather" }}>{verticalInfo.desc}</h2>
       </div>
-    </section>
+      <section id="courses">
+        <div className="user-course-grid-div">
+          <div className="row">
+            {allCourses.map((course) => (
+              <div
+                className="col-lg-4 col-md-6 col-sm-12"
+                style={{ padding: "10px" }}
+                key={course._id}
+              >
+                <Card data={course} type="course" onClick={handleViewUnits} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 

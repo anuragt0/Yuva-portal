@@ -1,20 +1,21 @@
 import React from "react";
-import DotLoader from "react-spinners/DotLoader";
+import SyncLoader from "react-spinners/SyncLoader";
 
 const override = {
   margin: "auto",
   width: "fit-content",
-  marginTop: "120px",
+  marginTop: "25%",
   textAlign: "center",
 };
 
 const Loader = () => {
   return (
     <div style={override}>
-      <DotLoader
-        color="red"
+      <SyncLoader
+        // color="red"
+        color="grey"
         loading={true}
-        size={100}
+        size={20}
         aria-label="Loading Spinner"
         data-testid="loader"
       />
