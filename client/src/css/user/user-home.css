@@ -58,3 +58,7 @@
 .user-home-landing-btn-2:hover {
   background-color: var(--yuva-dark-green);
 }
+
+.user-home-grid-div {
+  background-color: transparent;
+}

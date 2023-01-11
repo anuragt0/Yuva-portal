@@ -60,36 +60,38 @@ const UserVerticals = () => {
   const loader = <Loader />;
   const element = (
     <>
-        <div style={{textAlign:"center", fontFamily:"Montserrat", margin:"5%"}}>
+      <div
+        style={{ textAlign: "center", fontFamily: "Montserrat", margin: "5%" }}
+      >
         <h1>Curated Verticals designed for you!</h1>
-        </div>
-    <section className="online">
-      <div className="container1">
-        {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
-        <div className="content grid2 row">
-          {allVerticals.map((vertical) => (
-            <div className="box col" key={vertical._id}>
-              <div className="img">
-                <img src={vertical.imgSrc} alt="sjfn" />
-                {/* <img src={vertical.imgSrc} alt="" className="show" /> */}
-              </div>
-              <h1>{vertical.name}</h1>
-              <h1>{vertical.desc}</h1>
-              <span>{vertical.courseIds.length} Courses </span>
-              <br />
-              <button
-                className="btn btn-primary"
-                style={{ margin: "10px" }}
-                id={vertical._id}
-                onClick={handleViewCourses}
-              >
-                View courses
-              </button>
-            </div>
-          ))}
-        </div>
       </div>
-    </section>
+      <section className="online">
+        <div className="container1">
+          {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
+          <div className="content grid2 row">
+            {allVerticals.map((vertical) => (
+              <div className="box col" key={vertical._id}>
+                <div className="img">
+                  <img src={vertical.imgSrc} alt="sjfn" />
+                  {/* <img src={vertical.imgSrc} alt="" className="show" /> */}
+                </div>
+                <h1>{vertical.name}</h1>
+                <h1>{vertical.desc}</h1>
+                <span>{vertical.courseIds.length} Courses </span>
+                <br />
+                <button
+                  className="btn btn-primary"
+                  style={{ margin: "10px" }}
+                  id={vertical._id}
+                  onClick={handleViewCourses}
+                >
+                  View courses
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 

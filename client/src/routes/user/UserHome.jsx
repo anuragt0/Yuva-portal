@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { SERVER_ORIGIN } from "../../utilities/constants";
 import logo from "../../yuva_logo2.png";
+import Card from "../../components/common/Card";
 
 import "../../css/user/user-home.css";
 
@@ -77,42 +78,20 @@ const HomePage = () => {
       <hr />
 
       {/* SECTION 2 */}
-      <section id="verticles">
-        <div id="verticleHeading" style={{ textAlign: "center" }}>
-          <h1>
-            Curated <span style={{ color: "#0A2647" }}>verticles</span> designed
-            specially for you!
-          </h1>
-        </div>
-
-        <section className="online">
-          <div className="container1">
-            {/* <Heading subtitle="COURSES" title="Browse Our Online Courses" /> */}
-            <div className="content grid2 row">
-              {allVerticals.map((vertical) => (
-                <div className="box col" key={vertical._id}>
-                  <div className="img">
-                    <img src={vertical.imgSrc} alt="sjfn" />
-                    {/* <img src={vertical.imgSrc} alt="" className="show" /> */}
-                  </div>
-                  <h1>{vertical.name}</h1>
-                  {/* {console.log( vertical.name)} */}
-                  <h1>{vertical.desc}</h1>
-                  <span>{vertical.courseIds.length} Courses </span>
-                  <br />
-                  <button
-                    className="btn btn-primary"
-                    style={{ margin: "10px" }}
-                    id={vertical._id}
-                    onClick={handleViewCourses}
-                  >
-                    View courses
-                  </button>
-                </div>
-              ))}
-            </div>
+      <section id="verticals">
+        <div className="user-home-grid-div">
+          <div className="row">
+            {allVerticals.map((vertical) => (
+              <div
+                className="col-lg-4 col-md-6 col-sm-12"
+                style={{ padding: "10px" }}
+                key={vertical._id}
+              >
+                <Card vertical={vertical} />
+              </div>
+            ))}
           </div>
-        </section>
+        </div>
       </section>
     </>
   );
