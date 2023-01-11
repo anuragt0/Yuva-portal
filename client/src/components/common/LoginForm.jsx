@@ -1,5 +1,6 @@
 import React from "react";
 import "../../css/user/login.css";
+import "../../css/vars.css";
 
 export const LoginForm = (props) => {
   const handleChange = (e) => {

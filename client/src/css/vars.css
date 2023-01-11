@@ -1,9 +1,12 @@
 :root {
   --dark-purple: #131022;
-  --font-family-1: "Rubik";
-  --green: green;
-}
 
-body.div {
-  margin: 0;
+  --font-family-1: "Montserrat";
+  --font-family-2: "Rubik";
+
+  --yuva-green: green;
+  --yuva-dark-green: #044f04;
+  --yuva-blue: #0d5e9c;
+  --yuva-dark-blue: #053357;
+  --yuva-orange: #ec4812;
 }
