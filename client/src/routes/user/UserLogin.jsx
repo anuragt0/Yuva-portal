@@ -34,7 +34,7 @@ const UserLogin = () => {
 
       if (token) {
         localStorage.setItem("token", token);
-        navigate("/user"); // redirect to Home Page
+        navigate("/"); // redirect to Home Page
       } else {
         // throw some error
       }
