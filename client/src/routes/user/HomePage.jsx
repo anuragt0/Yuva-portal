@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { SERVER_ORIGIN } from "../../utilities/constants";
 import logo from "../../assets/images/yuva_logo.png";
 import Card from "../../components/user/Card";
+import HeaderCard from "../../components/common/HeaderCard";
 
 import "../../css/user/user-home.css";
+import { CardGrid } from "../../components/common/CardGrid";
 
 const HomePage = () => {
   const [allVerticals, setAllVerticals] = useState([]);
@@ -77,29 +79,27 @@ const HomePage = () => {
       <hr />
 
       {/* SECTION 2 */}
-      <div className="user-verticals-header-div">
-        <p className="user-verticals-header-text">
-          Curated verticals designed for you !
+      <HeaderCard>
+        <p className="home-page-header-text">
+          Here's what we have got for you !
         </p>
-      </div>
+      </HeaderCard>
       <section id="verticals">
-        <div className="user-home-grid-div">
-          <div className="row">
-            {allVerticals.map((vertical) => (
-              <div
-                className="col-lg-4 col-md-6 col-sm-12"
-                style={{ padding: "10px" }}
-                key={vertical._id}
-              >
-                <Card
-                  data={vertical}
-                  type="vertical"
-                  onClick={handleViewCourses}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+        <CardGrid>
+          {allVerticals.map((vertical) => (
+            <div
+              className="col-lg-4 col-md-6 col-sm-12"
+              style={{ padding: "10px" }}
+              key={vertical._id}
+            >
+              <Card
+                data={vertical}
+                type="vertical"
+                onClick={handleViewCourses}
+              />
+            </div>
+          ))}
+        </CardGrid>
       </section>
     </>
   );

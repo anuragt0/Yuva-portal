@@ -61,3 +61,8 @@
 .user-home-grid-div {
   background-color: transparent;
 }
+
+.home-page-header-text {
+  font-size: 3rem;
+  font-weight: 800;
+}
