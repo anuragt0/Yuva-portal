@@ -1,10 +1,9 @@
 import React from "react";
-import "../../css/user/login.css";
-import "../../css/vars.css";
+import "../../css/common/login-form.css";
 
 export const LoginForm = (props) => {
   const handleChange = (e) => {
-    props.onChange(e);
+    props.onChange(e); // Need to pass the whole event, passing updatedField just gives the last entered character of the input
   };
 
   const handleLogInClick = () => {
@@ -17,9 +16,9 @@ export const LoginForm = (props) => {
       <input
         className="form-input"
         type="text"
-        placeholder="User Id"
-        name="userId"
-        value={props.userId}
+        placeholder={props.role === "user" ? "User Id" : "Admin Id"}
+        name={props.role === "user" ? "userId" : "adminId"}
+        value={props.role === "user" ? props.userId : props.adminId}
         onChange={handleChange}
       />
       <input

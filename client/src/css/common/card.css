@@ -1,7 +1,7 @@
 .card-div {
   /* border: 2px solid green; */
   height: fit-content;
-  padding-bottom: 2rem;
+  padding-bottom: 2.4rem;
   /* height: 30rem; */
   width: 100%;
   /* margin: 0; */
@@ -37,28 +37,38 @@
 
 .card-desc {
   font-family: var(--font-family-2);
-  /* font-weight: 600; */
   padding: 0 1rem 0 1rem;
-  max-lines: 1;
+  /* color: darkslategray; */
 }
 
 .card-count {
-  font-family: var(--font-family-1);
+  font-family: var(--font-family-2);
   color: gray;
-  font-weight: 550;
+  font-weight: 580;
   font-size: 0.8rem;
+  text-decoration: underline;
 }
 
-.card-view-btn {
+.card-btn {
+}
+
+.card-view-btn,
+.card-dlt-btn {
   border-radius: 0.4rem;
   border: none;
-  width: 70%;
+  width: 60%;
   background-color: var(--yuva-dark-blue);
   display: block;
-
-  height: 2.75rem;
-  font-weight: 600;
+  height: 2.3rem;
+  font-weight: 500;
   color: white;
   margin: auto;
-  margin-top: 2.4rem;
+  margin-top: 1rem;
+  font-family: var(--font-family-2);
+}
+
+.card-dlt-btn {
+  border: 1.5px solid var(--card-dlt-red);
+  margin-left: 0.4rem;
+  background-color: white;
 }

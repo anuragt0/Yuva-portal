@@ -1,5 +1,5 @@
 .user-home-outer-div {
-  margin-top: 6rem;
+  margin-top: 9rem;
   display: grid;
   grid-template-columns: 1.3fr 0.7fr;
   margin-bottom: 10rem;
@@ -27,7 +27,6 @@
 .user-home-landing-desc {
   font-size: 1.1rem;
   font-family: var(--font-family-2);
-  color: black;
 }
 
 .user-home-landing-btn-1,

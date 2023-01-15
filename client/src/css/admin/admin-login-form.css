@@ -1,9 +1,9 @@
-.user-login-outer-div {
+.admin-login-outer-div {
   margin-top: 9rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
 
-.user-login-yuva-img {
+.admin-login-yuva-img {
   width: 100%;
 }

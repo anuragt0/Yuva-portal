@@ -1,2 +1,17 @@
-.user-unit-grid-div {
+.units-page-outer-div {
+  margin-top: 8rem;
+}
+
+.user-units-header-name-text {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 0;
+  margin-bottom: 40px;
+}
+
+.user-units-header-desc-text {
+  font-size: 1.5rem;
+  font-weight: 100;
+  font-family: Rubik;
+  margin: 0;
 }

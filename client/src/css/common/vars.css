@@ -1,0 +1,20 @@
+:root {
+  --dark-purple: #131022;
+
+  --font-family-1: "Poppins";
+  --font-family-2: "Rubik";
+
+  --yuva-green: green;
+  --yuva-dark-green: #044f04;
+  --yuva-blue: #0d5e9c;
+  --yuva-dark-blue: #053357;
+  --yuva-dark-orange: #ec4812;
+  --yuva-orange: orange;
+  --card-dlt-red: #ed0707;
+
+  --box-shadow-1: 0 0 0.5rem 0 rgb(0, 0, 0, 0.9);
+}
+
+body {
+  margin: 0;
+}
