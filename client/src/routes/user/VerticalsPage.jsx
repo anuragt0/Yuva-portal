@@ -1,24 +1,23 @@
-import React, { useEffect, useState, useRef } from "react";
-import "../../css/admin/admin-verticals.css"; // ! Uses a css file from admin folder, might need to create a common one later
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { SERVER_ORIGIN } from "../../utilities/constants";
-import { refreshScreen } from "../../utilities/helper_functions";
+import toast from "react-hot-toast";
 
 // My components
 import Loader from "../../components/common/Loader";
 import Card from "../../components/user/Card";
-
-// My css
-import "../../css/user/user-verticals.css";
 import { CardGrid } from "../../components/common/CardGrid";
 import HeaderCard from "../../components/common/HeaderCard";
+
+// My css
+import "../../css/user/u-verticals-page.css";
+
+import { SERVER_ORIGIN } from "../../utilities/constants";
 
 //! If allVerticals is empty, then it will throw an error when using map function on an empty array because the accessed fields like vertical.name/vertical.desc will not be present, so make a check
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-const UserVerticals = () => {
+const VerticalsPage = () => {
   const [allVerticals, setAllVerticals] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -37,13 +36,17 @@ const UserVerticals = () => {
           }
         );
 
-        const { statusText, allVerticals } = await response.json();
-        // console.log(response);
+        const result = await response.json();
+        // console.log(result);
 
-        if (response.ok && response.status === 200) {
-          setAllVerticals(allVerticals);
+        if (response.status >= 400 && response.status < 600) {
+          if (response.status === 500) {
+            toast.error(result.statusText);
+          }
+        } else if (response.ok && response.status === 200) {
+          setAllVerticals(result.allVerticals);
         } else {
-          console.log("Internal server error");
+          // for future
         }
 
         setIsLoading(false);
@@ -66,29 +69,33 @@ const UserVerticals = () => {
   const loader = <Loader />;
 
   const element = (
-    <div className="verticals-page-outer-div">
+    <div className="u-verticals-page-outer-div">
       <HeaderCard>
-        <p className="user-verticals-header-text">
+        <p className="u-verticals-page-header-text">
           Here's what we have got for you !
         </p>
       </HeaderCard>
 
       <section id="verticals">
-        <CardGrid>
-          {allVerticals.map((vertical) => (
-            <div
-              className="col-lg-4 col-md-6 col-sm-12"
-              style={{ padding: "10px" }}
-              key={vertical._id}
-            >
-              <Card
-                data={vertical}
-                type="vertical"
-                onClick={handleViewCourses}
-              />
-            </div>
-          ))}
-        </CardGrid>
+        {allVerticals.length > 0 ? (
+          <CardGrid>
+            {allVerticals.map((vertical) => (
+              <div
+                className="col-lg-4 col-md-6 col-sm-12"
+                style={{ padding: "10px" }}
+                key={vertical._id}
+              >
+                <Card
+                  data={vertical}
+                  type="vertical"
+                  onClick={handleViewCourses}
+                />
+              </div>
+            ))}
+          </CardGrid>
+        ) : (
+          <h1>EMPTY</h1>
+        )}
       </section>
     </div>
   );
@@ -96,4 +103,4 @@ const UserVerticals = () => {
   return <>{isLoading ? loader : element}</>;
 };
 
-export default UserVerticals;
+export default VerticalsPage;

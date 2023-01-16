@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 
-//my modules
+// My components
 import "../../css/common/card.css";
-// import { faXmark, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 function Card(props) {
   return (

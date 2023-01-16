@@ -1,19 +1,20 @@
 import React, { useEffect, useState, useRef } from "react";
-import "../../css/admin/admin-verticals.css";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-hot-toast";
+
+// My components
+import Card from "../../components/admin/Card";
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
-import {
-  youtubeParser,
-  getVideoThumbnail,
-} from "../../utilities/helper_functions";
-
-import Card from "../../components/admin/Card";
+import { getVideoThumbnail } from "../../utilities/helper_functions";
+import { CardGrid } from "../../components/common/CardGrid";
+import Loader from "../../components/common/Loader";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const AdminUnits = () => {
+const UnitsPage = () => {
   const [allUnits, setAllUnits] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
 
@@ -23,7 +24,7 @@ const AdminUnits = () => {
 
       try {
         const response = await fetch(
-          `${SERVER_ORIGIN}/api/public/verticals/${verticalId}/courses/${courseId}/units/all`,
+          `${SERVER_ORIGIN}/api/admin/auth/verticals/${verticalId}/courses/${courseId}/units/all`,
           {
             method: "GET",
             headers: {
@@ -33,14 +34,29 @@ const AdminUnits = () => {
           }
         );
 
-        const { statusText, allUnits } = await response.json();
+        const result = await response.json();
+        // console.log(result);
 
-        console.log(statusText);
-        console.log(allUnits);
+        if (response.status >= 400 && response.status < 600) {
+          if (response.status === 401) {
+            if ("isLoggedIn" in result && !result.isLoggedIn) {
+              navigate("/admin/login");
+            } else if ("isAdmin" in result && !result.isAdmin) {
+              navigate("/admin/login");
+            }
+          } else if (response.status === 500) {
+            toast.error(result.statusText);
+          }
+        } else if (response.ok && response.status === 200) {
+          setAllUnits(result.allUnits);
+        } else {
+          // for future
+        }
 
-        setAllUnits(allUnits);
+        setIsLoading(false);
       } catch (error) {
         console.log(error.message);
+        setIsLoading(false);
       }
     }
 
@@ -180,6 +196,33 @@ const AdminUnits = () => {
     </>
   );
 
+  const loader = <Loader />;
+
+  const element = (
+    <section id="units">
+      {allUnits.length > 0 ? (
+        <CardGrid>
+          {allUnits.map((unit) => {
+            const vdoThumbnail = getVideoThumbnail(unit.video.vdoSrc);
+            unit.vdoThumbnail = vdoThumbnail;
+
+            return (
+              <div
+                className="col-lg-4 col-md-6 col-sm-12"
+                style={{ padding: "10px" }}
+                key={unit._id}
+              >
+                <Card data={unit} type="unit" onDeleteClick={openDeleteModal} />
+              </div>
+            );
+          })}
+        </CardGrid>
+      ) : (
+        <h1>EMPTY</h1>
+      )}
+    </section>
+  );
+
   return (
     <>
       <div style={{ textAlign: "center", marginTop: "8rem" }}>
@@ -191,34 +234,11 @@ const AdminUnits = () => {
         </button>
       </div>
 
-      <section id="units">
-        <div className="user-unit-grid-div">
-          <div className="row">
-            {allUnits.map((unit) => {
-              const vdoThumbnail = getVideoThumbnail(unit.video.vdoSrc);
-              unit.vdoThumbnail = vdoThumbnail;
-
-              return (
-                <div
-                  className="col-lg-4 col-md-6 col-sm-12"
-                  style={{ padding: "10px" }}
-                  key={unit._id}
-                >
-                  <Card
-                    data={unit}
-                    type="unit"
-                    onDeleteClick={openDeleteModal}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      {isLoading ? loader : element}
 
       {deleteModal}
     </>
   );
 };
 
-export default AdminUnits;
+export default UnitsPage;

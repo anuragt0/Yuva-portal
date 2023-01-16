@@ -1,16 +1,20 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast from "react-hot-toast";
 
-import logo from "../../assets/images/yuva_logo.png";
-import { SERVER_ORIGIN } from "../../utilities/constants";
+// My components
 import { LoginForm } from "../../components/common/LoginForm";
 
 // My css
-import "../../css/admin/admin-login-form.css";
+import "../../css/common/login-form.css";
 
-const UserLogin = () => {
+import logo from "../../assets/images/yuva_logo.png";
+import { SERVER_ORIGIN } from "../../utilities/constants";
+
+// todo: cred validation on frontend
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+const LoginPage = () => {
   const [creds, setCreds] = useState({ adminId: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -26,17 +30,30 @@ const UserLogin = () => {
         body: JSON.stringify(creds),
       });
 
-      const { statusText, token } = await response.json();
-      //   console.log(statusText);
-      console.log(token);
+      const result = await response.json();
+      console.log(response);
 
       setIsLoading(false);
 
-      if (token) {
-        localStorage.setItem("token", token);
-        navigate("/admin/services"); // redirect to Home Page
+      if (response.status >= 400 && response.status < 600) {
+        if (response.status === 401) {
+          if (
+            !("areCredsInvalid" in result) ||
+            result.areCredsInvalid === true
+          ) {
+            toast.error(result.statusText);
+          }
+        } else {
+          toast.error(result.statusText);
+        }
+      } else if (response.ok && response.status === 200) {
+        if ("token" in result) {
+          const token = result.token;
+          localStorage.setItem("token", token);
+          navigate("/admin/services");
+        }
       } else {
-        // throw some error
+        // for future
       }
     } catch (error) {
       console.log(error.message);
@@ -61,13 +78,9 @@ const UserLogin = () => {
   };
 
   return (
-    <div className="admin-login-outer-div">
-      {/* <ToastContainer /> */}
-      <img
-        src={logo}
-        alt="yuva-big-logo"
-        className="admin-login-yuva-img"
-      ></img>
+    <div className="login-page-outer-div">
+      <img src={logo} alt="yuva-big-logo" className="login-page-yuva-img"></img>
+
       <LoginForm
         role="admin"
         adminId={creds.adminId}
@@ -79,4 +92,4 @@ const UserLogin = () => {
   );
 };
 
-export default UserLogin;
+export default LoginPage;

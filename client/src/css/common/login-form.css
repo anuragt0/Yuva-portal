@@ -1,19 +1,12 @@
-.outer-div {
+.login-form-outer-div {
   width: 70%;
   margin-left: 30%;
-  padding: 1.2rem 3rem;
+  padding: 1.4rem 3rem;
   border-radius: 0.5rem;
-  box-shadow: 0 0 0.5rem 0 rgb(0, 0, 0, 0.9);
-  /* background-image: linear-gradient(
-    to right,
-    var(--yuva-blue),
-    var(--yuva-dark-blue)
-  ); */
-  /* background-image: linear-gradient(to right, #c2dcfe, #cf4b8d); */
-  /*  */
+  box-shadow: var(--box-shadow-1);
 }
 
-.heading {
+.login-form-heading {
   font-size: 2.5rem;
   font-family: var(--font-family-1);
   text-align: center;
@@ -23,10 +16,10 @@
   color: var(--yuva-dark-blue);
 }
 
-.form-input {
+.login-form-input {
   border-radius: 0.4rem;
   outline: none;
-  border: 0.1rem solid grey;
+  border: 0.1rem solid var(--grey);
   width: 100%;
   display: block;
   margin: 0.7rem auto;
@@ -35,32 +28,33 @@
   font-family: var(--font-family-2);
 }
 
-.form-btn {
+.login-form-btn {
   border-radius: 0.4rem;
   border: none;
   width: 100%;
-  /* background-color: var(--yuva); */
   background-color: var(--yuva-blue);
   display: block;
   margin: auto;
   height: 2.75rem;
-  /* font-weight: 600; */
   color: white;
-  margin-top: 2.4rem;
+  margin-top: 2rem;
   font-family: var(--font-family-2);
 }
 
-.form-btn:hover {
-  background-color: var(--yuva-blue);
+.login-form-btn:hover {
+  background-color: var(--yuva-dark-blue);
 }
 
-.forgot-pass-text {
-  margin-top: 1.5rem;
+.login-form-forgot-pass-text {
+  margin-top: 2.4rem;
   text-align: center;
   font-family: var(--font-family-2);
-  color: grey;
+  color: var(--grey);
+  text-decoration: underline;
+  font-size: 0.9rem;
 }
 
-.form-input:focus {
-  border: 0.1rem solid orange;
+.login-form-input:focus {
+  border: none;
+  box-shadow: var(--box-shadow-2);
 }

@@ -20,7 +20,7 @@ const Navbar = () => {
         <img src={img} alt="" style={{ width: "5.5%", marginRight: "2%" }} />
         <button
           type="button"
-          class="navbar-toggler"
+          className="navbar-toggler"
           data-bs-toggle="collapse"
           data-bs-target="#navbarCollapse"
         >

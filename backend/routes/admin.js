@@ -10,7 +10,7 @@ var jwt = require("jsonwebtoken");
 
 // My utilities
 const statusText = require("../utilities/status-text.js");
-const { fetchPerson } = require("../middlewares/fetch-person");
+const { fetchPerson, isAdmin } = require("../middlewares/fetch-person");
 const Vertical = require("../models/Vertical");
 const Course = require("../models/Course");
 const { default: mongoose } = require("mongoose");
@@ -38,18 +38,17 @@ router.post("/dummy", async (req, res) => {
 router.post("/login", async (req, res) => {
   // todo : validation
 
-  //   console.log(req.body);
-
   const adminId = req.body.adminId;
   const enteredPassword = req.body.password;
-
-  //   console.log(adminId);
 
   try {
     // match creds
     const adminDoc = await Admin.findOne({ adminId: adminId });
     if (!adminDoc) {
-      return res.status(401).json({ error: statusText.INVALID_CREDS });
+      // wrong adminId
+      return res
+        .status(401)
+        .json({ statusText: statusText.INVALID_CREDS, areCredsInvalid: true });
     }
 
     const hashedPassword = adminDoc.password;
@@ -60,7 +59,10 @@ router.post("/login", async (req, res) => {
     );
 
     if (!passwordCompare) {
-      return res.status(400).json({ error: statusText.INVALID_CREDS });
+      // wrong password
+      return res
+        .status(400)
+        .json({ statusText: statusText.INVALID_CREDS, areCredsInvalid: true });
     }
     console.log(adminDoc);
 
@@ -79,11 +81,79 @@ router.post("/login", async (req, res) => {
       .json({ statusText: statusText.LOGIN_IN_SUCCESS, token: token });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    res.status(500).json({ statusText: statusText.INTERNAL_SERVER_ERROR });
   }
 });
 
 /////////////////////////////////////////// All //////////////////////////////////////////
+
+router.get("/verticals/all", fetchPerson, isAdmin, async (req, res) => {
+  // console.log(req.originalUrl);
+
+  try {
+    const allVerticals = await Vertical.find();
+    // console.log(allVerticals);
+
+    res
+      .status(200)
+      .json({ statusText: statusText.SUCCESS, allVerticals: allVerticals });
+  } catch (error) {
+    // console.log(error);
+    res.status(500).json({ statusText: statusText.FAIL });
+  }
+});
+
+router.get(
+  "/verticals/:verticalId/courses/all",
+  fetchPerson,
+  isAdmin,
+  async (req, res) => {
+    console.log(req.originalUrl);
+    const { verticalId } = req.params;
+
+    try {
+      const vertical = await Vertical.findById(verticalId);
+      // console.log(vertical);
+
+      const allCourses = await Course.find({
+        _id: { $in: vertical.courseIds },
+      });
+      // console.log(allCourses);
+
+      res
+        .status(200)
+        .json({ statusText: statusText.SUCCESS, allCourses: allCourses });
+    } catch (error) {
+      // console.log(error);
+      res.status(500).json({ statusText: statusText.FAIL });
+    }
+  }
+);
+
+router.get(
+  "/verticals/:verticalId/courses/:courseId/units/all",
+  fetchPerson,
+  isAdmin,
+  async (req, res) => {
+    // todo : validation
+    console.log(req.originalUrl);
+
+    const { courseId } = req.params;
+
+    try {
+      const courseDoc = await Course.findById(courseId);
+
+      // console.log(courseDoc);
+
+      // res
+      //   .status(200)
+      //   .json({ statusText: statusText.SUCCESS, allUnits: courseDoc.unitArr });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ statusText: statusText.FAIL });
+    }
+  }
+);
 
 /////////////////////////////////////////// ADD ///////////////////////////////////////////
 
@@ -157,11 +227,10 @@ router.post(
         { $push: { unitArr: unit } },
         { new: true }
       );
-      
 
       // console.log(courseDoc); // new = true to return the updated doc
 
-      res.status(200).json({ statusText: statusText.UNIT_ADD_SUCCESS});
+      res.status(200).json({ statusText: statusText.UNIT_ADD_SUCCESS });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });

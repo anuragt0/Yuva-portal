@@ -21,6 +21,8 @@ const fetchPerson = (req, res, next) => {
     const data = jwt.verify(token, process.env.JWT_SECRET);
     req.mongoId = data.person.mongoId;
     req.role = data.person.role;
+
+    // console.log(req.role);
     next();
   } catch (error) {
     console.log(error);
@@ -37,7 +39,6 @@ const isUser = (req, res, next) => {
       .status(401)
       .send({ statusText: statusText.INVALID_TOKEN, isUser: false });
   }
-
   next();
 };
 
@@ -74,10 +75,11 @@ const isEligibleToTakeQuiz = async (req, res, next) => {
   const unitKey = `unit${unitId}`;
   const MIN_WATCH_TIME_IN_PERCENT = 2;
 
-  if ( 
-    userDoc.activity===undefined || userDoc.activity[unitKey]===undefined||
+  if (
+    userDoc.activity === undefined ||
+    userDoc.activity[unitKey] === undefined ||
     userDoc.activity[unitKey].video.watchTimeInPercent <
-    MIN_WATCH_TIME_IN_PERCENT
+      MIN_WATCH_TIME_IN_PERCENT
   ) {
     return res.status(403).json({
       statusText: statusText.NOT_ELIGIBLE_TO_TAKE_QUIZ,

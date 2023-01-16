@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
+// My components
 import Navbar from "./components/common/Navbar";
 import UserHome from "./routes/user/HomePage";
 import UserLogin from "./routes/user/LoginPage";
@@ -84,6 +86,15 @@ function App() {
           <UserApp />
           <AdminApp />
         </div>
+        <Toaster
+          toastOptions={{
+            duration: 2500,
+            style: {
+              fontFamily: "var(--font-family-2)",
+              marginTop: "2rem",
+            },
+          }}
+        />
       </Router>
     </>
   );

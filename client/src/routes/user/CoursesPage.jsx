@@ -7,15 +7,17 @@ import { SERVER_ORIGIN } from "../../utilities/constants";
 import Loader from "../../components/common/Loader";
 import Card from "../../components/user/Card";
 import HeaderCard from "../../components/common/HeaderCard";
+import { CardGrid } from "../../components/common/CardGrid";
 
 // My css
-import "../../css/user/user-courses.css";
-import { CardGrid } from "../../components/common/CardGrid";
+import "../../css/user/u-courses-page.css";
 
 //! If allVerticals is empty, then it will throw an error when using map function on an empty array because the accessed fields like vertical.name/vertical.desc will not be present, so make a check
 //! make handleAddView Courses/Verticals/Units functions non async
 
-const UserCourses = () => {
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const CoursesPage = () => {
   const [allCourses, setAllCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [verticalInfo, setVerticalInfo] = useState({ name: "", desc: "" });
@@ -42,12 +44,13 @@ const UserCourses = () => {
         const result = await response.json();
         // console.log(response);
         // console.log(result);
-        setVerticalInfo(result.verticalDoc);
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
-            if (!("isLoggedIn" in result) || result.isLoggedIn === false) {
-              console.log("go to login");
+            if ("isLoggedIn" in result && !result.isLoggedIn) {
+              navigate("/user/login");
+            } else if ("isUser" in result && !result.isUser) {
+              navigate("/user/login");
             }
           } else if (response.status === 403) {
             if (result.userDoc.isPassReset === false) {
@@ -60,8 +63,9 @@ const UserCourses = () => {
           }
         } else if (response.ok && response.status === 200) {
           setAllCourses(result.allCourses);
+          setVerticalInfo(result.verticalDoc);
           // we also have userDoc here
-          console.log("UserDoc from all courses", result.userDoc);
+          // console.log("UserDoc from all courses", result.userDoc);
         } else {
           // for future
         }
@@ -96,17 +100,21 @@ const UserCourses = () => {
       </HeaderCard>
 
       <section id="courses">
-        <CardGrid>
-          {allCourses.map((course) => (
-            <div
-              className="col-lg-4 col-md-6 col-sm-12"
-              style={{ padding: "10px" }}
-              key={course._id}
-            >
-              <Card data={course} type="course" onClick={handleViewUnits} />
-            </div>
-          ))}
-        </CardGrid>
+        {allCourses.length > 0 ? (
+          <CardGrid>
+            {allCourses.map((course) => (
+              <div
+                className="col-lg-4 col-md-6 col-sm-12"
+                style={{ padding: "10px" }}
+                key={course._id}
+              >
+                <Card data={course} type="course" onClick={handleViewUnits} />
+              </div>
+            ))}
+          </CardGrid>
+        ) : (
+          <h1>EMPTY</h1>
+        )}
       </section>
     </div>
   );
@@ -114,4 +122,4 @@ const UserCourses = () => {
   return <>{isLoading ? loader : element}</>;
 };
 
-export default UserCourses;
+export default CoursesPage;

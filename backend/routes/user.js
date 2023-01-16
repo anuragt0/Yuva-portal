@@ -21,6 +21,7 @@ const {
 const statusText = require("../utilities/status-text.js");
 
 // ! Dont bind data to req, bind them to res, change this at all routes and middlewares reference: https://stackoverflow.com/questions/18875292/passing-variables-to-the-next-middleware-using-next-in-express-js
+// todo: only send statusText and not error field in response
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,17 +45,20 @@ router.post("/dummy", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   // todo : validation
-  console.log(req.originalUrl);
-
-  console.log(req.body);
+  // console.log(req.originalUrl);
+  // console.log(req.body);
 
   const userId = req.body.userId;
   const enteredPassword = req.body.password;
   try {
     // match creds
     const user = await User.findOne({ userId: userId });
+
     if (!user) {
-      return res.status(401).json({ statusText: statusText.INVALID_CREDS });
+      // wrong userId
+      return res
+        .status(401)
+        .json({ statusText: statusText.INVALID_CREDS, areCredsInvalid: true });
     }
 
     const hashedPassword = user.password;
@@ -65,7 +69,10 @@ router.post("/login", async (req, res) => {
     );
 
     if (!passwordCompare) {
-      return res.status(401).json({ error: statusText.INVALID_CREDS });
+      // wrong password
+      return res
+        .status(401)
+        .json({ statusText: statusText.INVALID_CREDS, areCredsInvalid: true });
     }
 
     // generate token
@@ -82,13 +89,12 @@ router.post("/login", async (req, res) => {
       .status(200)
       .json({ statusText: statusText.LOGIN_IN_SUCCESS, token: token });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+    // console.log(error.message);
+    res.status(500).json({ statusText: statusText.INTERNAL_SERVER_ERROR });
   }
 });
 
 router.post("/register", fetchPerson, isUser, async (req, res) => {
-  // console.log(req.originalUrl);
   const mongoId = req.mongoId;
 
   // todo: validation
@@ -200,6 +206,8 @@ router.get(
   isUser,
   arePrereqSatisfied,
   async (req, res) => {
+    console.log(req.originalUrl);
+
     const { verticalId } = req.params;
 
     try {
@@ -215,7 +223,7 @@ router.get(
         statusText: statusText.SUCCESS,
         allCourses: allCourses,
         userDoc: req.userDoc,
-        verticalDoc: {name:vertical.name, desc: vertical.desc}
+        verticalDoc: { name: vertical.name, desc: vertical.desc },
       });
     } catch (error) {
       // console.log(error);
@@ -239,9 +247,11 @@ router.get(
 
       console.log(courseDoc);
 
-      res
-        .status(200)
-        .json({ statusText: statusText.SUCCESS, allUnits: courseDoc.unitArr, courseDoc:{name:courseDoc.name, desc: courseDoc.desc} });
+      res.status(200).json({
+        statusText: statusText.SUCCESS,
+        allUnits: courseDoc.unitArr,
+        courseDoc: { name: courseDoc.name, desc: courseDoc.desc },
+      });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
@@ -286,7 +296,12 @@ router.get(
       let isEligibleToTakeQuiz = false;
 
       const userDoc = await User.findById(mongoId, userProj);
-      if(userDoc.activity && userDoc.activity[`unit${unitId}`] && userDoc.activity[`unit${unitId}`].video.watchTimeInPercent>=MIN_WATCH_TIME_IN_PERCENT){
+      if (
+        userDoc.activity &&
+        userDoc.activity[`unit${unitId}`] &&
+        userDoc.activity[`unit${unitId}`].video.watchTimeInPercent >=
+          MIN_WATCH_TIME_IN_PERCENT
+      ) {
         isEligibleToTakeQuiz = true;
       }
 
@@ -302,7 +317,7 @@ router.get(
         statusText: statusText.SUCCESS,
         unit: unit,
         quizPercent: quizPercent,
-        isEligibleToTakeQuiz: isEligibleToTakeQuiz
+        isEligibleToTakeQuiz: isEligibleToTakeQuiz,
       });
     } catch (error) {
       console.error(error.message);
@@ -331,7 +346,7 @@ router.get(
       };
 
       const courseDoc = await Course.findById(courseId, courseProj);
-    //   console.log(courseDoc.unitArr.length);
+      //   console.log(courseDoc.unitArr.length);
 
       let unit = null;
       courseDoc.unitArr.forEach((singleUnit) => {

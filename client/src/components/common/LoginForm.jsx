@@ -1,5 +1,8 @@
 import React from "react";
+
+// My css
 import "../../css/common/login-form.css";
+// ! Disable login button when loading by creating isLoading state, so user cannot press it again and again
 
 export const LoginForm = (props) => {
   const handleChange = (e) => {
@@ -11,10 +14,10 @@ export const LoginForm = (props) => {
   };
 
   return (
-    <div className="outer-div">
-      <p className="heading">Log In</p>
+    <div className="login-form-outer-div">
+      <p className="login-form-heading">Login</p>
       <input
-        className="form-input"
+        className="login-form-input"
         type="text"
         placeholder={props.role === "user" ? "User Id" : "Admin Id"}
         name={props.role === "user" ? "userId" : "adminId"}
@@ -22,17 +25,21 @@ export const LoginForm = (props) => {
         onChange={handleChange}
       />
       <input
-        className="form-input"
+        className="login-form-input"
         type="text"
         placeholder="Password"
         name="password"
         value={props.password}
         onChange={handleChange}
       />
-      <button className="form-btn" onClick={handleLogInClick}>
-        Log In
+      <button
+        className="login-form-btn"
+        onClick={handleLogInClick}
+        disabled={props.isBtnDisabled}
+      >
+        Login
       </button>
-      <p className="forgot-pass-text">Forgot your password</p>
+      <p className="login-form-forgot-pass-text">Forgot your password ?</p>
     </div>
   );
 };

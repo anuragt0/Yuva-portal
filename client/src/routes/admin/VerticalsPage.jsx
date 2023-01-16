@@ -1,23 +1,29 @@
 import React, { useEffect, useState, useRef } from "react";
-import "../../css/admin/admin-verticals.css";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+
+// My components
+import Card from "../../components/admin/Card";
+import { CardGrid } from "../../components/common/CardGrid";
+import Loader from "../../components/common/Loader";
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
 import { refreshScreen } from "../../utilities/helper_functions";
 
-// My components
-import Card from "../../components/admin/Card";
+//////////////////////////////////////////////////////////////////////////////////////////////
 
-const AdminVerticals = () => {
+const VerticalsPage = () => {
   const [allVerticals, setAllVerticals] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [newVertical, setNewVertical] = useState({ name: "", desc: "" });
   const navigate = useNavigate();
 
   useEffect(() => {
+    setIsLoading(true);
     async function getAllVerticals() {
       try {
         const response = await fetch(
-          `${SERVER_ORIGIN}/api/public/verticals/all`,
+          `${SERVER_ORIGIN}/api/admin/auth/verticals/all`,
           {
             method: "GET",
             headers: {
@@ -27,14 +33,29 @@ const AdminVerticals = () => {
           }
         );
 
-        const { statusText, allVerticals } = await response.json();
+        const result = await response.json();
+        // console.log(result);
 
-        // console.log(statusText);
-        // console.log(allVerticals);
+        if (response.status >= 400 && response.status < 600) {
+          if (response.status === 401) {
+            if ("isLoggedIn" in result && !result.isLoggedIn) {
+              navigate("/admin/login");
+            } else if ("isAdmin" in result && !result.isAdmin) {
+              navigate("/admin/login");
+            }
+          } else if (response.status === 500) {
+            toast.error(result.statusText);
+          }
+        } else if (response.ok && response.status === 200) {
+          setAllVerticals(result.allVerticals);
+        } else {
+          // for future
+        }
 
-        setAllVerticals(allVerticals);
+        setIsLoading(false);
       } catch (error) {
         console.log(error.message);
+        setIsLoading(false);
       }
     }
 
@@ -209,6 +230,33 @@ const AdminVerticals = () => {
     </>
   );
 
+  const loader = <Loader />;
+
+  const element = (
+    <section id="verticals">
+      {allVerticals.length > 0 ? (
+        <CardGrid>
+          {allVerticals.map((vertical) => (
+            <div
+              className="col-lg-4 col-md-6 col-sm-12"
+              style={{ padding: "10px" }}
+              key={vertical._id}
+            >
+              <Card
+                data={vertical}
+                type="vertical"
+                onAddViewClick={handleAddOrViewCourses}
+                onDeleteClick={openDeleteModal}
+              />
+            </div>
+          ))}
+        </CardGrid>
+      ) : (
+        <h1>EMPTY</h1>
+      )}
+    </section>
+  );
+
   return (
     <>
       <div style={{ textAlign: "center", margin: "5% 0" }}>
@@ -237,26 +285,7 @@ const AdminVerticals = () => {
         </button>
       </div>
 
-      <section id="verticals">
-        <div className="user-verticals-grid-div">
-          <div className="row">
-            {allVerticals.map((vertical) => (
-              <div
-                className="col-lg-4 col-md-6 col-sm-12"
-                style={{ padding: "10px" }}
-                key={vertical._id}
-              >
-                <Card
-                  data={vertical}
-                  type="vertical"
-                  onAddViewClick={handleAddOrViewCourses}
-                  onDeleteClick={openDeleteModal}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {isLoading ? loader : element}
 
       <button
         ref={ref}
@@ -363,4 +392,4 @@ const AdminVerticals = () => {
   );
 };
 
-export default AdminVerticals;
+export default VerticalsPage;

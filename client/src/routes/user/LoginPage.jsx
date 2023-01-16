@@ -1,21 +1,25 @@
-import React, { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
-import "../../css/user/user-login.css";
-import logo from "../../assets/images/yuva_logo.png";
-import { SERVER_ORIGIN } from "../../utilities/constants";
+// My components
 import { LoginForm } from "../../components/common/LoginForm";
 
-const UserLogin = () => {
+// My css
+import "../../css/common/login-page.css";
+
+import logo from "../../assets/images/yuva_logo.png";
+import { SERVER_ORIGIN } from "../../utilities/constants";
+
+// todo: validation of creds on frontend side
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+const LoginPage = () => {
   const [creds, setCreds] = useState({ userId: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    // e.preventDefault();
-
     try {
       setIsLoading(true);
       const response = await fetch(`${SERVER_ORIGIN}/api/user/auth/login`, {
@@ -26,17 +30,30 @@ const UserLogin = () => {
         body: JSON.stringify(creds),
       });
 
-      const { statusText, token } = await response.json();
-      //   console.log(statusText);
-      console.log(token);
+      const result = await response.json();
+      console.log(response);
 
       setIsLoading(false);
 
-      if (token) {
-        localStorage.setItem("token", token);
-        navigate("/"); // redirect to Home Page
+      if (response.status >= 400 && response.status < 600) {
+        if (response.status === 401) {
+          if (
+            !("areCredsInvalid" in result) ||
+            result.areCredsInvalid === true
+          ) {
+            toast.error(result.statusText);
+          }
+        } else {
+          toast.error(result.statusText);
+        }
+      } else if (response.ok && response.status === 200) {
+        if ("token" in result) {
+          const token = result.token;
+          localStorage.setItem("token", token);
+          navigate("/");
+        }
       } else {
-        // throw some error
+        // for future
       }
     } catch (error) {
       console.log(error.message);
@@ -53,18 +70,19 @@ const UserLogin = () => {
   };
 
   return (
-    <div className="user-login-outer-div">
-      {/* <ToastContainer /> */}
-      <img src={logo} alt="yuva-big-logo" className="user-login-yuva-img"></img>
+    <div className="login-page-outer-div">
+      <img src={logo} alt="yuva-big-logo" className="login-page-yuva-img"></img>
+
       <LoginForm
         role="user"
         userId={creds.userId}
         password={creds.password}
         onChange={updateCreds}
         onClick={handleSubmit}
+        isBtnDisabled={isLoading}
       />
     </div>
   );
 };
 
-export default UserLogin;
+export default LoginPage;

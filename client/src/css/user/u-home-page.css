@@ -1,15 +1,15 @@
-.user-home-outer-div {
+.u-home-page-outer-div {
   margin-top: 9rem;
   display: grid;
   grid-template-columns: 1.3fr 0.7fr;
-  margin-bottom: 10rem;
+  margin-bottom: 8rem;
 }
 
-.user-home-yuva-img {
+.u-home-page-yuva-img {
   width: 100%;
 }
 
-.user-home-landing-heading {
+.u-home-page-landing-heading {
   font-size: 2.8rem;
   font-family: var(--font-family-1);
   color: #2a3e78;
@@ -17,52 +17,52 @@
   font-weight: 600;
 }
 
-.user-home-landing-subheading {
-  font-size: 1.6rem;
-  font-family: var(--font-family-1);
+.u-home-page-landing-subheading {
+  font-size: 1.5rem;
+  font-family: var(--font-family-2);
   font-weight: 500;
-  margin: 0.6rem 0 1.8rem 0;
+  margin: 0.5rem 0 1.8rem 0;
 }
 
-.user-home-landing-desc {
+.u-home-page-landing-desc {
   font-size: 1.1rem;
   font-family: var(--font-family-2);
 }
 
-.user-home-landing-btn-1,
-.user-home-landing-btn-2 {
+.u-home-page-landing-btn-1,
+.u-home-page-landing-btn-2 {
   border-radius: 0.4rem;
   border: none;
   width: 40%;
   display: inline;
   margin-right: 5%;
   height: 2.75rem;
-  font-weight: 600;
+  font-family: var(--font-family-2);
   color: white;
   margin-top: 2.4rem;
 }
 
-.user-home-landing-btn-1 {
+.u-home-page-landing-btn-1 {
   background-color: var(--yuva-blue);
 }
 
-.user-home-landing-btn-1:hover {
+.u-home-page-landing-btn-1:hover {
   background-color: var(--yuva-dark-blue);
 }
 
-.user-home-landing-btn-2 {
+.u-home-page-landing-btn-2 {
   background-color: var(--yuva-green);
 }
 
-.user-home-landing-btn-2:hover {
+.u-home-page-landing-btn-2:hover {
   background-color: var(--yuva-dark-green);
 }
 
-.user-home-grid-div {
+.u-home-page-grid-div {
   background-color: transparent;
 }
 
-.home-page-header-text {
+.u-home-page-header-text {
   font-size: 3rem;
   font-weight: 800;
 }

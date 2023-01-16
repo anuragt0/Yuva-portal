@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import "../../css/common/card.css";
 
 function Card(props) {
-  console.log(props);
+  // console.log(props);
   return (
     <div className="card-div">
       {props.type === "course" ? null : (

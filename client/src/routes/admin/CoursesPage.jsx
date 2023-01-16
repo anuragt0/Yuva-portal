@@ -1,25 +1,30 @@
 import React, { useEffect, useState, useRef } from "react";
-import "../../css/admin/admin-verticals.css";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-hot-toast";
+
+// My components
+import Card from "../../components/admin/Card";
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
 import { refreshScreen } from "../../utilities/helper_functions";
+import { CardGrid } from "../../components/common/CardGrid";
+import Loader from "../../components/common/Loader";
 
-import Card from "../../components/admin/Card";
-
-const AdminCourses = () => {
+const CoursesPage = () => {
   const [allCourses, setAllCourses] = useState([]);
   const [newCourse, setNewCourse] = useState({ name: "", desc: "" });
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
 
   useEffect(() => {
     async function getAllCourses() {
+      setIsLoading(true);
       const { verticalId } = params;
 
       try {
         const response = await fetch(
-          `${SERVER_ORIGIN}/api/public/verticals/${verticalId}/courses/all`,
+          `${SERVER_ORIGIN}/api/admin/auth/verticals/${verticalId}/courses/all`,
           {
             method: "GET",
             headers: {
@@ -29,14 +34,29 @@ const AdminCourses = () => {
           }
         );
 
-        const { statusText, allCourses } = await response.json();
+        const result = await response.json();
+        // console.log(result);
 
-        console.log(statusText);
-        console.log(allCourses);
+        if (response.status >= 400 && response.status < 600) {
+          if (response.status === 401) {
+            if ("isLoggedIn" in result && !result.isLoggedIn) {
+              navigate("/admin/login");
+            } else if ("isAdmin" in result && !result.isAdmin) {
+              navigate("/admin/login");
+            }
+          } else if (response.status === 500) {
+            toast.error(result.statusText);
+          }
+        } else if (response.ok && response.status === 200) {
+          setAllCourses(result.allCourses);
+        } else {
+          // for future
+        }
 
-        setAllCourses(allCourses);
+        setIsLoading(false);
       } catch (error) {
         console.log(error.message);
+        setIsLoading(false);
       }
     }
 
@@ -218,6 +238,33 @@ const AdminCourses = () => {
     navigate(`/admin/verticals/${verticalId}/courses/${courseId}/units/all`);
   }
 
+  const loader = <Loader />;
+
+  const element = (
+    <section id="courses">
+      {allCourses.length > 0 ? (
+        <CardGrid>
+          {allCourses.map((course) => (
+            <div
+              className="col-lg-4 col-md-6 col-sm-12"
+              style={{ padding: "10px" }}
+              key={course._id}
+            >
+              <Card
+                data={course}
+                type="course"
+                onAddViewClick={handleAddOrViewUnits}
+                onDeleteClick={openDeleteModal}
+              />
+            </div>
+          ))}
+        </CardGrid>
+      ) : (
+        <h1>EMPTY</h1>
+      )}
+    </section>
+  );
+
   return (
     <>
       <div style={{ textAlign: "center", marginTop: "8rem" }}>
@@ -226,26 +273,7 @@ const AdminCourses = () => {
         </button>
       </div>
 
-      <section id="courses">
-        <div className="user-course-grid-div">
-          <div className="row">
-            {allCourses.map((course) => (
-              <div
-                className="col-lg-4 col-md-6 col-sm-12"
-                style={{ padding: "10px" }}
-                key={course._id}
-              >
-                <Card
-                  data={course}
-                  type="course"
-                  onAddViewClick={handleAddOrViewUnits}
-                  onDeleteClick={openDeleteModal}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {isLoading ? loader : element}
 
       <button
         ref={ref}
@@ -335,4 +363,4 @@ const AdminCourses = () => {
   );
 };
 
-export default AdminCourses;
+export default CoursesPage;

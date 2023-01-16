@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import "../../css/admin/admin-verticals.css";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
