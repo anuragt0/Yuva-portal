@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 require("dotenv").config();
 
+const { parse } = require("csv-parse");
+
 // My models
 const Admin = require("../models/Admin");
 const bcrypt = require("bcryptjs");
@@ -136,7 +138,7 @@ router.get(
   isAdmin,
   async (req, res) => {
     // todo : validation
-    console.log(req.originalUrl);
+    // console.log(req.originalUrl);
 
     const { courseId } = req.params;
 
@@ -145,9 +147,9 @@ router.get(
 
       // console.log(courseDoc);
 
-      // res
-      //   .status(200)
-      //   .json({ statusText: statusText.SUCCESS, allUnits: courseDoc.unitArr });
+      res
+        .status(200)
+        .json({ statusText: statusText.SUCCESS, allUnits: courseDoc.unitArr });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ statusText: statusText.FAIL });
@@ -335,5 +337,27 @@ router.delete(
     }
   }
 );
+
+router.post("/add-users", async (req, res) => {
+  // console.log(req.body);
+  console.log(req.files.test.data);
+
+  const input = req.files.test.data;
+  parse(
+    input,
+    {
+      comment: "#",
+    },
+    function (err, records) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(records);
+      }
+    }
+  );
+
+  res.status(200).json({ statusText: statusText.SUCCESS });
+});
 
 module.exports = router;

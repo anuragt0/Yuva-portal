@@ -1,5 +1,11 @@
 const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
+const CsvUpload = require("express-fileupload");
+
+app.use(CsvUpload());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 const connectToMongo = require("./db");
 const cors = require("cors");
 require("dotenv").config();

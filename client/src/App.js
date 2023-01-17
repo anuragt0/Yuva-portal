@@ -19,6 +19,7 @@ import AdminVerticals from "./routes/admin/VerticalsPage";
 import AdminCourses from "./routes/admin/CoursesPage.jsx";
 import AdminUnits from "./routes/admin/UnitsPage";
 import AdminAddUnit from "./routes/admin/AddUnitPage";
+import AddUsersPage from "./routes/admin/AddUsersPage";
 
 import "./App.css";
 
@@ -60,6 +61,7 @@ function AdminApp() {
       <Route exact path="/admin/courses" element={<AdminCourses />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/services" element={<AdminServices />} />
+      <Route path="/admin/add-users" element={<AddUsersPage />} />
       <Route path="/admin/verticals/all" element={<AdminVerticals />} />
       <Route
         path="/admin/verticals/:verticalId/courses/all"

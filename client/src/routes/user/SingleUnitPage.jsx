@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { jsPDF } from "jspdf";
 
 import VideoPlayer from "../../components/user/VideoPlayer";
 // import Instructions from "../../components/Instructions";
@@ -11,6 +12,7 @@ import UnitActivities from "../../components/user/UnitActivities";
 // My css
 import "../../css/user/user-single-unit.css";
 import SecCard from "../../components/user/SecCard";
+import Cert from "../../components/user/Cert";
 
 const UserSingleUnit = () => {
   const [unit, setUnit] = useState({
@@ -20,6 +22,8 @@ const UserSingleUnit = () => {
   });
   const [isGetCertBtnDisabled, setIsGetCertBtnDisabled] = useState(true);
   const [isQuizButtonEnable, setIsQuizButtonEnable] = useState(false);
+  const [course, setCourse] = useState(null);
+  const [user, setUser] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [videoInfo, setVideoInfo] = useState(false);
@@ -47,8 +51,6 @@ const UserSingleUnit = () => {
         const result = await response.json();
         // console.log(response);
         console.log(result);
-        setVideoInfo(result.unit.video);
-        setIsQuizButtonEnable(result.isEligibleToTakeQuiz);
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
@@ -67,6 +69,12 @@ const UserSingleUnit = () => {
           }
         } else if (response.ok && response.status === 200) {
           setUnit(result.unit);
+          setVideoInfo(result.unit.video);
+          setIsQuizButtonEnable(result.isEligibleToTakeQuiz);
+          setCourse(result.course);
+          setUser(result.user);
+
+          console.log(result);
 
           console.log(result.quizPercent);
           const CERTIFICATE_GENERATION_CUT_OFF_IN_PERCENT = 65;
@@ -98,11 +106,50 @@ const UserSingleUnit = () => {
     );
   }
   function handleGetCertificate() {
-    console.log("kjfnkwejnefkjwfkjnwkjfnwek");
+    console.log("generating cert ...");
+    function generatePDF() {
+      const opt = {
+        //   orientation: "landscape",
+        unit: "px",
+        format: [4, 2],
+      };
+      const doc = new jsPDF("l", "px", [404.1, 504]); // h,w (for h<w use landscape)
+
+      doc.html(document.querySelector("#cert"), {
+        callback: function (pdf) {
+          pdf.save("my.pdf");
+        },
+      });
+    }
+
+    generatePDF();
   }
+
+  const certificate = !isGetCertBtnDisabled ? (
+    // <>
+    //   <p>Course: {course.name} </p>
+    //   <p>UnitId: {unit._id} </p>
+    //   <p>Certificate Id: {course._id + unit._id + user.mongoId} </p>
+    //   <p>Participant name: {user.name} </p>
+    // </>
+    <Cert
+      courseName={course.name}
+      unitId={unit._id}
+      courseId={course._id}
+      userMongoId={user.mongoId}
+      userName={user.name}
+    />
+  ) : null;
+
   return (
-    <div style={{}}>
+    <div style={{ marginTop: "8rem" }}>
+      {/* <section style={{ display: "none" }}> */}
+      <section>
+        <div id="cert">{certificate}</div>
+      </section>
+
       {unit.video !== null ? <VideoPlayer video={unit.video} /> : null}
+
       <div
         className="user-single-unit-title-desc-div"
         style={{

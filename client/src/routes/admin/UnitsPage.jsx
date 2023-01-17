@@ -20,6 +20,7 @@ const UnitsPage = () => {
 
   useEffect(() => {
     async function getAllUnits() {
+      setIsLoading(true);
       const { verticalId, courseId } = params;
 
       try {

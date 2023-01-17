@@ -273,7 +273,7 @@ router.get(
 
     try {
       const courseProj = {
-        _id: 0,
+        name: 1,
         unitArr: 1,
       };
 
@@ -288,7 +288,9 @@ router.get(
       });
 
       const userProj = {
-        _id: 0,
+        fName: 1,
+        mName: 1,
+        lName: 1,
         activity: 1,
       };
 
@@ -313,9 +315,23 @@ router.get(
         quizPercent = userDoc.activity[`unit${unitId}`].quizPercent;
       }
 
+      // console.log(courseDoc.name);
+      const user = {
+        mongoId: userDoc._id,
+        name:
+          userDoc.fName +
+          "*" +
+          (!("mName" in userDoc) || userDoc.mName.length === 0
+            ? ""
+            : userDoc.mName + "*") +
+          userDoc.lName,
+      };
+      console.log(user);
       res.status(200).json({
         statusText: statusText.SUCCESS,
+        course: courseDoc,
         unit: unit,
+        user: user,
         quizPercent: quizPercent,
         isEligibleToTakeQuiz: isEligibleToTakeQuiz,
       });

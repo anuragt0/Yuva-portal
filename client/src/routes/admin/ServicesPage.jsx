@@ -4,11 +4,6 @@ import { useNavigate } from "react-router-dom";
 const AdminServices = () => {
   const navigate = useNavigate();
 
-  function handleClick(e) {
-    console.log(e.target.name);
-    navigate("/admin/verticals/all");
-  }
-
   return (
     <>
       <h1 className="my-3">Welcome to the platform analysis</h1>
@@ -22,10 +17,28 @@ const AdminServices = () => {
           </p>
           <button
             className="btn btn-primary"
-            onClick={handleClick}
-            name="verticals"
+            onClick={() => {
+              navigate("/admin/verticals/all");
+            }}
           >
             Verticals
+          </button>
+        </div>
+      </div>
+
+      <div className="card w-75 my-5 mx-3">
+        <div className="card-body">
+          <h5 className="card-title">Verticals</h5>
+          <p className="card-text">
+            Add a csv/excel file and add new users' credentials on the go!
+          </p>
+          <button
+            className="btn btn-primary"
+            onClick={() => {
+              navigate("/admin/add-users");
+            }}
+          >
+            Add Users
           </button>
         </div>
       </div>
