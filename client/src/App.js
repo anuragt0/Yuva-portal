@@ -12,6 +12,7 @@ import UserSingleUnit from "./routes/user/SingleUnitPage";
 import UserResetPass from "./routes/user/ResetPassPage";
 import UserRegis from "./routes/user/RegisPage";
 import UserQuiz from "./routes/user/QuizPage";
+import CertPage from "./routes/user/CertPage";
 
 import AdminLogin from "./routes/admin/LoginPage";
 import AdminServices from "./routes/admin/ServicesPage";
@@ -50,7 +51,12 @@ function UserApp() {
         element={<UserQuiz />}
       />
       <Route exact path="/user/reset-password" element={<UserResetPass />} />
-      <Route exact path="/user/register" element={<UserRegis />} />{" "}
+      <Route exact path="/user/register" element={<UserRegis />} />
+      <Route
+        exact
+        path="/user/certificate/:certificateId"
+        element={<CertPage />}
+      />
     </Routes>
   );
 }

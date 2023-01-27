@@ -1,3 +1,65 @@
-.cert-outer-div {
-  border: 2px solid red;
+.cert-page-outer-div {
+  margin-top: 6rem;
+  /* border: 2px solid green; */
+}
+
+.cert-page-cert-outer-div {
+  margin: auto;
+  width: 100%;
+  padding: 0.2rem;
+  /* border: 0.1rem solid var(--grey); */
+  /* border: 0.1rem solid var(--cert-gold); */
+  border-radius: 1rem;
+  box-shadow: var(--box-shadow-1);
+  /* border: 1.5px solid red; */
+
+  text-align: center;
+  /* display: inline; */
+}
+
+.cert-page-cert-inner-div {
+  /* border: 0.1rem solid var(--cert-gold); */
+  border-radius: 1rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.cert-page-logo-img {
+  width: 6rem;
+  width: 40%;
+}
+
+.cert-page-trophy-img {
+  margin-top: 0;
+  width: 6rem;
+  width: 18%;
+}
+
+.cert-page-sign-img {
+  margin-top: 1rem;
+  width: 5rem;
+  width: 30%;
+}
+
+.cert-page-cert-desig-text {
+  /* font-family: var(--font-family-2); */
+  font-size: 0.8rem;
+  margin: 0;
+  /* letter-spacing: 0px; */
+}
+
+.cert-page-cert-ciyi-text {
+  /* letter-spacing: 0px; */
+  font-family: var(--font-family-2);
+  font-size: 0.65rem;
+  margin: 0;
+}
+
+.cert-page-cert-name-text {
+  /* font-family: "Alex Brush"; */
+  /* letter-spacing: 0px; */
+
+  /* font-weight: 900; */
+  font-size: 2.5rem;
+  margin: 0.2rem;
 }

@@ -1,5 +1,5 @@
 var jwt = require("jsonwebtoken");
-const statusText = require("../utilities/status-text.js");
+const statusText = require("../utilities/status_text.js");
 // const JWT_SECRET = "Harryisagoodb$oy";
 
 // My models

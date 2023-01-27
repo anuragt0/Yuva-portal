@@ -1,3 +1,5 @@
+import { jsPDF } from "jspdf";
+
 function youtubeParser(vdoSrc) {
   var regExp =
     /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
@@ -22,9 +24,32 @@ function roundOffDecimalPlaces(num, places) {
   return Math.round(num * power) / power;
 }
 
+function downloadCertificate() {
+  const opt = {
+    //   orientation: "landscape",
+    unit: "px",
+    format: [4, 2],
+  };
+
+  const certElement = document.querySelector("#cert");
+  const certElementWidth = certElement.offsetWidth;
+  const certElementHeight = certElement.offsetHeight;
+
+  // const doc = new jsPDF("l", "px", [404.1, 504]); // h,w (for h<w use landscape)
+
+  const doc = new jsPDF("l", "px", [certElementHeight + 2, certElementWidth]); // h,w (for h<w use landscape)
+
+  doc.html(document.querySelector("#cert"), {
+    callback: function (pdf) {
+      pdf.save("my.pdf");
+    },
+  });
+}
+
 export {
   youtubeParser,
   refreshScreen,
   getVideoThumbnail,
   roundOffDecimalPlaces,
+  downloadCertificate,
 };

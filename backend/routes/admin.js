@@ -11,7 +11,7 @@ var jwt = require("jsonwebtoken");
 // My middlewares
 
 // My utilities
-const statusText = require("../utilities/status-text.js");
+const statusText = require("../utilities/status_text.js");
 const { fetchPerson, isAdmin } = require("../middlewares/fetch-person");
 const Vertical = require("../models/Vertical");
 const Course = require("../models/Course");
@@ -339,23 +339,17 @@ router.delete(
 );
 
 router.post("/add-users", async (req, res) => {
-  // console.log(req.body);
-  console.log(req.files.test.data);
-
   const input = req.files.test.data;
-  parse(
-    input,
-    {
-      comment: "#",
-    },
-    function (err, records) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(records);
-      }
+  const options = {};
+
+  parse(input, options, (err, records) => {
+    if (err) {
+      console.log(err);
+    } else {
+      // console.log(records);
+      // todo: check unique creds
     }
-  );
+  });
 
   res.status(200).json({ statusText: statusText.SUCCESS });
 });

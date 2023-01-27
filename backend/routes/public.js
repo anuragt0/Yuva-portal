@@ -5,7 +5,7 @@ const router = express.Router();
 // My models
 const Vertical = require("../models/Vertical");
 const Course = require("../models/Course");
-const statusText = require("../utilities/status-text.js");
+const statusText = require("../utilities/status_text.js");
 
 // router.get("/verticals/all", fetchPerson, async (req, res) => {
 //   // todo: verify role, reason: a student can paste the url on browser and potray himself as an admin

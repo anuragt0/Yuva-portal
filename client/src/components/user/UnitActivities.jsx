@@ -1,56 +1,18 @@
 import React from "react";
-import SecCard from "./SecCard";
 
 const UnitActivities = (props) => {
-  // console.log(props);
-  const activities = (
+  return (
     <>
-      <p
-        style={{
-          fontFamily: "var(--font-family-1)",
-          fontWeight: "900",
-          fontSize: "2.4rem",
-        }}
-      >
-        Activities
-      </p>
-
       {props.activities.map((activity, index) => {
         return (
-          <div
-            style={{
-              margin: "2rem 0 1.5rem 0",
-            }}
-            key={index}
-          >
-            <p
-              style={{
-                fontFamily: "var(--font-family-2)",
-                fontWeight: "550",
-              }}
-            >
-              {index + 1}: {activity}
+          <div className="u-single-unit-page-activity-div" key={index}>
+            <p className="u-single-unit-page-sec-text">
+              {index + 1}. {activity}
             </p>
 
-            <input
-              type="file"
-              style={{
-                marginTop: "0.5rem",
-                fontFamily: "var(--font-family-2)",
-                fontWeight: "550",
-                // border: "1px solid red",
-              }}
-            />
+            <input type="file" className="u-single-unit-page-activity-input" />
             <button
-              style={{
-                backgroundColor: "var(--yuva-green)",
-                borderRadius: "0.4rem",
-                height: "2.2rem",
-                border: "none",
-                color: "white",
-                padding: "0 1rem 0 1rem",
-                fontFamily: "var(--font-family-2)",
-              }}
+              className="u-single-unit-page-sec-btn btn btn-primary "
               type="button"
             >
               Submit
@@ -58,12 +20,6 @@ const UnitActivities = (props) => {
           </div>
         );
       })}
-    </>
-  );
-
-  return (
-    <>
-      <SecCard>{activities}</SecCard>
     </>
   );
 };

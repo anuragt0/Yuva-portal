@@ -6,7 +6,7 @@ const HeaderCard = (props) => {
     // backgroundImage: "linear-gradient(to right, var(--yuva-green),red)",
 
     boxShadow: "var(--box-shadow-1)",
-    borderRadius: "10px",
+    borderRadius: "1.5rem",
     textAlign: "center",
     fontFamily: "var(--font-family-1)",
     width: "100%",

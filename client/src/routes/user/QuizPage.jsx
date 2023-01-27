@@ -1,28 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Countdown from "react-countdown";
+import { toast } from "react-hot-toast";
 
-import { SERVER_ORIGIN } from "../../utilities/constants";
+// My components
+import SecCard from "../../components/user/SecCard";
+import Loader from "../../components/common/Loader";
+
+// My css
+import "../../css/user/u-quiz-page.css";
+
+import { SERVER_ORIGIN, vars } from "../../utilities/constants";
 import {
   roundOffDecimalPlaces,
   refreshScreen,
 } from "../../utilities/helper_functions";
-import SecCard from "../../components/user/SecCard";
 
 // todo: a user must not be able to leave any question unanswered in the quiz
 
 const UserQuiz = () => {
   const [quiz, setQuiz] = useState([]);
   const [storedResult, setStoredResult] = useState(-1);
+  const [isEligibleToTakeQuiz, setIsEligibleToTakeQuiz] = useState(false);
 
   const [response, setResponse] = useState([]);
   const [result, setResult] = useState(0);
-  const [isEligibleToTakeQuiz, setIsEligibleToTakeQuiz] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  // no need for loader, as instruction element is instantly visible on page visit
+  const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate();
   const params = useParams();
   const TEST_DURATION_IN_MINUTES = 10;
 
@@ -30,7 +36,8 @@ const UserQuiz = () => {
   const renderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
       // Render a completed state
-      document.getElementById("quizSubmitButton").click();
+      document.getElementById("quiz-submit-btn").click(); // auto submit
+      // ! error here, see console
     } else {
       // Render a countdown
       return (
@@ -43,6 +50,8 @@ const UserQuiz = () => {
 
   useEffect(() => {
     async function getQuiz() {
+      setIsLoading(true);
+
       const { verticalId, courseId, unitId } = params;
 
       try {
@@ -62,26 +71,25 @@ const UserQuiz = () => {
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
-            if (!("isLoggedIn" in result) || result.isLoggedIn === false) {
+            if (!("isLoggedIn" in result) || !result.isLoggedIn) {
               console.log("go to login");
             }
           } else if (response.status === 403) {
-            if (result.isEligibleToTakeQuiz === false) {
-              // console.log("flase");
+            if (!result.isEligibleToTakeQuiz) {
               setIsEligibleToTakeQuiz(false);
-            } else if (result.userDoc.isPassReset === false) {
-              console.log("go to reset password");
-            } else if (result.userDoc.isRegistered === false) {
-              console.log("go to registration page");
+            } else if (!result.userDoc.isPassReset) {
+              toast.error("go to reset password");
+            } else if (!result.userDoc.isRegistered) {
+              toast.error("go to registration page");
             }
             // isPassReset and isRegistered 'if' statement wont ever hit because isEligibleToTakeQuiz is true only if video watch time is greater than a certain minimum and a user can watch vdo only if isPrerequisitesSatisfied
           } else {
-            alert("Internal server error"); // todo: toast notify
+            toast.error("Internal server error");
           }
         } else if (response.ok && response.status === 200) {
           setQuiz(result.quiz);
           setStoredResult(result.quizPercent);
-          setIsEligibleToTakeQuiz(true);
+          setIsEligibleToTakeQuiz(result.isEligibleToTakeQuiz);
 
           // console.log(result.quiz);
 
@@ -99,7 +107,10 @@ const UserQuiz = () => {
         } else {
           // for future
         }
+
+        setIsLoading(false);
       } catch (error) {
+        setIsLoading(false);
         console.log(error.message);
       }
     }
@@ -113,7 +124,7 @@ const UserQuiz = () => {
 
     for (let quizIndex = 0; quizIndex < quiz.length; quizIndex++) {
       let isRespCorrect = true;
-      /* if default value is true, then this handles all the cases including the edge case when the user doesnot enter
+      /* if default value of isRespCorrect is true, then this handles all the cases including the edge case when the user doesnot enter
       any response for a question, then it would be correct only if all the options of that question are false */
 
       for (let optIndex = 0; optIndex < 4; optIndex++) {
@@ -129,13 +140,11 @@ const UserQuiz = () => {
     let quizPercent = (correctRespCnt * 100) / quiz.length;
 
     quizPercent = roundOffDecimalPlaces(quizPercent, 2); // round off to two decimal places
-    console.log(quizPercent);
-
-    setResult(quizPercent);
-    setShowQuiz(false);
-    setShowResult(true);
+    // console.log(quizPercent);
 
     // submitting result to server
+    setIsLoading(true);
+
     const { verticalId, courseId, unitId } = params;
 
     try {
@@ -163,16 +172,16 @@ const UserQuiz = () => {
           console.log("Internal server error"); // todo: toast notify, dont redirect, allow user to re-press submit button
         }
       } else if (response.ok && response.status === 200) {
-        console.log("go to unit page");
-        const { verticalId, courseId, unitId } = params;
-
-        // navigate(
-        //   `/user/verticals/${verticalId}/courses/${courseId}/units/${unitId}`
-        // );
+        setResult(quizPercent);
+        setShowQuiz(false);
+        setShowResult(true);
       } else {
         // for future
       }
+
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.log(error.message);
     }
   }
@@ -192,101 +201,52 @@ const UserQuiz = () => {
   }
 
   const resultElement = (
-    <>
-      <div style={{ textAlign: "center", marginTop: "10%" }}>
-        <p style={{ fontSize: "150%" }}>
-          Quiz has been submitted successfully!
-        </p>
-        <p style={{ fontSize: "150%", fontFamily: "Merriweather" }}>
-          Your score: {result}%
-        </p>
-
-        <p style={{ fontSize: "150%" }}>
-          {result > 65
+    <div style={{ textAlign: "center", marginTop: "10%" }}>
+      <SecCard>
+        <h1 className="u-quiz-page-result-text">Your score: {result}%</h1>
+        <h5 className="u-quiz-page-result-text">
+          {result >= 65
             ? `Congratulations! You have unlocked the certificate.`
-            : `Note: You have to score atleast 65% to pass the test`}
-        </p>
-        <button className="btn btn-success" onClick={refreshScreen}>
-          Retake quiz
+            : `Note: You need to score atleast 65% to pass the test`}
+        </h5>
+
+        <button
+          className="u-quiz-page-btn btn btn-primary"
+          onClick={refreshScreen}
+        >
+          Retake Quiz
         </button>
-      </div>
-    </>
+      </SecCard>
+    </div>
   );
 
   const instructionsElement = (
-    <div style={{ margin: "5rem 0 0rem 0" }}>
+    <div className="u-quiz-page-inst-outer-div">
       <SecCard>
         <div>
-          <p
-            style={{
-              fontSize: "1rem",
-              textAlign: "right",
-              fontFamily: "var(--font-family-2)",
-            }}
-          >
+          <p className="u-quiz-page-inst-time-text">
             Total duration: {TEST_DURATION_IN_MINUTES} minutes
           </p>
 
-          <h3
-            style={{
-              fontFamily: "var(--font-family-1)",
-              fontWeight: "700",
-              marginBottom: "1rem",
-            }}
-          >
-            Instructions
-          </h3>
-          <ul
-            style={{
-              fontSize: "1.1rem",
-              fontFamily: "var(--font-family-2)",
-            }}
-          >
-            <li>Quiz will contain 10 questions.</li>
-            <li>The duration of quiz is 5 min.</li>
-            <li>The type of questions are Multiple Choice Questions(MCQs).</li>
-            <li>Each question carries equal marks.</li>
-            <li>There is only 1 possible answer on every question. </li>
-            <li>
-              Only those participants will be given certificates who appear and
-              submit the response within stipulated time with the score of above
-              65%.
-            </li>
-            <li>
-              If you are not able to pass the quiz watch the content again and
-              retake the quiz.{" "}
-            </li>
+          <h2 className="u-quiz-page-sec-heading">Instructions</h2>
+
+          <ul className="u-quiz-page-inst-list-text">
+            {vars.quizInstructions.map((instruction) => {
+              return <li>{instruction}</li>;
+            })}
           </ul>
         </div>
 
         <div style={{ textAlign: "center" }}>
           <button
-            className="btn btn-primary"
+            className="u-quiz-page-inst-start-btn btn btn-primary"
             onClick={handleStartQuizClick}
             disabled={!isEligibleToTakeQuiz ? true : false}
-            style={{
-              backgroundColor: "var(--yuva-green)",
-              borderRadius: "0.4rem",
-              height: "2.2rem",
-              border: "none",
-              color: "white",
-              padding: "0 1rem 0 1rem",
-              fontFamily: "var(--font-family-2)",
-              marginTop: "1rem",
-              marginBottom: "1rem",
-            }}
           >
-            {isEligibleToTakeQuiz === true ? "Start" : "Quiz Locked"}
+            {isEligibleToTakeQuiz ? "Start Quiz" : "Quiz Locked"}
           </button>
 
-          <p
-            style={{
-              fontSize: "0.9rem",
-              fontFamily: "var(--font-family-2)",
-              color: "gray",
-              textDecoration: "underline",
-            }}
-          >
+          <p className="u-quiz-page-inst-score-text">
             {storedResult === -1
               ? "You never took this quiz before"
               : `Your latest quiz score is ${storedResult}%`}
@@ -296,101 +256,99 @@ const UserQuiz = () => {
     </div>
   );
 
-  const quizElement =
-    quiz.length === 0 ? (
-      <p>
-        There are currently no questions in this quiz. Kindly revisit the page
-        later.
-      </p>
-    ) : (
-      <>
-        <p
-          style={{
-            fontSize: "150%",
-            fontFamily: "Merriweather",
-            margin: "8rem 0",
-          }}
-        >
-          <i class="fa-regular fa-clock"></i> All the best! Quiz has been
-          started. Tick the correct answers before the timer runs out.
-        </p>
-
-        <div
-          id="quiz"
-          name="quiz"
-          style={{
-            marginTop: "5%",
-            fontSize: "140%",
-          }}
-        >
-          <div id="timer" style={{ textAlign: "right" }}>
-            Time remaining :{/* 10 minute = 10000*6*10 miliseconds */}
-            <span style={{ marginLeft: "1%", fontFamily: "Merriweather" }}>
-              <Countdown
-                date={Date.now() + 10000 * 6 * 10}
-                renderer={renderer}
-              />
-            </span>
-          </div>
-          {quiz.map((quizObject, quizIndex) => {
-            let options = [];
-            options.push(quizObject.option1);
-            options.push(quizObject.option2);
-            options.push(quizObject.option3);
-            options.push(quizObject.option4);
-
-            return (
-              <div key={quizIndex} style={{ margin: "10px" }}>
-                <p>
-                  {quizIndex + 1}. {quizObject.question}
-                </p>
-
-                {options.map((option, optIndex) => {
-                  return (
-                    <div key={optIndex} style={{ display: "block" }}>
-                      <span>{optIndex + 1} . </span>
-                      <input
-                        className="form-check-input mx-3"
-                        type="checkbox"
-                        id={quizIndex * 11 + optIndex + 1}
-                        value={
-                          response[quizIndex][`isOption${optIndex + 1}Checked`]
-                        }
-                        onChange={(e) => {
-                          handleResponseChange(
-                            e.target.checked,
-                            quizIndex,
-                            optIndex
-                          );
-                        }}
-                      />
-                      <label>{option}</label>
-                    </div>
-                  );
-                })}
+  const quizElement = (
+    <div className="u-quiz-page-quiz-outer-div">
+      {quiz.length === 0 ? (
+        <p>There are currently no questions in this quiz.</p>
+      ) : (
+        <>
+          <div className="u-quiz-page-timer-div">
+            <SecCard>
+              <h4>
+                All the best! Quiz has been started. Tick the correct answers
+                before the timer runs out.
+              </h4>
+              <div style={{ textAlign: "right", fontSize: "2.4rem" }}>
+                <i className="fa-regular fa-clock"></i>
+                {/* 10 minute = 10000*6*10 miliseconds */}{" "}
+                <Countdown
+                  date={Date.now() + 10000 * 6 * 0.1}
+                  renderer={renderer}
+                />
               </div>
-            );
-          })}
-          <div style={{ textAlign: "center", margin: "5%" }}>
-            <button
-              id="quizSubmitButton"
-              className="btn btn-success"
-              onClick={handleSubmitQuiz}
-            >
-              Submit Quiz
-            </button>
+            </SecCard>
           </div>
-        </div>
-      </>
-    );
+
+          <div className="u-quiz-page-quiz-div">
+            <SecCard>
+              {quiz.map((quizObject, quizIndex) => {
+                let options = [];
+                options.push(quizObject.option1);
+                options.push(quizObject.option2);
+                options.push(quizObject.option3);
+                options.push(quizObject.option4);
+
+                return (
+                  <div key={quizIndex} style={{ margin: "10px" }}>
+                    <p>
+                      {quizIndex + 1}. {quizObject.question}
+                    </p>
+
+                    {options.map((option, optIndex) => {
+                      return (
+                        <div key={optIndex} style={{ display: "block" }}>
+                          <input
+                            className="form-check-input mx-3"
+                            type="checkbox"
+                            id={quizIndex * 11 + optIndex + 1}
+                            value={
+                              response[quizIndex][
+                                `isOption${optIndex + 1}Checked`
+                              ]
+                            }
+                            onChange={(e) => {
+                              handleResponseChange(
+                                e.target.checked,
+                                quizIndex,
+                                optIndex
+                              );
+                            }}
+                          />
+                          <label>{option}</label>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+
+              <div style={{ textAlign: "center" }}>
+                <button
+                  id="quiz-submit-btn"
+                  className="u-quiz-page-submit-btn btn btn-primary"
+                  onClick={handleSubmitQuiz}
+                >
+                  Submit Quiz
+                </button>
+              </div>
+            </SecCard>
+          </div>
+        </>
+      )}
+    </div>
+  );
 
   return (
     <>
-      {showQuiz
-        ? quizElement
-        : showResult
-        ? resultElement
-        : instructionsElement}
+      {isLoading ? (
+        <Loader />
+      ) : showQuiz ? (
+        quizElement
+      ) : showResult ? (
+        resultElement
+      ) : (
+        instructionsElement
+      )}
     </>
   );
 };

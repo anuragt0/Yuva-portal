@@ -14,7 +14,11 @@ const Navbar = () => {
   return (
     <div style={{ padding: "0 3%" }}>
       <nav
-        style={{ backgroundColor: "white", padding: "0.7% 3%" }}
+        style={{
+          backgroundColor: "white",
+          padding: "0.7% 3%",
+          // boxShadow: "0 0 5px 0",
+        }}
         className="navbar navbar-expand-lg fixed-top"
       >
         <img src={img} alt="" style={{ width: "5.5%", marginRight: "2%" }} />

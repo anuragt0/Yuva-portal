@@ -18,7 +18,8 @@ const {
 } = require("../middlewares/fetch-person");
 
 // My utilities
-const statusText = require("../utilities/status-text.js");
+const statusText = require("../utilities/status_text.js");
+const vars = require("../utilities/constants.js");
 
 // ! Dont bind data to req, bind them to res, change this at all routes and middlewares reference: https://stackoverflow.com/questions/18875292/passing-variables-to-the-next-middleware-using-next-in-express-js
 // todo: only send statusText and not error field in response
@@ -266,19 +267,19 @@ router.get(
   arePrereqSatisfied,
   async (req, res) => {
     // todo : validation
-    console.log(req.originalUrl);
+    // console.log(req.originalUrl);
 
     const { courseId, unitId } = req.params;
     const mongoId = req.mongoId;
 
     try {
+      // find course and then the required unit from the unitArr of that course
       const courseProj = {
         name: 1,
         unitArr: 1,
       };
 
       const courseDoc = await Course.findById(courseId, courseProj);
-      console.log(courseDoc.unitArr.length);
 
       let unit = null;
       courseDoc.unitArr.forEach((singleUnit) => {
@@ -294,7 +295,7 @@ router.get(
         activity: 1,
       };
 
-      const MIN_WATCH_TIME_IN_PERCENT = 2;
+      // find user doc and decide whether user is eligible to take quiz or get certificate
       let isEligibleToTakeQuiz = false;
 
       const userDoc = await User.findById(mongoId, userProj);
@@ -302,7 +303,7 @@ router.get(
         userDoc.activity &&
         userDoc.activity[`unit${unitId}`] &&
         userDoc.activity[`unit${unitId}`].video.watchTimeInPercent >=
-          MIN_WATCH_TIME_IN_PERCENT
+          vars.MIN_WATCH_TIME_IN_PERCENT
       ) {
         isEligibleToTakeQuiz = true;
       }
@@ -315,29 +316,29 @@ router.get(
         quizPercent = userDoc.activity[`unit${unitId}`].quizPercent;
       }
 
-      // console.log(courseDoc.name);
-      const user = {
+      const courseInfo = { name: courseDoc.name, _id: courseDoc._id };
+
+      const userInfo = {
         mongoId: userDoc._id,
         name:
           userDoc.fName +
-          "*" +
+          " " +
           (!("mName" in userDoc) || userDoc.mName.length === 0
             ? ""
-            : userDoc.mName + "*") +
+            : userDoc.mName + " ") +
           userDoc.lName,
       };
-      console.log(user);
+
       res.status(200).json({
         statusText: statusText.SUCCESS,
-        course: courseDoc,
+        courseInfo: courseInfo,
         unit: unit,
-        user: user,
+        userInfo: userInfo,
         quizPercent: quizPercent,
         isEligibleToTakeQuiz: isEligibleToTakeQuiz,
       });
     } catch (error) {
-      console.error(error.message);
-      res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+      res.status(500).json({ statusText: statusText.INTERNAL_SERVER_ERROR });
     }
   }
 );

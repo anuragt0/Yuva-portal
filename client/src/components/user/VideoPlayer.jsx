@@ -17,7 +17,7 @@ const VideoPlayer = (props) => {
 
   // get the total duration of the video
   function handleDuration(duration) {
-    console.log("handle duration");
+    // console.log("handle duration");
     totalDurationInSec = duration;
   }
 
