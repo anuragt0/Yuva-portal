@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
   LinkedinShareButton,
   LinkedinIcon,
@@ -23,10 +24,65 @@ import trophy_logo from "../../assets/images/trophy_logo.jpg";
 import sign from "../../assets/images/sign.png";
 import { downloadCertificate } from "../../utilities/helper_functions";
 
+import { SERVER_ORIGIN } from "../../utilities/constants";
+
 const CertPage = () => {
   const [certInfo, setCertInfo] = useState({
-    name: "",
+    holderName: "",
+    passingDate: "",
+    courseName: "",
+    unitId: "",
   });
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const params = useParams();
+  // console.log(params);
+
+  useEffect(() => {
+    const getCert = async () => {
+      setIsLoading(true);
+      const certId = params.certId;
+      try {
+        const response = await fetch(
+          `${SERVER_ORIGIN}/api/public/certificate/${certId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const result = await response.json();
+        console.log(result);
+
+        if (response.status >= 400 && response.status < 600) {
+          if (response.status === 404) {
+            // invalid cert id
+          } else {
+            alert("Internal server error"); // todo: toast notify
+          }
+        } else if (response.ok && response.status === 200) {
+          setCertInfo(result.certInfo);
+        } else {
+          // for future
+        }
+
+        //         holder name
+        // coursename
+        // unit id
+        // passing date
+
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err.message);
+        setIsLoading(false);
+      }
+    };
+
+    getCert();
+  }, []);
 
   const handleCertPDFDownload = () => {
     // console.log("downloading");
@@ -39,7 +95,7 @@ const CertPage = () => {
       <div className="row">
         <div className="col-lg-8">
           <div>
-            <Cert />
+            <Cert certInfo={certInfo} />
           </div>
           <div style={{ marginTop: "2rem" }}>
             <SecCard>

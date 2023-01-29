@@ -54,7 +54,7 @@ function UserApp() {
       <Route exact path="/user/register" element={<UserRegis />} />
       <Route
         exact
-        path="/user/certificate/:certificateId"
+        path="/user/certificate/:certId"
         element={<CertPage />}
       />
     </Routes>

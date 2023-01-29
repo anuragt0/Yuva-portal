@@ -26,13 +26,14 @@ const UserSingleUnit = () => {
   });
   const [isCertBtnDisabled, setIsCertBtnDisabled] = useState(true);
   const [isQuizBtnDisabled, setIsQuizBtnDisabled] = useState(false);
-  const [courseInfo, setCourseInfo] = useState(null);
-  const [userInfo, setUserInfo] = useState(null);
+  // const [courseInfo, setCourseInfo] = useState(null);
+  // const [userInfo, setUserInfo] = useState(null);
+  const [certId, setCertId] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
-  const [videoInfo, setVideoInfo] = useState(false);
-  const navigate = useNavigate();
+  const [videoInfo, setVideoInfo] = useState({});
 
+  const navigate = useNavigate();
   const params = useParams();
 
   useEffect(() => {
@@ -73,20 +74,21 @@ const UserSingleUnit = () => {
             } else {
             }
           } else {
+            console.log("kwjnfkwef");
             toast.error(result.statusText);
           }
         } else if (response.ok && response.status === 200) {
           setUnit(result.unit);
           setVideoInfo(result.unit.video);
-          setIsQuizBtnDisabled(result.isEligibleToTakeQuiz);
-          setCourseInfo(result.courseInfo);
-          setUserInfo(result.userInfo);
+          setIsQuizBtnDisabled(!result.isEligibleToTakeQuiz);
+          // setCourseInfo(result.courseInfo);
+          // setUserInfo(result.userInfo);
 
-          // console.log(result.quizPercent);
-          const CERTIFICATE_GENERATION_CUT_OFF_IN_PERCENT = 65;
-          if (result.quizPercent >= CERTIFICATE_GENERATION_CUT_OFF_IN_PERCENT) {
-            setIsCertBtnDisabled(false);
-          }
+          setCertId(result.certId);
+
+          setIsCertBtnDisabled(!result.isCertGenerated);
+
+          console.log(result);
 
           // we also have userDoc here
         } else {
@@ -110,27 +112,15 @@ const UserSingleUnit = () => {
   }
 
   function handleGetCertificate() {
-    console.log("downloading cert ...");
-    downloadCertificate();
-  }
+    // const userMongoId = userInfo._id;
+    // const { verticalId, courseId, unitId } = params;
 
-  const certificate = !isCertBtnDisabled ? (
-    <Cert
-      courseName={courseInfo.name}
-      unitId={unit._id}
-      courseId={courseInfo._id}
-      userMongoId={userInfo.mongoId}
-      userName={userInfo.name}
-    />
-  ) : null;
+    // console.log(certId);
+    navigate(`/user/certificate/${certId}`);
+  }
 
   const element = (
     <div className="u-single-unit-page-outer-div">
-      {/* <section style={{ display: "none" }}> */}
-      <section>
-        <div id="cert">{certificate}</div>
-      </section>
-
       {unit.video !== null ? <VideoPlayer video={unit.video} /> : null}
 
       <div className="u-single-unit-page-common">

@@ -19,7 +19,8 @@ const {
 
 // My utilities
 const statusText = require("../utilities/status_text.js");
-const vars = require("../utilities/constants.js");
+const { vars } = require("../utilities/constants.js");
+const { encodeCertificateId } = require("../utilities/helper_functions.js");
 
 // ! Dont bind data to req, bind them to res, change this at all routes and middlewares reference: https://stackoverflow.com/questions/18875292/passing-variables-to-the-next-middleware-using-next-in-express-js
 // todo: only send statusText and not error field in response
@@ -260,6 +261,8 @@ router.get(
   }
 );
 
+// ! need to verify whether coursedoc exists or not
+
 router.get(
   "/verticals/:verticalId/courses/:courseId/units/:unitId",
   fetchPerson,
@@ -295,7 +298,7 @@ router.get(
         activity: 1,
       };
 
-      // find user doc and decide whether user is eligible to take quiz or get certificate
+      // find user doc and decide whether user is eligible to take quiz  or get certificate
       let isEligibleToTakeQuiz = false;
 
       const userDoc = await User.findById(mongoId, userProj);
@@ -308,34 +311,30 @@ router.get(
         isEligibleToTakeQuiz = true;
       }
 
-      let quizPercent = -1;
+      let quizScoreInPercent = -1;
       if (
         userDoc.activity !== undefined &&
         userDoc.activity[`unit${unitId}`] !== undefined
       ) {
-        quizPercent = userDoc.activity[`unit${unitId}`].quizPercent;
+        quizScoreInPercent =
+          userDoc.activity[`unit${unitId}`].quiz.scoreInPercent;
       }
 
-      const courseInfo = { name: courseDoc.name, _id: courseDoc._id };
+      const isCertGenerated =
+        quizScoreInPercent >= vars.CERTIFICATE_GENERATION_CUT_OFF_IN_PERCENT;
 
-      const userInfo = {
-        mongoId: userDoc._id,
-        name:
-          userDoc.fName +
-          " " +
-          (!("mName" in userDoc) || userDoc.mName.length === 0
-            ? ""
-            : userDoc.mName + " ") +
-          userDoc.lName,
-      };
+      // we need courseInfo and userInfo for the "Get certificate button" which redirects on the cert's url and url contains courseId, unitId, userId
 
       res.status(200).json({
         statusText: statusText.SUCCESS,
-        courseInfo: courseInfo,
+        // courseInfo: { _id: courseDoc._id },
+        // userInfo: {
+        //   _id: userDoc._id,
+        // },
+        certId: encodeCertificateId(userDoc._id, courseDoc._id, unit._id),
         unit: unit,
-        userInfo: userInfo,
-        quizPercent: quizPercent,
         isEligibleToTakeQuiz: isEligibleToTakeQuiz,
+        isCertGenerated: isCertGenerated,
       });
     } catch (error) {
       res.status(500).json({ statusText: statusText.INTERNAL_SERVER_ERROR });
@@ -380,10 +379,11 @@ router.get(
       const userDoc = await User.findById(mongoId, userProj);
 
       res.status(200).json({
-        error: statusText.SUCCESS,
+        statusText: statusText.SUCCESS,
         quiz: unit.quiz,
         isEligibleToTakeQuiz: true,
-        quizPercent: userDoc.activity[`unit${unitId}`].quizPercent,
+        quizScoreInPercent:
+          userDoc.activity[`unit${unitId}`].quiz.scoreInPercent,
       });
     } catch (error) {
       console.error(error.message);
@@ -403,7 +403,7 @@ router.post(
     // console.log(req.originalUrl);
 
     const { courseId, unitId } = req.params;
-    const { quizPercent } = req.body;
+    const { quizScoreInPercent } = req.body;
     const mongoId = req.mongoId;
 
     try {
@@ -419,25 +419,49 @@ router.post(
         userDoc.activity[unitKey] = {
           video: { watchTimeInPercent: 0 },
           activities: [],
-          quizPercent: -1,
+          quiz: {
+            scoreInPercent: -1,
+            passingDate: "",
+          },
         };
       }
 
       // always update by creating a new doc for activity out of the previous one
 
-      const QUIZ_CUT_OFF_IN_PERCENT = 75; // check cutoff on quiz submit only, the user can always see the quiz page (except watchtime criteria)
-      if (userDoc.activity[unitKey].quizPercent < QUIZ_CUT_OFF_IN_PERCENT) {
-        userDoc.activity[unitKey].quizPercent = quizPercent;
+      // check cutoff on quiz submit only, the user can always see the quiz page (except watchtime criteria)
+      let hasPassedQuiz = false,
+        hasPassedQuizFirstTime = false;
+      if (
+        userDoc.activity[unitKey].quiz.scoreInPercent <
+        vars.QUIZ_CUT_OFF_IN_PERCENT
+      ) {
+        // if user hasn't passed quiz already, then only update the score
+        userDoc.activity[unitKey].quiz = {
+          scoreInPercent: quizScoreInPercent,
+          passingDate: new Date().toISOString(),
+        };
+
+        if (
+          quizScoreInPercent >= vars.CERTIFICATE_GENERATION_CUT_OFF_IN_PERCENT
+        ) {
+          hasPassedQuiz = true;
+          hasPassedQuizFirstTime = true;
+        }
 
         const updatedDoc = await User.findByIdAndUpdate(mongoId, userDoc, {
           new: true,
         });
         console.log(updatedDoc);
       } else {
-        console.log("No update in Quiz percent, as its already >=75");
+        hasPassedQuiz = true;
+        console.log("No update in Quiz percent, already passed");
       }
 
-      res.status(200).json({ statusText: statusText.SUCCESS });
+      res.status(200).json({
+        statusText: statusText.SUCCESS,
+        hasPassedQuiz: hasPassedQuiz,
+        hasPassedQuizFirstTime: hasPassedQuizFirstTime,
+      });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
@@ -467,16 +491,20 @@ router.post(
         userDoc.activity[unitKey] = {
           video: { watchTimeInPercent: 0 },
           activities: [],
-          quizPercent: -1,
+          quiz: {
+            scoreInPercent: -1,
+            passingDate: "",
+          },
         };
       }
 
+      // ! what if we deleted just the watchtime field in mongodb doc manually
       userDoc.activity[unitKey].video.watchTimeInPercent += watchTimeInPercent;
 
       const updatedDoc = await User.findByIdAndUpdate(mongoId, userDoc, {
         new: true,
       });
-      console.log(updatedDoc);
+      // console.log(updatedDoc);
 
       res.status(200).json({ statusText: statusText.SUCCESS });
     } catch (error) {

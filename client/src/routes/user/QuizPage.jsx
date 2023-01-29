@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 // My components
 import SecCard from "../../components/user/SecCard";
 import Loader from "../../components/common/Loader";
+import Party from "../../components/user/Party";
 
 // My css
 import "../../css/user/u-quiz-page.css";
@@ -20,13 +21,16 @@ import {
 
 const UserQuiz = () => {
   const [quiz, setQuiz] = useState([]);
-  const [storedResult, setStoredResult] = useState(-1);
+  const [storedQuizScore, setStoredQuizScore] = useState(-1);
   const [isEligibleToTakeQuiz, setIsEligibleToTakeQuiz] = useState(false);
 
   const [response, setResponse] = useState([]);
-  const [result, setResult] = useState(0);
+  const [currQuizScore, setCurrQuizScore] = useState(0);
   const [showQuiz, setShowQuiz] = useState(false);
-  const [showResult, setShowResult] = useState(false);
+  const [showQuizScore, setShowQuizScore] = useState(false);
+  const [hasPassedQuiz, setHasPassedQuiz] = useState(false);
+  const [hasPassedQuizFirstTime, setHasPassedQuizFirstTime] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const params = useParams();
@@ -88,7 +92,7 @@ const UserQuiz = () => {
           }
         } else if (response.ok && response.status === 200) {
           setQuiz(result.quiz);
-          setStoredResult(result.quizPercent);
+          setStoredQuizScore(result.quizScoreInPercent);
           setIsEligibleToTakeQuiz(result.isEligibleToTakeQuiz);
 
           // console.log(result.quiz);
@@ -137,10 +141,10 @@ const UserQuiz = () => {
       correctRespCnt += isRespCorrect;
     }
 
-    let quizPercent = (correctRespCnt * 100) / quiz.length;
+    let calculatedCurrQuizScore = (correctRespCnt * 100) / quiz.length;
 
-    quizPercent = roundOffDecimalPlaces(quizPercent, 2); // round off to two decimal places
-    // console.log(quizPercent);
+    calculatedCurrQuizScore = roundOffDecimalPlaces(calculatedCurrQuizScore, 2); // round off to two decimal places
+    // console.log(calculatedCurrQuizScore);
 
     // submitting result to server
     setIsLoading(true);
@@ -156,7 +160,7 @@ const UserQuiz = () => {
             "Content-Type": "application/json",
             "auth-token": localStorage.getItem("token"),
           },
-          body: JSON.stringify({ quizPercent: quizPercent }),
+          body: JSON.stringify({ quizScoreInPercent: calculatedCurrQuizScore }),
         }
       );
 
@@ -172,9 +176,11 @@ const UserQuiz = () => {
           console.log("Internal server error"); // todo: toast notify, dont redirect, allow user to re-press submit button
         }
       } else if (response.ok && response.status === 200) {
-        setResult(quizPercent);
+        setCurrQuizScore(calculatedCurrQuizScore);
+        setHasPassedQuiz(result.hasPassedQuiz);
+        setHasPassedQuizFirstTime(result.hasPassedQuizFirstTime);
         setShowQuiz(false);
-        setShowResult(true);
+        setShowQuizScore(true);
       } else {
         // for future
       }
@@ -203,10 +209,14 @@ const UserQuiz = () => {
   const resultElement = (
     <div style={{ textAlign: "center", marginTop: "10%" }}>
       <SecCard>
-        <h1 className="u-quiz-page-result-text">Your score: {result}%</h1>
+        <h1 className="u-quiz-page-result-text">
+          Your score: {currQuizScore}%
+        </h1>
         <h5 className="u-quiz-page-result-text">
-          {result >= 65
-            ? `Congratulations! You have unlocked the certificate.`
+          {hasPassedQuiz
+            ? hasPassedQuizFirstTime
+              ? "Congratulations! your certificate has been unlocked"
+              : "Certificate has already been unlocked"
             : `Note: You need to score atleast 65% to pass the test`}
         </h5>
 
@@ -217,6 +227,8 @@ const UserQuiz = () => {
           Retake Quiz
         </button>
       </SecCard>
+
+      {!hasPassedQuizFirstTime ? <Party /> : null}
     </div>
   );
 
@@ -247,9 +259,9 @@ const UserQuiz = () => {
           </button>
 
           <p className="u-quiz-page-inst-score-text">
-            {storedResult === -1
+            {storedQuizScore === -1
               ? "You never took this quiz before"
-              : `Your latest quiz score is ${storedResult}%`}
+              : `Your latest quiz score is ${storedQuizScore}%`}
           </p>
         </div>
       </SecCard>
@@ -272,7 +284,7 @@ const UserQuiz = () => {
                 <i className="fa-regular fa-clock"></i>
                 {/* 10 minute = 10000*6*10 miliseconds */}{" "}
                 <Countdown
-                  date={Date.now() + 10000 * 6 * 0.1}
+                  date={Date.now() + 10000 * 6 * 10}
                   renderer={renderer}
                 />
               </div>
@@ -344,7 +356,7 @@ const UserQuiz = () => {
         <Loader />
       ) : showQuiz ? (
         quizElement
-      ) : showResult ? (
+      ) : showQuizScore ? (
         resultElement
       ) : (
         instructionsElement

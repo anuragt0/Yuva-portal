@@ -10,6 +10,7 @@ const User = require("../models/User");
 const fetchPerson = (req, res, next) => {
   const token = req.header("auth-token");
   // console.log(token);
+  // * if token is verified then the mongoId contained in the token always belongs to some user doc
 
   if (!token) {
     return res
