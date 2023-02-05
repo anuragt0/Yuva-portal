@@ -69,11 +69,6 @@ const CertPage = () => {
           // for future
         }
 
-        //         holder name
-        // coursename
-        // unit id
-        // passing date
-
         setIsLoading(false);
       } catch (err) {
         console.log(err.message);
@@ -90,6 +85,8 @@ const CertPage = () => {
     downloadCertificate();
   };
 
+  const URL = "https://www.youtube.com/";
+
   return (
     <div className="cert-page-outer-div">
       <div className="row">
@@ -97,16 +94,16 @@ const CertPage = () => {
           <div>
             <Cert certInfo={certInfo} />
           </div>
-          <div style={{ marginTop: "2rem" }}>
+          <div style={{ marginTop: "2rem", marginBottom: "10rem" }}>
             <SecCard>
-              <p className="text-ff2">
-                This certificate above verifies that Apoorv Jain successfully
-                completed the course The Complete 2023 Web Development Bootcamp
-                on 06/10/2022 as taught by Dr. Angela Yu on Udemy. The
-                certificate indicates the entire course was completed as
-                validated by the student. The course duration represents the
-                total video hours of the course at time of most recent
-                completion.
+              <p className="text-ff2" style={{ margin: "0" }}>
+                This certificate above verifies that{" "}
+                <span className="text-underline">{certInfo.holderName}</span>{" "}
+                successfully completed the course{" "}
+                <span className="text-underline">{certInfo.courseName}</span> on{" "}
+                <span className="text-underline">{certInfo.passingDate}</span>{" "}
+                on Yuva Portal. The certificate indicates the entire course was
+                completed as validated by the student.
               </p>
             </SecCard>
           </div>
@@ -114,12 +111,10 @@ const CertPage = () => {
         <div className="col-lg-4">
           <div className="cert-page-cert-info-div">
             <p className="cert-page-holder-text">Certificate holder name:</p>
-            <h3 className="cert-page-holder-name">Apoorv Jain</h3>
+            <h3 className="cert-page-holder-name">{certInfo.holderName}</h3>
 
             <p className="cert-page-holder-text">Course name:</p>
-            <h3 className="cert-page-holder-name">
-              Water Management and resources
-            </h3>
+            <h3 className="cert-page-holder-name">{certInfo.courseName}</h3>
 
             <hr></hr>
 
@@ -133,7 +128,7 @@ const CertPage = () => {
               Or share on
             </p>
             <div className="cert-page-share-btns-div">
-              <LinkedinShareButton url="skdnj">
+              <LinkedinShareButton url={URL}>
                 <LinkedinIcon
                   className="cert-page-share-icon"
                   size={55}
@@ -141,7 +136,7 @@ const CertPage = () => {
                 />
               </LinkedinShareButton>
 
-              <FacebookShareButton url="skdnj">
+              <FacebookShareButton url={URL}>
                 <FacebookIcon
                   className="cert-page-share-icon"
                   size={55}
@@ -149,7 +144,7 @@ const CertPage = () => {
                 />
               </FacebookShareButton>
 
-              <TwitterShareButton url="skdnj">
+              <TwitterShareButton url={URL}>
                 <TwitterIcon
                   className="cert-page-share-icon"
                   size={55}

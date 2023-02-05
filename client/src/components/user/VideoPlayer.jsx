@@ -57,6 +57,7 @@ const VideoPlayer = (props) => {
 
   async function updateVdoProgress() {
     const { verticalId, courseId, unitId } = params;
+    console.log(params);
     let watchTimeInPercent = (watchTimeInSec * 100) / totalDurationInSec;
     watchTimeInPercent = roundOffDecimalPlaces(watchTimeInPercent, 2);
     console.log(watchTimeInPercent);
@@ -70,7 +71,7 @@ const VideoPlayer = (props) => {
             "Content-Type": "application/json",
             "auth-token": localStorage.getItem("token"),
           },
-          body: JSON.stringify({ watchTimeInPercent: watchTimeInPercent }),
+          body: JSON.stringify({ vdoWatchTimeInPercent: watchTimeInPercent }),
         }
       );
 

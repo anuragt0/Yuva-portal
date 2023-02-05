@@ -46,10 +46,15 @@ function downloadCertificate() {
   });
 }
 
+const convertBytesToMegaBytes = (bytes) => {
+  return bytes / 1000000;
+};
+
 export {
   youtubeParser,
   refreshScreen,
   getVideoThumbnail,
   roundOffDecimalPlaces,
   downloadCertificate,
+  convertBytesToMegaBytes,
 };

@@ -29,6 +29,11 @@ const statusText = {
   UNIT_DELETE_SUCCESS: "Unit deleted successfully",
 
   INVALID_CERT_ID: "Invalid certificate Id",
+  CERT_CUTOFF_NOT_CROSSED:
+    "You haven't crossed the certificate generation cutoff",
+
+  FILE_UPLOAD_SUCCESS: "File uploaded successfully",
+  FILE_UPLOAD_FAIL: "Failed to upload the file. Please try again",
 };
 
 module.exports = statusText;

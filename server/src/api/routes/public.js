@@ -1,15 +1,18 @@
 const express = require("express");
-const { fetchPerson } = require("../middlewares/fetch-person");
 const router = express.Router();
 
 // My models
-const User = require("../models/User");
-const Course = require("../models/Course");
+const User = require("../../databases/mongodb/models/User");
+const Course = require("../../databases/mongodb/models/Course");
 
-const statusText = require("../utilities/status_text.js");
-const { vars } = require("../utilities/constants");
+// const { fetchPerson } = require("../middlewares");
 
-const { decodeCertificateId } = require("../utilities/helper_functions");
+const statusText = require("../../utilities/status_text.js");
+const { vars } = require("../../utilities/constants");
+const { decodeCertificateId } = require("../../utilities/helper_functions");
+const {
+  isRequiredUnitActivityPresent,
+} = require("../../utilities/helper_functions");
 
 // ! what if the user's activity field is not present, and we include it in the projection
 
@@ -17,7 +20,8 @@ router.get("/certificate/:certId", async (req, res) => {
   const { certId } = req.params;
   // console.log(certId);
   // console.log(decodeCertificateId(certId));
-  const { userMongId, courseId, unitId } = decodeCertificateId(certId);
+  const { userMongId, verticalId, courseId, unitId } =
+    decodeCertificateId(certId);
 
   try {
     const userProj = {
@@ -28,20 +32,25 @@ router.get("/certificate/:certId", async (req, res) => {
     };
 
     const userDoc = await User.findById(userMongId, userProj);
-    console.log(userDoc);
+    // console.log(userDoc);
+
+    if (!isRequiredUnitActivityPresent(userDoc, verticalId, courseId, unitId)) {
+      console.log("1 Invalid cert Id");
+      return res.status(404).json({ statusText: statusText.INVALID_CERT_ID });
+    }
+
+    const unitActivity =
+      userDoc.activity[`v${verticalId}`][`c${courseId}`][`u${unitId}`];
+    // console.log(unitActivity);
 
     if (
-      !(
-        userDoc &&
-        userDoc.activity &&
-        userDoc.activity[`unit${unitId}`] &&
-        userDoc.activity[`unit${unitId}`].quiz &&
-        userDoc.activity[`unit${unitId}`].quiz.scoreInPercent >=
-          vars.CERTIFICATE_GENERATION_CUT_OFF_IN_PERCENT
-      )
+      unitActivity.quiz.scoreInPercent <
+      vars.activity.CERTIFICATE_GENERATION_CUT_OFF_IN_PERCENT
     ) {
-      console.log("user doc not found");
-      return res.status(404).json({ statusText: statusText.INVALID_CERT_ID });
+      console.log("Quiz score less than cert cut off");
+      return res
+        .status(404)
+        .json({ statusText: statusText.CERT_CUTOFF_NOT_CROSSED });
     }
 
     const courseProj = {
@@ -52,7 +61,7 @@ router.get("/certificate/:certId", async (req, res) => {
     const courseDoc = await Course.findById(courseId, courseProj);
 
     if (!courseDoc) {
-      console.log("course doc not found");
+      console.log("Invalid cert Id: course doc not found");
       return res.status(404).json({ statusText: statusText.INVALID_CERT_ID });
     }
 
@@ -67,7 +76,7 @@ router.get("/certificate/:certId", async (req, res) => {
     }
 
     if (!unitDoc) {
-      console.log("unit doc not found");
+      console.log("Invalid cert Id: unit doc not found");
       return res.status(404).json({ statusText: statusText.INVALID_CERT_ID });
     }
 
@@ -83,13 +92,13 @@ router.get("/certificate/:certId", async (req, res) => {
       statusText: statusText.SUCCESS,
       certInfo: {
         holderName: holderName,
-        passingDate: userDoc.activity[`unit${unitId}`].quiz.passingDate,
+        passingDate: unitActivity.quiz.passingDate,
         courseName: courseDoc.name,
         unitId: unitId,
       },
     });
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
   }
 });
 

@@ -1,9 +1,10 @@
-var jwt = require("jsonwebtoken");
-const statusText = require("../utilities/status_text.js");
-// const JWT_SECRET = "Harryisagoodb$oy";
+const jwt = require("jsonwebtoken");
 
 // My models
-const User = require("../models/User");
+const User = require("./databases/mongodb/models/User");
+
+const statusText = require("./utilities/status_text.js");
+const { vars } = require("./utilities/constants");
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,17 +71,21 @@ const arePrereqSatisfied = async (req, res, next) => {
 
 // ! check whether the user is eligible to take quiz, this is imp in cases when user directly copy pastes the url of the quiz page and tries to submit it
 const isEligibleToTakeQuiz = async (req, res, next) => {
-  const { unitId } = req.params;
+  const { verticalId, courseId, unitId } = req.params;
   const userDoc = await User.findById(req.mongoId);
 
-  const unitKey = `unit${unitId}`;
-  const MIN_WATCH_TIME_IN_PERCENT = 2;
+  // ! why are we not checking that the verticalid, courseid, unitid is valid
+  const verticalKey = `v${verticalId}`;
+  const courseKey = `c${courseId}`;
+  const unitKey = `u${unitId}`;
 
   if (
     userDoc.activity === undefined ||
-    userDoc.activity[unitKey] === undefined ||
-    userDoc.activity[unitKey].video.watchTimeInPercent <
-      MIN_WATCH_TIME_IN_PERCENT
+    userDoc.activity[verticalKey] === undefined ||
+    userDoc.activity[verticalKey][courseKey] === undefined ||
+    userDoc.activity[verticalKey][courseKey][unitKey] === undefined ||
+    userDoc.activity[verticalKey][courseKey][unitKey].video.watchTimeInPercent <
+      vars.activity.MIN_WATCH_TIME_IN_PERCENT
   ) {
     return res.status(403).json({
       statusText: statusText.NOT_ELIGIBLE_TO_TAKE_QUIZ,

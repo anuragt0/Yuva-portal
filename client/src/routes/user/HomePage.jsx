@@ -65,8 +65,6 @@ const HomePage = () => {
     navigate(`/user/verticals/${verticalId}/courses/all`);
   }
 
-  const loader = <Loader />;
-
   const element = (
     <>
       <HeaderCard>

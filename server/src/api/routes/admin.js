@@ -1,21 +1,22 @@
 const express = require("express");
 const router = express.Router();
+const { default: mongoose } = require("mongoose");
 require("dotenv").config();
 
 const { parse } = require("csv-parse");
+const csvUpload = require("express-fileupload");
 
 // My models
-const Admin = require("../models/Admin");
+const Admin = require("../../databases/mongodb/models/Admin");
+const Vertical = require("../../databases/mongodb/models/Vertical");
+const Course = require("../../databases/mongodb/models/Course");
+
 const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
-// My middlewares
 
 // My utilities
-const statusText = require("../utilities/status_text.js");
-const { fetchPerson, isAdmin } = require("../middlewares/fetch-person");
-const Vertical = require("../models/Vertical");
-const Course = require("../models/Course");
-const { default: mongoose } = require("mongoose");
+const statusText = require("../../utilities/status_text.js");
+const { fetchPerson, isAdmin } = require("../../middlewares");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -338,20 +339,32 @@ router.delete(
   }
 );
 
-router.post("/add-users", async (req, res) => {
-  const input = req.files.test.data;
-  const options = {};
+router.post("/add-users", csvUpload(), async (req, res) => {
+  console.log(req.originalUrl);
+  // ! todo: SEND MAILS
 
-  parse(input, options, (err, records) => {
-    if (err) {
-      console.log(err);
-    } else {
-      // console.log(records);
-      // todo: check unique creds
-    }
-  });
+  try {
+    const input = req.files.userCreds.data; // csvUploads (in index.js) file adds file to req.files
+    const options = {};
+    parse(input, options, (err, records) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+      } else {
+        console.log(records);
 
-  res.status(200).json({ statusText: statusText.SUCCESS });
+        try {
+          // create users and send bulk emails
+        } catch (err) {
+          console.log(err);
+        }
+        res.status(200).json({ statusText: statusText.SUCCESS });
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+  }
 });
 
 module.exports = router;

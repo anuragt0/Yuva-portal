@@ -21,14 +21,14 @@ const AdminServices = () => {
               navigate("/admin/verticals/all");
             }}
           >
-            Verticals
+            Add / View Verticals
           </button>
         </div>
       </div>
 
       <div className="card w-75 my-5 mx-3">
         <div className="card-body">
-          <h5 className="card-title">Verticals</h5>
+          <h5 className="card-title">Add Users</h5>
           <p className="card-text">
             Add a csv/excel file and add new users' credentials on the go!
           </p>
@@ -38,7 +38,7 @@ const AdminServices = () => {
               navigate("/admin/add-users");
             }}
           >
-            Add Users
+            Upload CSV file
           </button>
         </div>
       </div>

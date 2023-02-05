@@ -228,7 +228,7 @@ const UserQuiz = () => {
         </button>
       </SecCard>
 
-      {!hasPassedQuizFirstTime ? <Party /> : null}
+      {hasPassedQuizFirstTime ? <Party /> : null}
     </div>
   );
 

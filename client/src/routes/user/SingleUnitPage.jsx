@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
+// My components
 import VideoPlayer from "../../components/user/VideoPlayer";
 import UnitText from "../../components/user/UnitText";
 import SecCard from "../../components/user/SecCard";
-import Cert from "../../components/user/Cert";
-import UnitActivities from "../../components/user/UnitActivities";
+import UnitActivity from "../../components/user/UnitActivity";
+import HeaderCard from "../../components/common/HeaderCard";
+import Loader from "../../components/common/Loader";
 
 // My css
 import "../../css/user/u-single-unit-page.css";
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
-import { downloadCertificate } from "../../utilities/helper_functions";
-import HeaderCard from "../../components/common/HeaderCard";
-import Loader from "../../components/common/Loader";
-import { toast } from "react-hot-toast";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +39,7 @@ const UserSingleUnit = () => {
     async function getUnit() {
       setIsLoading(true);
       const { verticalId, courseId, unitId } = params;
+      console.log(params);
       setIsLoading(true);
 
       try {
@@ -74,7 +74,6 @@ const UserSingleUnit = () => {
             } else {
             }
           } else {
-            console.log("kwjnfkwef");
             toast.error(result.statusText);
           }
         } else if (response.ok && response.status === 200) {
@@ -88,7 +87,7 @@ const UserSingleUnit = () => {
 
           setIsCertBtnDisabled(!result.isCertGenerated);
 
-          console.log(result);
+          // console.log(result);
 
           // we also have userDoc here
         } else {
@@ -146,7 +145,14 @@ const UserSingleUnit = () => {
         {unit.activities !== null ? (
           <SecCard>
             <h2 className="u-single-unit-page-sec-heading">Activities</h2>
-            <UnitActivities activities={unit.activities} />
+
+            {unit.activities.map((activity, index) => {
+              return (
+                <div key={index}>
+                  <UnitActivity index={index} activity={activity} />
+                </div>
+              );
+            })}
           </SecCard>
         ) : null}
       </div>
