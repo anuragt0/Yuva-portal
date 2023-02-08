@@ -13,6 +13,7 @@ import UserResetPass from "./routes/user/ResetPassPage";
 import UserRegis from "./routes/user/RegisPage";
 import UserQuiz from "./routes/user/QuizPage";
 import CertPage from "./routes/user/CertPage";
+import UserDashBoard from "./routes/user/Dashboard";
 
 import AdminLogin from "./routes/admin/LoginPage";
 import AdminServices from "./routes/admin/ServicesPage";
@@ -27,7 +28,7 @@ import "./App.css";
 function UserApp() {
   return (
     <Routes>
-      <Route exact path="/user/login" element={<UserLogin />} />{" "}
+      <Route exact path="/user/login" element={<UserLogin />} />
       <Route exact path="/" element={<UserHome />} />
       <Route exact path="/user/verticals/all" element={<UserVerticals />} />
       <Route
@@ -52,11 +53,8 @@ function UserApp() {
       />
       <Route exact path="/user/reset-password" element={<UserResetPass />} />
       <Route exact path="/user/register" element={<UserRegis />} />
-      <Route
-        exact
-        path="/user/certificate/:certId"
-        element={<CertPage />}
-      />
+      <Route exact path="/user/certificate/:certId" element={<CertPage />} />
+      <Route exact path="/user/dashboard" element={<UserDashBoard />} />
     </Routes>
   );
 }
