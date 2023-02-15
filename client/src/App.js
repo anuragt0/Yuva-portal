@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 
 // My components
 import Navbar from "./components/common/Navbar";
+
 import UserHome from "./routes/user/HomePage";
 import UserLogin from "./routes/user/LoginPage";
 import UserVerticals from "./routes/user/VerticalsPage";

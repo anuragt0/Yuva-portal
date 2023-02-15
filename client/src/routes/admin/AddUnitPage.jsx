@@ -1,32 +1,46 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+// My components
+import SecCard from "../../components/common/SecCard";
+import VideoInput from "../../components/admin/VideoInput";
+
+// My css
+import "../../css/admin/a-add-unit-page.css";
+
 import { SERVER_ORIGIN } from "../../utilities/constants";
 
 // TODO: VALIDATION
 
-function VideoInput(props) {
-  return (
-    <div class="form-group row profile">
-      <label for={props.id} class="col-sm-2 col-form-label">
-        {props.label}
-      </label>
-      <div class="col-sm-10">
-        <input
-          type="text"
-          class="form-control"
-          id={props.id}
-          name={props.name}
-          placeholder={props.placeholder}
-          value={props.value}
-          onChange={(e) => {
-            props.onChange(e);
-          }}
-        />
-      </div>
-    </div>
-  );
-}
+// function VideoInput(props) {
+//   return (
+//     <div
+//       className="form-group row profile"
+//       style={{ margin: 0, marginBottom: "0.8rem" }}
+//     >
+//       <label
+//         for={props.id}
+//         className="col-sm-2 col-form-label text-ff2"
+//         style={{ paddingLeft: "0" }}
+//       >
+//         {props.label}
+//       </label>
+//       <div className="col-sm-10 text-ff2" style={{ padding: 0 }}>
+//         <input
+//           type="text"
+//           className="form-control"
+//           id={props.id}
+//           name={props.name}
+//           placeholder={props.placeholder}
+//           value={props.value}
+//           onChange={(e) => {
+//             props.onChange(e);
+//           }}
+//         />
+//       </div>
+//     </div>
+//   );
+// }
 
 function TextInput(props) {
   return (
@@ -363,41 +377,38 @@ const AdminAddUnit = () => {
   }
 
   return (
-    <>
-      <div style={{ marginTop: "8rem" }} className="">
-        <h1>Adding a new unit for course: </h1>
+    <div className="a-add-unit-page-outer-div">
+      <div>
+        <h1>Adding a new unit for course</h1>
       </div>
       <hr className="my-5" />
-      <div>
-        <h3>Add video:</h3>
-        <p style={{ fontSize: "140%" }}>
-          Please enter the information of the video you want to upload!
-        </p>
-      </div>
-      <VideoInput
-        name="title"
-        id="title"
-        label="Title"
-        placeholder="Title"
-        value={video.title}
-        onChange={onVideoChange}
-      />
-      <VideoInput
-        name="desc"
-        id="desc"
-        label="Description"
-        placeholder="Description"
-        value={video.desc}
-        onChange={onVideoChange}
-      />
-      <VideoInput
-        name="vdoSrc"
-        id="video-src"
-        label="Source"
-        placeholder="https://youtube.com...."
-        value={video.vdoSrc}
-        onChange={onVideoChange}
-      />
+      <SecCard>
+        <h2 className="text-ff1">Video</h2>
+        <VideoInput
+          name="title"
+          id="title"
+          label="Title"
+          placeholder="Title"
+          value={video.title}
+          onChange={onVideoChange}
+        />
+        <VideoInput
+          name="desc"
+          id="desc"
+          label="Description"
+          placeholder="Description"
+          value={video.desc}
+          onChange={onVideoChange}
+        />
+        <VideoInput
+          name="vdoSrc"
+          id="video-src"
+          label="Source"
+          placeholder="https://youtube.com...."
+          value={video.vdoSrc}
+          onChange={onVideoChange}
+        />
+      </SecCard>
       <hr className="my-5" />
       <div>
         <h3>Add text to read:</h3>
@@ -470,7 +481,7 @@ const AdminAddUnit = () => {
           Add Unit
         </button>
       </div>
-    </>
+    </div>
   );
 };
 

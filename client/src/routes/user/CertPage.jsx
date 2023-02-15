@@ -88,7 +88,7 @@ const CertPage = () => {
   const URL = "https://www.youtube.com/";
 
   return (
-    <div className="cert-page-outer-div">
+    <div className="u-cert-page-outer-div">
       <div className="row">
         <div className="col-lg-8">
           <div>
@@ -109,28 +109,28 @@ const CertPage = () => {
           </div>
         </div>
         <div className="col-lg-4">
-          <div className="cert-page-cert-info-div">
-            <p className="cert-page-holder-text">Certificate holder name:</p>
-            <h3 className="cert-page-holder-name">{certInfo.holderName}</h3>
+          <div className="u-cert-page-cert-info-div">
+            <p className="u-cert-page-holder-text">Certificate holder name:</p>
+            <h3 className="u-cert-page-holder-name">{certInfo.holderName}</h3>
 
-            <p className="cert-page-holder-text">Course name:</p>
-            <h3 className="cert-page-holder-name">{certInfo.courseName}</h3>
+            <p className="u-cert-page-holder-text">Course name:</p>
+            <h3 className="u-cert-page-holder-name">{certInfo.courseName}</h3>
 
             <hr></hr>
 
             <button
-              className="cert-page-cert-download-btn"
+              className="u-cert-page-cert-download-btn"
               onClick={handleCertPDFDownload}
             >
               Download PDF
             </button>
-            <p className="cert-page-share-text text-ff2 text-center">
+            <p className="u-cert-page-share-text text-ff2 text-center">
               Or share on
             </p>
-            <div className="cert-page-share-btns-div">
+            <div className="u-cert-page-share-btns-div">
               <LinkedinShareButton url={URL}>
                 <LinkedinIcon
-                  className="cert-page-share-icon"
+                  className="u-cert-page-share-icon"
                   size={55}
                   round={true}
                 />
@@ -138,7 +138,7 @@ const CertPage = () => {
 
               <FacebookShareButton url={URL}>
                 <FacebookIcon
-                  className="cert-page-share-icon"
+                  className="u-cert-page-share-icon"
                   size={55}
                   round={true}
                 />
@@ -146,7 +146,7 @@ const CertPage = () => {
 
               <TwitterShareButton url={URL}>
                 <TwitterIcon
-                  className="cert-page-share-icon"
+                  className="u-cert-page-share-icon"
                   size={55}
                   round={true}
                 />

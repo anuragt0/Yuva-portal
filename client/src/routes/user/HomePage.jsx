@@ -126,7 +126,6 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* SECTION 2 */}
       {isLoading ? Loader : element}
     </>
   );

@@ -4,8 +4,12 @@ import { toast } from "react-hot-toast";
 
 // My components
 import Card from "../../components/admin/Card";
+import HeaderCard from "../../components/common/HeaderCard";
 import { CardGrid } from "../../components/common/CardGrid";
 import Loader from "../../components/common/Loader";
+
+// My css
+import "../../css/admin/a-verticals-page.css";
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
 import { refreshScreen } from "../../utilities/helper_functions";
@@ -258,32 +262,30 @@ const VerticalsPage = () => {
   );
 
   return (
-    <>
-      <div style={{ textAlign: "center", margin: "5% 0" }}>
+    <div className="a-verticals-page-outer-div">
+      <HeaderCard>
         <h1>Verticals</h1>
-      </div>
-      <div style={{ textAlign: "left", margin: "5% 0" }}>
-        <h3>
-          {" "}
-          <i class="fa-solid fa-arrow-right"></i> Every verticals related
-          information is available on this page.{" "}
-        </h3>
-        <h3>
-          {" "}
-          <i class="fa-solid fa-arrow-right"></i> You can View/Add/Delete any
-          vertical.
-        </h3>
-        <p style={{ fontSize: "140%" }}>
-          {" "}
-          Note: Deleting a vertical is irreversible. Do it at your own risk.{" "}
-        </p>
-      </div>
 
-      <div style={{ textAlign: "center", margin: "2%" }}>
-        <button onClick={openAddModal} className="btn btn-primary btn-lg">
+        <div style={{ textAlign: "left", fontFamily: "var(--font-family-2)" }}>
+          <h4>
+            <i className="fa-solid fa-arrow-right"></i> Every verticals related
+            information is available on this page.
+          </h4>
+          <h4>
+            <i className="fa-solid fa-arrow-right"></i> You can View/Add/Delete
+            any vertical.
+          </h4>
+          <h5>
+            Note: Deleting a vertical is irreversible. Do it at your own risk.
+          </h5>
+        </div>
+        <button
+          onClick={openAddModal}
+          className="text-ff2 a-verticals-page-add-v-btn btn bt btn"
+        >
           Add a new vertical
         </button>
-      </div>
+      </HeaderCard>
 
       {isLoading ? loader : element}
 
@@ -388,7 +390,7 @@ const VerticalsPage = () => {
       </div>
 
       {deleteModal}
-    </>
+    </div>
   );
 };
 

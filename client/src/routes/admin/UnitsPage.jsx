@@ -4,11 +4,14 @@ import { toast } from "react-hot-toast";
 
 // My components
 import Card from "../../components/admin/Card";
+import { CardGrid } from "../../components/common/CardGrid";
+import Loader from "../../components/common/Loader";
+
+// My css
+import "../../css/admin/a-units-page.css";
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
 import { getVideoThumbnail } from "../../utilities/helper_functions";
-import { CardGrid } from "../../components/common/CardGrid";
-import Loader from "../../components/common/Loader";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -225,11 +228,11 @@ const UnitsPage = () => {
   );
 
   return (
-    <>
-      <div style={{ textAlign: "center", marginTop: "8rem" }}>
+    <div className="a-units-page-outer-div">
+      <div style={{ textAlign: "center" }}>
         <button
+          className="a-units-page-add-u-btn"
           onClick={redirectToAddUnitPage}
-          className="btn btn-primary btn-lg"
         >
           Add a new Unit
         </button>
@@ -238,7 +241,7 @@ const UnitsPage = () => {
       {isLoading ? loader : element}
 
       {deleteModal}
-    </>
+    </div>
   );
 };
 

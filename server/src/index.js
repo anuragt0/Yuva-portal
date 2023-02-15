@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json()); // to use req.body
 
 // Mine
-const connectToMongoDB = require("./databases/MongoDB/config");
+const connectToMongoDB = require("./databases/mongodb/config");
 connectToMongoDB();
 
 const { createDir } = require("./utilities/helper_functions");
@@ -27,3 +27,12 @@ app.listen(5000, () => {
   // createDir(vars.imageFile.ORIGINAL_UPLOADS_DIR_PATH);
   // createDir(vars.imageFile.COMPRESSED_UPLOADS_DIR_PATH);
 });
+
+/*
+todo:
+while deployment:
+make all import like mongodb in lowercase
+uncomment createDir
+firebase private key error while deployment:
+https://stackoverflow.com/questions/50299329/node-js-firebase-service-account-private-key-wont-parse
+*/

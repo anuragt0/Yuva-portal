@@ -20,7 +20,11 @@
   --ice-blue: #c2dcfe;
   --pink: ##cf4b8d;
   --dark-purple: #131022;
+
   --grey: grey;
+  --dark-grey: #696969;
+  --light-grey: lightgray;
+  --blue: #0b5ed7;
   --cert-gold: #996515;
 
   /* styling */
@@ -34,6 +38,10 @@ body {
 
 .text-ff2 {
   font-family: var(--font-family-2);
+}
+
+.text-ff1 {
+  font-family: var(--font-family-1);
 }
 
 .text-center {

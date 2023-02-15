@@ -4,11 +4,14 @@ import { toast } from "react-hot-toast";
 
 // My components
 import Card from "../../components/admin/Card";
+import { CardGrid } from "../../components/common/CardGrid";
+import Loader from "../../components/common/Loader";
+
+// My css
+import "../../css/admin/a-courses-page.css";
 
 import { SERVER_ORIGIN } from "../../utilities/constants";
 import { refreshScreen } from "../../utilities/helper_functions";
-import { CardGrid } from "../../components/common/CardGrid";
-import Loader from "../../components/common/Loader";
 
 const CoursesPage = () => {
   const [allCourses, setAllCourses] = useState([]);
@@ -266,9 +269,9 @@ const CoursesPage = () => {
   );
 
   return (
-    <>
-      <div style={{ textAlign: "center", marginTop: "8rem" }}>
-        <button onClick={openModal} className="btn btn-primary btn-lg">
+    <div className="a-courses-page-outer-div">
+      <div style={{ textAlign: "center" }}>
+        <button className="a-courses-page-add-c-btn" onClick={openModal}>
           Add a new Course
         </button>
       </div>
@@ -359,7 +362,7 @@ const CoursesPage = () => {
       </div>
 
       {deleteModal}
-    </>
+    </div>
   );
 };
 

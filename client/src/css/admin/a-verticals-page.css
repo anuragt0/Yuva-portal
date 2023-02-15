@@ -1,0 +1,21 @@
+.a-verticals-page-outer-div {
+  margin-top: 6rem;
+}
+
+.a-verticals-page-add-v-btn {
+  border-radius: 0.4rem;
+  border: none;
+  background-color: var(--blue);
+  margin-top: 2.4rem;
+  height: 2.75rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  color: white;
+
+  font-family: var(--font-family-2);
+}
+
+.a-verticals-page-add-v-btn:hover {
+  background-color: var(--yuva-dark-blue);
+  color: white;
+}

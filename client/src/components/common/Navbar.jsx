@@ -5,87 +5,91 @@ import img from "../../assets/images/yi_logo.png";
 const Navbar = () => {
   const navigate = useNavigate();
 
-  const handleLogout = (e) => {
-    e.preventDefault();
+  const handleLoginClick = (e) => {
+    navigate("/user/login");
+  };
+
+  const handleLogoutClick = (e) => {
     localStorage.removeItem("token");
     navigate("/user/login");
   };
 
   return (
-    <div style={{ padding: "0 3%" }}>
-      <nav
-        style={{
-          backgroundColor: "white",
-          padding: "0.7% 3%",
-          // boxShadow: "0 0 5px 0",
-        }}
-        className="navbar navbar-expand-lg fixed-top"
+    <nav
+      style={{
+        backgroundColor: "white",
+        padding: "0.7% 3%",
+        boxShadow: "0 0.3rem 0.25rem -0.25rem rgb(0,0,0,0.2)",
+      }}
+      className="navbar navbar-expand-lg fixed-top"
+    >
+      <img src={img} alt="" style={{ width: "5.5%", marginRight: "2%" }} />
+      <button
+        type="button"
+        className="navbar-toggler"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarCollapse"
       >
-        <img src={img} alt="" style={{ width: "5.5%", marginRight: "2%" }} />
-        <button
-          type="button"
-          className="navbar-toggler"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarCollapse"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
+        <span className="navbar-toggler-icon"></span>
+      </button>
 
-        <div className="collapse navbar-collapse" id="navbarCollapse">
-          <ul className="navbar-nav mr-auto">
-            <li className="nav-item active">
-              <Link className="nav-link active" to="/">
-                Home <span className="sr-only">(current)</span>
-              </Link>
-            </li>
-            <li className="nav-item active">
-              <Link className="nav-link active" to="/user/verticals/all">
-                Verticals
-              </Link>
-            </li>
-            <li className="nav-item active">
-              <Link className="nav-link active" to="/user/about">
-                About
-              </Link>
-            </li>
-          </ul>
-          <ul
-            className="nav navbar-nav navbar-right"
-            style={{ position: "absolute", right: "3%" }}
+      <div className="collapse navbar-collapse" id="navbarCollapse">
+        <ul
+          className="navbar-nav mr-auto text-ff1"
+          style={{ fontWeight: "100" }}
+        >
+          <li className="nav-item active">
+            <Link
+              className="nav-link active"
+              to="/"
+              style={{ fontWeight: "400" }}
+            >
+              Home
+            </Link>
+          </li>
+          <li className="nav-item active">
+            <Link
+              className="nav-link active"
+              to="/user/verticals/all"
+              style={{ fontWeight: "400" }}
+            >
+              Verticals
+            </Link>
+          </li>
+          <li className="nav-item active">
+            <Link
+              className="nav-link active"
+              to="/user/about"
+              style={{ fontWeight: "400" }}
+            >
+              About
+            </Link>
+          </li>
+        </ul>
+
+        <ul className="navbar-nav ms-auto">
+          <button
+            className="text-ff1 navbar-right"
+            style={{
+              backgroundColor: "var(--light-grey)",
+              color: "black",
+              borderRadius: "0.3rem",
+              height: "2.2rem",
+              width: "fit-content",
+              padding: "0 1rem 0 1rem",
+              border: "none",
+            }}
+            onClick={
+              !localStorage.getItem("token")
+                ? handleLoginClick
+                : handleLogoutClick
+            }
           >
-            {!localStorage.getItem("token") ? (
-              <form className="d-flex">
-                <li className="nav-item active">
-                  <Link className="nav-link active mx-3" to="/user/login">
-                    Login
-                  </Link>
-                </li>
-              </form>
-            ) : (
-              <>
-                <li className="nav-item active">
-                  <button
-                    style={{
-                      backgroundColor: "var(--yuva-orange)",
-                      color: "white",
-                      borderRadius: "0.4rem",
-                      height: "2.2rem",
-                      width: "fit-content",
-                      padding: "0 1rem 0 1rem",
-                      fontWeight: "600",
-                      border: "none",
-                    }}
-                    onClick={handleLogout}
-                  >
-                    Log Out
-                  </button>
-                </li>
-              </>
-            )}
-          </ul>
-        </div>
-      </nav>
-    </div>
+            {!localStorage.getItem("token") ? "Login" : "Logout"}
+          </button>
+        </ul>
+      </div>
+    </nav>
   );
 };
 
