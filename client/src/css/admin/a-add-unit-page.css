@@ -1,3 +1,78 @@
 .a-add-unit-page-outer-div {
   margin-top: 6rem;
 }
+
+.a-add-unit-page-sec-div {
+  margin-bottom: 3rem;
+}
+
+.a-add-unit-page-text-textarea {
+  border-radius: 0.4rem;
+  outline: none;
+  border: 0.05rem solid var(--grey);
+  width: 100%;
+
+  padding: 0.8rem;
+  font-family: var(--font-family-2);
+}
+
+.a-add-unit-page-text-textarea:focus {
+  border: none;
+  /* box-shadow: var(--box-shadow-1); */
+  border: 0.1rem solid var(--grey);
+}
+
+.a-add-unit-page-input {
+  border-radius: 0.4rem;
+  outline: none;
+  border: 0.05rem solid var(--grey);
+  width: 100%;
+  height: 2.4rem;
+  padding: 0.8rem;
+  font-family: var(--font-family-2);
+}
+
+.a-add-unit-page-input:focus {
+  border: none;
+  /* box-shadow: var(--box-shadow-1); */
+  border: 0.1rem solid var(--grey);
+}
+
+.a-add-unit-page-activity-remove-btn {
+  border: none;
+  background-color: transparent;
+  color: var(--red);
+}
+
+.a-add-unit-page-btn {
+  border-radius: 0.4rem;
+  border: none;
+  background-color: var(--blue);
+  /* margin: auto; */
+  /* margin-top: 1rem; */
+  /* margin-bottom: 2rem; */
+  height: 2.75rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  color: white;
+  font-family: var(--font-family-2);
+}
+
+.a-add-unit-page-btn:hover {
+  background-color: var(--yuva-dark-blue);
+  color: white;
+}
+
+.a-add-unit-page-opt-input {
+  border-radius: 0.3rem;
+  outline: none;
+  padding: 0 0.5rem;
+  height: 2rem;
+  border: 0.05rem solid var(--grey);
+}
+
+.a-add-unit-page-opt-input:focus {
+  border: none;
+  /* box-shadow: var(--box-shadow-1); */
+  border: 0.1rem solid var(--grey);
+}

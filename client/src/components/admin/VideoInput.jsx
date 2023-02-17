@@ -2,23 +2,14 @@ import React from "react";
 
 import "../../css/admin/a-add-unit-page.css";
 
-function VideoInput(props) {
+const VideoInput = (props) => {
   return (
-    <div
-      className="form-group row profile"
-      style={{ margin: 0, marginBottom: "0.8rem" }}
-    >
-      <label
-        for={props.id}
-        className="col-sm-2 col-form-label text-ff2"
-        style={{ paddingLeft: "0" }}
-      >
-        {props.label}
-      </label>
-      <div className="col-sm-10 text-ff2" style={{ padding: 0 }}>
+    <div style={{ marginBottom: "0.8rem" }} className="text-ff2">
+      <label htmlFor={props.id}>{props.label}</label>
+      <div>
         <input
+          className="a-add-unit-page-input"
           type="text"
-          className="form-control"
           id={props.id}
           name={props.name}
           placeholder={props.placeholder}
@@ -30,6 +21,6 @@ function VideoInput(props) {
       </div>
     </div>
   );
-}
+};
 
 export default VideoInput;

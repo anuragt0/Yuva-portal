@@ -92,6 +92,7 @@ const UserQuiz = () => {
           }
         } else if (response.ok && response.status === 200) {
           setQuiz(result.quiz);
+          // console.log(result.quiz.length);
           setStoredQuizScore(result.quizScoreInPercent);
           setIsEligibleToTakeQuiz(result.isEligibleToTakeQuiz);
 
@@ -99,12 +100,7 @@ const UserQuiz = () => {
 
           let initialResponse = [];
           for (var counter = 0; counter < result.quiz.length; counter++) {
-            initialResponse.push({
-              isOption1Checked: false,
-              isOption2Checked: false,
-              isOption3Checked: false,
-              isOption4Checked: false,
-            });
+            initialResponse.push([false, false, false, false]);
           }
 
           setResponse(initialResponse);
@@ -125,26 +121,31 @@ const UserQuiz = () => {
   async function handleSubmitQuiz() {
     // calculating the result
     let correctRespCnt = 0; // count of correct responses
+    // console.log(response);
 
-    for (let quizIndex = 0; quizIndex < quiz.length; quizIndex++) {
+    for (let quizItemIdx = 0; quizItemIdx < quiz.length; quizItemIdx++) {
       let isRespCorrect = true;
       /* if default value of isRespCorrect is true, then this handles all the cases including the edge case when the user doesnot enter
       any response for a question, then it would be correct only if all the options of that question are false */
-
-      for (let optIndex = 0; optIndex < 4; optIndex++) {
+      // quiz[quizIdx].options.length
+      for (let optIdx = 0; optIdx < 4; optIdx++) {
         isRespCorrect =
           isRespCorrect &&
-          quiz[quizIndex][`isOption${optIndex + 1}Checked`] ===
-            response[quizIndex][`isOption${optIndex + 1}Checked`];
+          quiz[quizItemIdx].options[optIdx].isChecked ===
+            response[quizItemIdx][optIdx];
       }
 
-      correctRespCnt += isRespCorrect;
+      if (isRespCorrect) {
+        correctRespCnt++;
+      }
     }
+
+    // console.log(correctRespCnt);
 
     let calculatedCurrQuizScore = (correctRespCnt * 100) / quiz.length;
 
     calculatedCurrQuizScore = roundOffDecimalPlaces(calculatedCurrQuizScore, 2); // round off to two decimal places
-    // console.log(calculatedCurrQuizScore);
+    console.log(calculatedCurrQuizScore);
 
     // submitting result to server
     setIsLoading(true);
@@ -192,11 +193,13 @@ const UserQuiz = () => {
     }
   }
 
-  function handleResponseChange(isChecked, quizIndex, optIndex) {
+  function handleResponseChange(e, quizItemIdx, optIdx) {
     setResponse((prevResponse) => {
       let newResponse = prevResponse;
-      newResponse[quizIndex][`isOption${optIndex + 1}Checked`] = isChecked;
+      const isChecked = e.target.checked;
+      newResponse[quizItemIdx][optIdx] = isChecked;
       // console.log(newResponse);
+      console.log(e.target.checked, quizItemIdx, optIdx);
 
       return newResponse;
     });
@@ -293,40 +296,26 @@ const UserQuiz = () => {
 
           <div className="u-quiz-page-quiz-div">
             <SecCard>
-              {quiz.map((quizObject, quizIndex) => {
-                let options = [];
-                options.push(quizObject.option1);
-                options.push(quizObject.option2);
-                options.push(quizObject.option3);
-                options.push(quizObject.option4);
-
+              {quiz.map((quizItem, quizItemIdx) => {
                 return (
-                  <div key={quizIndex} style={{ margin: "10px" }}>
+                  <div key={quizItemIdx} style={{ margin: "10px" }}>
                     <p>
-                      {quizIndex + 1}. {quizObject.question}
+                      {quizItemIdx + 1}. {quizItem.question}
                     </p>
 
-                    {options.map((option, optIndex) => {
+                    {quizItem.options.map((option, optIdx) => {
                       return (
-                        <div key={optIndex} style={{ display: "block" }}>
+                        <div key={optIdx} style={{ display: "block" }}>
                           <input
                             className="form-check-input mx-3"
                             type="checkbox"
-                            id={quizIndex * 11 + optIndex + 1}
-                            value={
-                              response[quizIndex][
-                                `isOption${optIndex + 1}Checked`
-                              ]
-                            }
+                            // id={quizItemIdx * 11 + optIdx + 1}
+                            value={response[quizItemIdx][optIdx]}
                             onChange={(e) => {
-                              handleResponseChange(
-                                e.target.checked,
-                                quizIndex,
-                                optIndex
-                              );
+                              handleResponseChange(e, quizItemIdx, optIdx);
                             }}
                           />
-                          <label>{option}</label>
+                          <label>{option.text}</label>
                         </div>
                       );
                     })}

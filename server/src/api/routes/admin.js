@@ -220,6 +220,8 @@ router.post(
       return res.status(400).json({ error: statusText.INVALID_TOKEN });
     }
 
+    console.log(req.originalUrl);
+
     // todo : validation
     const unit = req.body;
     const { courseId } = req.params;
