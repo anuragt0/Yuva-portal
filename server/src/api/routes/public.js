@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 
 // My models
 const User = require("../../databases/mongodb/models/User");
@@ -13,6 +14,7 @@ const { decodeCertificateId } = require("../../utilities/helper_functions");
 const {
   isRequiredUnitActivityPresent,
 } = require("../../utilities/helper_functions");
+const { response } = require("express");
 
 // ! what if the user's activity field is not present, and we include it in the projection
 
@@ -20,6 +22,7 @@ router.get("/certificate/:certId", async (req, res) => {
   const { certId } = req.params;
   // console.log(certId);
   // console.log(decodeCertificateId(certId));
+
   const { userMongId, verticalId, courseId, unitId } =
     decodeCertificateId(certId);
 
@@ -35,7 +38,8 @@ router.get("/certificate/:certId", async (req, res) => {
     // console.log(userDoc);
 
     if (!isRequiredUnitActivityPresent(userDoc, verticalId, courseId, unitId)) {
-      console.log("1 Invalid cert Id");
+      console.log("Invalid cert Id: Invalid User mongoId");
+
       return res.status(404).json({ statusText: statusText.INVALID_CERT_ID });
     }
 
@@ -61,7 +65,7 @@ router.get("/certificate/:certId", async (req, res) => {
     const courseDoc = await Course.findById(courseId, courseProj);
 
     if (!courseDoc) {
-      console.log("Invalid cert Id: course doc not found");
+      console.log("Invalid cert Id: Course doc not found");
       return res.status(404).json({ statusText: statusText.INVALID_CERT_ID });
     }
 
@@ -76,7 +80,7 @@ router.get("/certificate/:certId", async (req, res) => {
     }
 
     if (!unitDoc) {
-      console.log("Invalid cert Id: unit doc not found");
+      console.log("Invalid cert Id: Unit doc not found");
       return res.status(404).json({ statusText: statusText.INVALID_CERT_ID });
     }
 
@@ -98,7 +102,10 @@ router.get("/certificate/:certId", async (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    return res
+      .status(500)
+      .json({ statusText: statusText.INTERNAL_SERVER_ERROR });
   }
 });
 

@@ -71,7 +71,7 @@ const CertPage = () => {
 
         setIsLoading(false);
       } catch (err) {
-        console.log(err.message);
+        console.log(err);
         setIsLoading(false);
       }
     };
@@ -81,8 +81,9 @@ const CertPage = () => {
 
   const handleCertPDFDownload = () => {
     // console.log("downloading");
+    const certFileName = `Yuva_Portal_${certInfo.holderName}_${certInfo.unitId}`;
 
-    downloadCertificate();
+    downloadCertificate({ ...certInfo, fileName: certFileName });
   };
 
   const URL = "https://www.youtube.com/";

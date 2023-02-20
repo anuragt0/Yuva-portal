@@ -71,7 +71,7 @@ const UserQuiz = () => {
         );
 
         const result = await response.json();
-        console.log(result);
+        // console.log(result);
 
         if (response.status >= 400 && response.status < 600) {
           if (response.status === 401) {
@@ -92,7 +92,6 @@ const UserQuiz = () => {
           }
         } else if (response.ok && response.status === 200) {
           setQuiz(result.quiz);
-          // console.log(result.quiz.length);
           setStoredQuizScore(result.quizScoreInPercent);
           setIsEligibleToTakeQuiz(result.isEligibleToTakeQuiz);
 
@@ -199,7 +198,7 @@ const UserQuiz = () => {
       const isChecked = e.target.checked;
       newResponse[quizItemIdx][optIdx] = isChecked;
       // console.log(newResponse);
-      console.log(e.target.checked, quizItemIdx, optIdx);
+      console.log(isChecked, quizItemIdx, optIdx);
 
       return newResponse;
     });
@@ -305,12 +304,18 @@ const UserQuiz = () => {
 
                     {quizItem.options.map((option, optIdx) => {
                       return (
-                        <div key={optIdx} style={{ display: "block" }}>
+                        <div
+                          key={quizItemIdx * 11 + optIdx + 1}
+                          // style={{ display: "block" }}
+                        >
                           <input
                             className="form-check-input mx-3"
                             type="checkbox"
-                            // id={quizItemIdx * 11 + optIdx + 1}
+                            id={quizItemIdx * 11 + optIdx + 1}
+                            // defaultChecked={response[quizItemIdx][optIdx]}
+                            // checked={response[quizItemIdx][optIdx]}
                             value={response[quizItemIdx][optIdx]}
+                            // checked={true}
                             onChange={(e) => {
                               handleResponseChange(e, quizItemIdx, optIdx);
                             }}
