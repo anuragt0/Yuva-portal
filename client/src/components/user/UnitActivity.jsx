@@ -22,6 +22,7 @@ const UnitActivity = (props) => {
     // console.log(file);
 
     // validate file size
+    console.log(vars.IMAGE_SIZE_LIMIT_IN_BYTES);
     const sizeInBytes = file.size;
     if (sizeInBytes > vars.IMAGE_SIZE_LIMIT_IN_BYTES) {
       document.getElementById(`activity-file-input-${props.index}`).value =

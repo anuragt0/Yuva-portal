@@ -11,7 +11,7 @@ const vars = {
     "Only those participants will be given certificates who appear and submit the response within stipulated time with the score of above 65%.",
     "If you are not able to pass the quiz watch the content again and retake the quiz.",
   ],
-  IMAGE_SIZE_LIMIT_IN_BYTES: 1000 * 1000, // 1MB = 10^3KB = 10^6 Bytes
+  IMAGE_SIZE_LIMIT_IN_BYTES: 3 * 1000 * 1000, // 1MB = 10^3KB = 10^6 Bytes
   IMAGE_MIME_TYPES_WHITE_LIST: ["image/jpeg", "image/png"],
 };
 

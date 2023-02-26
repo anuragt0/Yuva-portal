@@ -533,10 +533,12 @@ router.post(
   }
 );
 
-const fs = require("fs");
+// const fs = require("fs");
+// const { promisify } = require("util");
+// const unlinkAsync = promisify(fs.unlink);
 
-const { promisify } = require("util");
-const unlinkAsync = promisify(fs.unlink);
+const { unlink } = require("node:fs/promises");
+
 router.post(
   "/verticals/:verticalId/courses/:courseId/units/:unitId/activity/submit",
   fetchPerson,
@@ -554,13 +556,6 @@ router.post(
     try {
       // compress file from 'original-file-path' to 'compressed-file-path'
       const compressResult = await sharp(originalFilePath)
-        .resize(
-          vars.imageFile.COMPRESS_IMG_WIDTH_IN_PX,
-          vars.imageFile.COMPRESS_IMG_HEIGHT_IN_PX,
-          {
-            fit: "inside",
-          }
-        )
         .resize({
           width: vars.imageFile.COMPRESS_IMG_WIDTH_IN_PX,
           fit: sharp.fit.contain,
@@ -571,7 +566,7 @@ router.post(
       // console.log(compressResult);
 
       // unlink original file
-      await unlinkAsync(originalFilePath);
+      await unlink(originalFilePath);
 
       // upload compressed file to firebase, with downloadToken = fileName
 
@@ -599,7 +594,7 @@ router.post(
         firebaseFileDownloadToken
       );
       // unlink compressed file
-      await unlinkAsync(compressedFilePath);
+      await unlink(compressedFilePath);
 
       // Save file download token to MongoDB
       const { verticalId, courseId, unitId } = req.params;
