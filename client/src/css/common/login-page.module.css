@@ -1,0 +1,33 @@
+/* .login-page-outer-div {
+  margin-top: 8rem;
+  display: grid;
+  grid-template-columns: 0fr 2fr;
+}
+
+.login-page-yuva-img {
+  width: 100%;
+} */
+
+.outerDiv {
+  margin-top: 8rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* border: 2px solid blue; */
+}
+
+.yuvaImg {
+  width: 100%;
+  /* border: 2px solid red; */
+}
+
+@media (max-width: 992px) and (min-width: 576px) {
+  .outerDiv {
+    grid-template-columns: 0.75fr 1.25fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .outerDiv {
+    grid-template-columns: 0fr 1fr;
+  }
+}

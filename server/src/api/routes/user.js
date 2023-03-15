@@ -63,7 +63,7 @@ router.post("/dummy", async (req, res) => {
 router.post("/login", async (req, res) => {
   // todo : validation
   // console.log(req.originalUrl);
-  // console.log(req.body);
+  console.log(req.body);
 
   const userId = req.body.userId;
   const enteredPassword = req.body.password;
@@ -106,38 +106,61 @@ router.post("/login", async (req, res) => {
       .status(200)
       .json({ statusText: statusText.LOGIN_IN_SUCCESS, token: token });
   } catch (error) {
-    // console.log(error.message);
+    console.log(error);
     res.status(500).json({ statusText: statusText.INTERNAL_SERVER_ERROR });
   }
 });
 
-router.post("/register", fetchPerson, isUser, async (req, res) => {
-  const mongoId = req.mongoId;
-
-  // todo: validation
-  const regForm = req.body;
+router.post("/check-userid-availability", async (req, res) => {
+  const desiredUserId = req.body.userId;
 
   try {
-    const userDoc = await User.findById(mongoId);
+    const userDoc = await User.findOne({ userId: desiredUserId });
 
-    // ! you can also make a check for isPassReset here, but some checking is already being done at other places, to prevent someone to register before pass reset
-
-    if (userDoc.isRegistered) {
-      return res.status(403).json({
-        statusText: statusText.REGISTERED_ALREADY,
-        isRegistered: true,
+    if (!userDoc) {
+      res.status(200).json({
+        statusText: statusText.USER_ID_AVAILABLE,
+        isUserIdAvailable: true,
+      });
+    } else {
+      res.status(200).json({
+        statusText: statusText.USER_ID_NOT_AVAILABLE,
+        isUserIdAvailable: false,
       });
     }
+  } catch (err) {
+    console.log(err.message);
 
-    await User.findByIdAndUpdate(
-      mongoId,
-      { ...regForm, isRegistered: true },
-      { overwrite: false }
-    );
-    res.status(200).json({ statusText: statusText.REGISTRATION_SUCCESS });
-  } catch (error) {
-    console.error(error.message);
     res.status(500).json({ error: statusText.INTERNAL_SERVER_ERROR });
+  }
+});
+
+router.post("/register", async (req, res) => {
+  console.log(req.originalUrl);
+  // manual validation not required, mongooose validation running
+
+  const regisForm = req.body;
+
+  console.log(regisForm);
+
+  /* 
+  todo:
+  regisForm contains an extra field cnfrmPass but only the fields in the schema will be saved by mongoose
+  we can remove the field for extra safety
+  */
+
+  try {
+    // hash password and update form
+    const salt = await bcrypt.genSalt(vars.bcryptSaltRounds);
+    regisForm.password = await bcrypt.hash(regisForm.password, salt);
+
+    await User.create(regisForm);
+
+    res.status(200).json({ statusText: statusText.REGISTRATION_SUCCESS });
+  } catch (err) {
+    console.log(err);
+    //! note: todo.txt contains the ways to get only the first error from mongoose so that we can return it directly to client
+    res.status(500).json({ statusText: statusText.INTERNAL_SERVER_ERROR });
   }
 });
 

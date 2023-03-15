@@ -1,120 +1,136 @@
-import React, { useState, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { toast } from "react-hot-toast";
 
 // My components
 import SecCard from "../../components/user/SecCard";
 
 // My css
-import "../../css/user/u-regis-page.css";
+import regisCss from "../../css/user/regis-page.module.css";
 
-// import "../../App.css";
-import { SERVER_ORIGIN } from "../../utilities/constants";
+import { SERVER_ORIGIN, vars } from "../../utilities/constants";
+import { validateRegisForm } from "../../utilities/helper_functions";
 
-const UserRegis = () => {
-  const [info, setInfo] = useState({
-    fName: "",
-    mName: "",
-    lName: "",
-    region: "",
-    collegeName: "",
-    branch: "",
-    phone: "",
-    addLine1: "",
-    addLine2: "",
-    city: "",
-    pincode: "",
-    country: "",
+const GreenMsg = (props) => {
+  return (
+    <>
+      {" "}
+      |{" "}
+      <span style={{ color: "green", fontWeight: "600" }}>
+        {props.children}
+      </span>
+    </>
+  );
+};
+
+const RedMsg = (props) => {
+  return (
+    <>
+      {" "}
+      |{" "}
+      <span style={{ color: "red", fontWeight: "600" }}>{props.children}</span>
+    </>
+  );
+};
+
+const UserRegis = (props) => {
+  const [regisDetails, setRegisDetails] = useState({
+    email: "a",
+    userId: "a",
+    password: "a",
+    cnfrmPassword: "a",
+
+    fName: "aa",
+    // mName: "a",
+    lName: "a",
+
+    collegeName: "a",
+    region: "a",
+    branch: "a",
+
+    phone: "a",
+    addLine1: "a",
+    addLine2: "a",
+    city: "a",
+    pincode: "a",
+    country: "a",
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  const [isBtnDisabled, setIsBtnDisabled] = useState(false);
 
-  useEffect(() => {
-    const canVisitPage = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          `${SERVER_ORIGIN}/api/user/auth/verify-token`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "auth-token": localStorage.getItem("token"),
-            },
-          }
-        );
+  const [isUserIdAvailable, setIsUserIdAvailable] = useState(false);
+  const [wasUserIdAvailabilityChecked, setWasUserIdAvailabilityChecked] =
+    useState(false);
+  let userIdAvailabilityCheckTimer = null;
+  const userIdAvailabilityCheckDelayInMilliSec = 1000;
 
-        const result = await response.json();
-        console.log(response);
-
-        console.log(result);
-
-        setIsLoading(false);
-
-        if (response.status >= 400 && response.status < 600) {
-          if (response.status === 401) {
-            if (!("isLoggedIn" in result) || result.isLoggedIn === false) {
-              // redirect to login page, navigate("/user/login");
-              console.log("go to login");
-            }
-          } else {
-            alert("Internal server error"); // todo: toast notify
-          }
-        } else if (response.ok && response.status === 200) {
-          if (!result.userDoc.isPassReset) {
-            console.log("go to reset password");
-          } else if (result.userDoc.isRegistered) {
-            console.log("go to home");
-          } else {
-            console.log("you can visit this page");
-          }
-        } else {
-          // for future
-        }
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-
-    canVisitPage();
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const checkUserIdAvailability = async () => {
+    // console.log("checking user id availability");
+    if (regisDetails.userId === "") {
+      return;
+    }
 
     try {
-      setIsLoading(true);
+      const response = await fetch(
+        `${SERVER_ORIGIN}/api/user/auth/check-userid-availability`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId: regisDetails.userId }),
+        }
+      );
+      const result = await response.json();
+      // console.log(response);
+      console.log(result);
+
+      if (response.status >= 400 && response.status < 600) {
+        if (response.status === 500) {
+          alert("Internal server error"); // todo: toast notify
+        }
+      } else if (response.ok && response.status === 200) {
+        setWasUserIdAvailabilityChecked(true);
+        setIsUserIdAvailable(result.isUserIdAvailable);
+      } else {
+        // for future
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const handleRegisterClick = async () => {
+    console.log("regis clicked");
+
+    // todo: trim fields
+    // const { isValid, desc } = validateRegisForm(regisDetails);
+    // if (!isValid) {
+    //   // show toast
+    //   return;
+    // }
+
+    try {
+      // setIsBtnDisabled(true);
+
       const response = await fetch(`${SERVER_ORIGIN}/api/user/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "auth-token": localStorage.getItem("token"),
         },
-        body: JSON.stringify(info),
+        body: JSON.stringify(regisDetails),
       });
 
       const result = await response.json();
       // console.log(response);
-
       console.log(result);
 
-      setIsLoading(false);
-
       if (response.status >= 400 && response.status < 600) {
-        if (response.status === 401) {
-          if (!("isLoggedIn" in result) || result.isLoggedIn === false) {
-            // redirect to login page, navigate("/user/login");
-            console.log("go to login");
-          }
-        } else if (response.status === 403) {
-          if (!("isRegistered" in result) || result.isRegistered === true) {
-            console.log("go to home*");
-          }
-        } else {
-          alert("Internal server error"); // todo: toast notify
+        if (response.status === 500) {
+          toast.error("Internal server error"); // todo: toast notify
+          setIsBtnDisabled(false); // can reclick on register btn
         }
       } else if (response.ok && response.status === 200) {
-        console.log("go to home**");
+        toast.success(result.statusText); // regis btn remains disabled
       } else {
         // for future
       }
@@ -124,253 +140,325 @@ const UserRegis = () => {
   };
 
   const onChange = (e) => {
-    setInfo((prevInfo) => {
-      const newInfo = { ...prevInfo, [e.target.name]: e.target.value };
-      console.log(newInfo);
+    setRegisDetails((prevRegisDetails) => {
+      const newRegisDetails = {
+        ...prevRegisDetails,
+        [e.target.name]: e.target.value,
+      };
+      // console.log(newregisDetails);
 
-      return newInfo;
+      return newRegisDetails;
     });
   };
 
+  const UserIdAvailabilityMsg = (props) => {
+    return wasUserIdAvailabilityChecked ? (
+      isUserIdAvailable ? (
+        <GreenMsg>Available</GreenMsg>
+      ) : (
+        <RedMsg>Not available</RedMsg>
+      )
+    ) : null;
+  };
+
   return (
-    <div className="u-regis-page-outer-div">
+    <div className={regisCss.outerDiv}>
       <SecCard>
         <h2 className="text-ff1">Registration</h2>
 
-        <form>
-          <div class="form-group row profile">
-            <label for="staticEmail" class="col-sm-2 col-form-label">
+        <div className="text-ff2" autoComplete="off">
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="userId">
+              User ID <UserIdAvailabilityMsg />
+            </label>
+            <input
+              className={regisCss.regisInput}
+              type="text"
+              id="userId"
+              name="userId"
+              placeholder="xyz@*123$"
+              autoComplete="off"
+              maxLength={vars.regisForm.userId.maxLen}
+              value={regisDetails.userId}
+              onChange={onChange}
+              onKeyDown={() => {
+                clearTimeout(userIdAvailabilityCheckTimer);
+                setWasUserIdAvailabilityChecked(false);
+              }}
+              onKeyUp={() => {
+                clearTimeout(userIdAvailabilityCheckTimer);
+                userIdAvailabilityCheckTimer = setTimeout(
+                  checkUserIdAvailability,
+                  userIdAvailabilityCheckDelayInMilliSec
+                );
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="pass">
+              Password
+            </label>
+            <input
+              className={regisCss.regisInput}
+              type="password"
+              id="password"
+              name="password"
+              placeholder="@ddx*12fqa3$"
+              autoComplete="off"
+              maxLength={vars.regisForm.pass.maxLen}
+              value={regisDetails.pass}
+              onChange={onChange}
+            />
+          </div>
+
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="cnfrmPass">
+              Confirm Password
+            </label>
+            <input
+              className={regisCss.regisInput}
+              type="password"
+              id="cnfrmPassword"
+              name="cnfrmPassword"
+              placeholder="@ddx*12fqa3$"
+              autoComplete="off"
+              maxLength={vars.regisForm.cnfrmPass.maxLen}
+              value={regisDetails.cnfrmPass}
+              onChange={onChange}
+            />
+          </div>
+
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="email">
               Email
             </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                readonly
-                class="form-control-plaintext"
-                id="staticEmail"
-                value="email@email.com"
-              />
-            </div>
-          </div>
-          <div class="form-group row profile">
-            <label for="staticUserId" class="col-sm-2 col-form-label">
-              UserID
-            </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                readonly
-                class="form-control-plaintext"
-                id="staticUserId"
-                value="UserID"
-              />
-            </div>
-          </div>
-          <div class="form-group row profile">
-            <label for="fName" class="col-sm-2 col-form-label">
-              First Name
-            </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                class="form-control"
-                id="fName"
-                name="fName"
-                placeholder="First Name"
-                value={info.fName}
-                onChange={onChange}
-              />
-            </div>
-          </div>
-          <div class="form-group row profile">
-            <label for="mName" class="col-sm-2 col-form-label">
-              Last Name
-            </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                class="form-control"
-                id="mName"
-                name="mName"
-                placeholder="Middle Name"
-                value={info.mName}
-                onChange={onChange}
-              />
-            </div>
-          </div>
-          <div class="form-group row profile">
-            <label for="lName" class="col-sm-2 col-form-label">
-              Last Name
-            </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                class="form-control"
-                id="lName"
-                name="lName"
-                placeholder="Last Name"
-                value={info.lName}
-                onChange={onChange}
-              />
-            </div>
+            <input
+              className={regisCss.regisInput}
+              type="email"
+              id="email"
+              name="email"
+              placeholder="xyz@gmail.com"
+              value={regisDetails.email}
+              onChange={onChange}
+            />
           </div>
 
-          <div class="form-group row profile">
-            <label for="region" class="col-sm-2 col-form-label">
-              Region
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="fName">
+              First name
             </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                class="form-control"
-                id="region"
-                name="region"
-                placeholder="Region"
-                value={info.region}
-                onChange={onChange}
-              />
-            </div>
+            <input
+              className={regisCss.regisInput}
+              type="text"
+              id="fName"
+              name="fName"
+              placeholder="Apoorv"
+              autoComplete="off"
+              maxLength={vars.regisForm.fName.maxLen}
+              value={regisDetails.fName}
+              onChange={onChange}
+            />
           </div>
-          <div class="form-group row profile">
-            <label for="collegeName" class="col-sm-2 col-form-label">
+
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="mName">
+              Middle name (Optional)
+            </label>
+            <input
+              className={regisCss.regisInput}
+              type="text"
+              id="mName"
+              name="mName"
+              placeholder="Jain"
+              autoComplete="off"
+              maxLength={vars.regisForm.mName.maxLen}
+              value={regisDetails.mName}
+              onChange={onChange}
+            />
+          </div>
+
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="lName">
+              Last name
+            </label>
+            <input
+              className={regisCss.regisInput}
+              type="text"
+              id="lName"
+              name="lName"
+              placeholder="Jain"
+              autoComplete="off"
+              maxLength={vars.regisForm.lName.maxLen}
+              value={regisDetails.lName}
+              onChange={onChange}
+            />
+          </div>
+
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="collegeName">
               College name
             </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                class="form-control"
-                id="collegeName"
-                name="collegeName"
-                placeholder="Enter your college name"
-                value={info.collegeName}
-                onChange={onChange}
-              />
-            </div>
+            <input
+              className={regisCss.regisInput}
+              type="text"
+              id="collegeName"
+              name="collegeName"
+              placeholder="Lakshmi Narain College of Technology"
+              autoComplete="off"
+              maxLength={vars.regisForm.collegeName.maxLen}
+              value={regisDetails.collegeName}
+              onChange={onChange}
+            />
           </div>
-          <div class="form-group row profile">
-            <label for="branch" class="col-sm-2 col-form-label">
+
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="region">
+              Region
+            </label>
+            <input
+              className={regisCss.regisInput}
+              type="text"
+              id="region"
+              name="region"
+              placeholder="Region"
+              autoComplete="off"
+              maxLength={vars.regisForm.region.maxLen}
+              value={regisDetails.region}
+              onChange={onChange}
+            />
+          </div>
+
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="branch">
               Branch
             </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                class="form-control"
-                id="branch"
-                name="branch"
-                placeholder="Branch"
-                value={info.branch}
-                onChange={onChange}
-              />
-            </div>
+            <input
+              className={regisCss.regisInput}
+              type="text"
+              id="branch"
+              name="branch"
+              placeholder="Computer Science and Engineering"
+              autoComplete="off"
+              maxLength={vars.regisForm.branch.maxLen}
+              value={regisDetails.branch}
+              onChange={onChange}
+            />
           </div>
-          <div class="form-group row profile">
-            <label for="phone" class="col-sm-2 col-form-label">
+
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="phone">
               Phone
             </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                class="form-control"
-                id="phone"
-                name="phone"
-                placeholder="Phone"
-                value={info.phone}
-                onChange={onChange}
-              />
-            </div>
+            <input
+              className={regisCss.regisInput}
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="9998887776"
+              autoComplete="off"
+              maxLength={vars.regisForm.phone.maxLen}
+              pattern="[0-9]{3} [0-9]{3} [0-9]{4}"
+              value={regisDetails.phone}
+              onChange={onChange}
+            />
           </div>
 
-          <div class="form-group row profile">
-            <label for="addLine1" class="col-sm-2 col-form-label">
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="addLine1">
               Address line 1
             </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                class="form-control"
-                id="addLine1"
-                name="addLine1"
-                placeholder="Address line 1"
-                value={info.addLine1}
-                onChange={onChange}
-              />
-            </div>
-          </div>
-          <div class="form-group row profile">
-            <label for="addLine2" class="col-sm-2 col-form-label">
-              Address line 2
-            </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                class="form-control"
-                id="addLine2"
-                name="addLine2"
-                placeholder="Address line 2"
-                value={info.addLine2}
-                onChange={onChange}
-              />
-            </div>
-          </div>
-          <div class="form-group row profile">
-            <label for="city" class="col-sm-2 col-form-label">
-              City
-            </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                class="form-control"
-                id="city"
-                name="city"
-                placeholder="City"
-                value={info.city}
-                onChange={onChange}
-              />
-            </div>
-          </div>
-          <div class="form-group row profile">
-            <label for="pincode" class="col-sm-2 col-form-label">
-              Pincode
-            </label>
-            <div class="col-sm-10">
-              <input
-                type="number"
-                class="form-control"
-                id="pincode"
-                name="pincode"
-                placeholder="Pincode"
-                value={info.pincode}
-                onChange={onChange}
-              />
-            </div>
-          </div>
-          <div class="form-group row profile">
-            <label for="country" class="col-sm-2 col-form-label">
-              Country
-            </label>
-            <div class="col-sm-10">
-              <input
-                type="text"
-                class="form-control"
-                id="country"
-                name="country"
-                placeholder="Country"
-                value={info.country}
-                onChange={onChange}
-              />
-            </div>
+            <input
+              className={regisCss.regisInput}
+              type="text"
+              id="addLine1"
+              name="addLine1"
+              placeholder="Address line 1"
+              autoComplete="off"
+              maxLength={vars.regisForm.addLine1.maxLen}
+              pattern="[0-9]{3} [0-9]{3} [0-9]{4}"
+              value={regisDetails.addLine1}
+              onChange={onChange}
+            />
           </div>
 
-          <div style={{ margin: "50px 0 0 44%" }}>
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="addLine2">
+              Address line 2
+            </label>
+            <input
+              className={regisCss.regisInput}
+              type="text"
+              id="addLine2"
+              name="addLine2"
+              placeholder="Address line 2"
+              autoComplete="off"
+              maxLength={vars.regisForm.addLine2.maxLen}
+              value={regisDetails.addLine2}
+              onChange={onChange}
+            />
+          </div>
+
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="city">
+              City
+            </label>
+            <input
+              className={regisCss.regisInput}
+              type="text"
+              id="city"
+              name="city"
+              placeholder="Vidisha"
+              autoComplete="off"
+              maxLength={vars.regisForm.city.maxLen}
+              value={regisDetails.city}
+              onChange={onChange}
+            />
+          </div>
+
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="pincode">
+              Pincode
+            </label>
+            <input
+              className={regisCss.regisInput}
+              type="text"
+              id="pincode"
+              name="pincode"
+              placeholder="464001"
+              autoComplete="off"
+              maxLength={vars.regisForm.pincode.maxLen}
+              value={regisDetails.pincode}
+              onChange={onChange}
+            />
+          </div>
+
+          <div style={{ marginBottom: "0.8rem" }}>
+            <label className={regisCss.regisLabel} htmlFor="country">
+              Country
+            </label>
+            <input
+              className={regisCss.regisInput}
+              type="text"
+              id="country"
+              name="country"
+              placeholder="India"
+              autoComplete="off"
+              maxLength={vars.regisForm.country.maxLen}
+              value={regisDetails.country}
+              onChange={onChange}
+            />
+          </div>
+          <div style={{ textAlign: "center", marginTop: "2rem" }}>
             <button
-              onClick={handleSubmit}
-              className="btn btn-success update"
-              style={{}}
+              onClick={handleRegisterClick}
+              className={regisCss.regisBtn}
+              disabled={isBtnDisabled}
             >
-              Update
+              Register
             </button>
           </div>
-        </form>
+        </div>
       </SecCard>
     </div>
   );

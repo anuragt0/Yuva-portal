@@ -114,6 +114,154 @@ const convertBytesToMegaBytes = (bytes) => {
   return bytes / 1000000;
 };
 
+/////////////////////////////////////////// Registration Form Validation ///////////////////////////////////////////////////
+
+const isRegisEmailValid = (email) => {
+  if (email === "") {
+    return false;
+  }
+  return true;
+};
+
+const isRegisPassValid = (pass) => {
+  if (pass === "") {
+    return false;
+  }
+  return true;
+};
+
+const isRegisCnfrmPassValid = (pass, cnfrmPass) => {
+  if (cnfrmPass === "") {
+    return false;
+  } else if (cnfrmPass !== pass) {
+    return false;
+  }
+  return true;
+};
+
+const isRegisFNameValid = (fName) => {
+  if (fName === "") {
+    return false;
+  }
+  return true;
+};
+
+const isRegisMNameValid = (mName) => {
+  if (mName === "") {
+    return false;
+  }
+  return true;
+};
+
+const isRegisLNameValid = (lName) => {
+  if (lName === "") {
+    return false;
+  }
+  return true;
+};
+
+const isRegisCollegeNameValid = (collegeName) => {
+  if (collegeName === "") {
+    return false;
+  }
+  return true;
+};
+const isRegisRegionValid = (region) => {
+  if (region === "") {
+    return false;
+  }
+  return true;
+};
+
+const isRegisBranchValid = (branch) => {
+  if (branch === "") {
+    return false;
+  }
+  return true;
+};
+
+const isRegisPhoneValid = (phone) => {
+  if (phone === "") {
+    return false;
+  }
+  return true;
+};
+
+const isRegisAddLine1Valid = (addLine1) => {
+  if (addLine1 === "") {
+    return false;
+  }
+  return true;
+};
+
+const isRegisAddLine2Valid = (addLine2) => {
+  if (addLine2 === "") {
+    return false;
+  }
+  return true;
+};
+
+const isRegisCityValid = (city) => {
+  if (city === "") {
+    return false;
+  }
+  return true;
+};
+
+const isRegisPincodeValid = (pincode) => {
+  if (pincode === "") {
+    return false;
+  }
+  return true;
+};
+const isRegisCountryValid = (country) => {
+  if (country === "") {
+    return false;
+  }
+  return true;
+};
+
+const isRegisFieldValid = (regisDetails, fieldName, fieldValue) => {
+  switch (fieldName) {
+    case "email":
+      return isRegisEmailValid(fieldValue);
+    case "pass":
+      return isRegisPassValid(fieldValue);
+    case "cnfrmPass":
+      return isRegisCnfrmPassValid(regisDetails["pass"], fieldValue);
+    case "fName":
+      return isRegisFNameValid(fieldValue);
+    case "mName":
+      return isRegisMNameValid(fieldValue);
+    case "lName":
+      return isRegisLNameValid(fieldValue);
+    case "collegeName":
+      return isRegisCollegeNameValid(fieldValue);
+    case "region":
+      return isRegisRegionValid(fieldValue);
+    case "branch":
+      return isRegisBranchValid(fieldValue);
+    case "phone":
+      return isRegisPhoneValid(fieldValue);
+    case "addLine1":
+      return isRegisAddLine1Valid(fieldValue);
+    case "addLine2":
+      return isRegisAddLine2Valid(fieldValue);
+    case "city":
+      return isRegisCityValid(fieldValue);
+    case "pincode":
+      return isRegisPincodeValid(fieldValue);
+    case "country":
+      return isRegisCountryValid(fieldValue);
+    default:
+      return false;
+  }
+};
+
+const validateRegisForm = (regisDetails) => {
+  return { isValid: true, desc: "All good" };
+};
+
 export {
   youtubeParser,
   refreshScreen,
@@ -121,4 +269,5 @@ export {
   roundOffDecimalPlaces,
   downloadCertificate,
   convertBytesToMegaBytes,
+  validateRegisForm,
 };

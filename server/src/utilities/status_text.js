@@ -8,6 +8,9 @@ const statusText = {
   REGISTERED_ALREADY: "Registered already",
   PASSWORD_NOT_RESET: "Password not reset",
 
+  USER_ID_AVAILABLE: "User Id is available",
+  USER_ID_NOT_AVAILABLE: "User Id is not available",
+
   TOKEN_NOT_FOUND: "Token not found",
   INVALID_TOKEN: "Invalid token",
   VERIFIED_TOKEN: "Token verified",

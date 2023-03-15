@@ -1,0 +1,11 @@
+.outerDiv {
+  border-radius: 1.5rem;
+  padding: 2.4rem 2rem;
+  box-shadow: 0 0 0.5rem 0 rgb(0, 0, 0, 0.9);
+}
+
+@media (max-width: 600px) {
+  .outerDiv {
+    padding: 2.4rem 1.6rem;
+  }
+}

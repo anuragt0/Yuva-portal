@@ -1,7 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 // My css
-import "../../css/common/login-form.css";
+import loginCss from "../../css/common/login-form.module.css";
 // ! Disable login button when loading by creating isLoading state, so user cannot press it again and again
 
 export const LoginForm = (props) => {
@@ -14,10 +15,10 @@ export const LoginForm = (props) => {
   };
 
   return (
-    <div className="login-form-outer-div">
-      <p className="login-form-heading">Login</p>
+    <div className={loginCss.outerDiv}>
+      <p className={loginCss.heading}>Login</p>
       <input
-        className="login-form-input"
+        className={loginCss.input}
         type="text"
         placeholder={props.role === "user" ? "User Id" : "Admin Id"}
         name={props.role === "user" ? "userId" : "adminId"}
@@ -25,7 +26,7 @@ export const LoginForm = (props) => {
         onChange={handleChange}
       />
       <input
-        className="login-form-input"
+        className={loginCss.input}
         type="text"
         placeholder="Password"
         name="password"
@@ -33,13 +34,20 @@ export const LoginForm = (props) => {
         onChange={handleChange}
       />
       <button
-        className="login-form-btn"
+        className={loginCss.btn}
         onClick={handleLogInClick}
         disabled={props.isBtnDisabled}
       >
         Login
       </button>
-      <p className="login-form-forgot-pass-text">Forgot your password ?</p>
+      {props.role === "user" ? (
+        <>
+          <p className={loginCss.forgotPassText}>Don't have an account ?</p>
+          <Link className={loginCss.forgotPassText} to="/user/register">
+            Register
+          </Link>
+        </>
+      ) : null}
     </div>
   );
 };

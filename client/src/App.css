@@ -7,6 +7,13 @@ body {
   margin: auto;
 }
 
+@media (max-width: 600px) {
+  .app-outer-div {
+    width: 92%;
+    margin: auto;
+  }
+}
+
 .top-bar span {
   font-size: 14px;
   padding: 8px 5px;

@@ -16,6 +16,7 @@ const vars = {
     COMPRESS_IMG_WIDTH_IN_PX: 400,
     COMPRESS_IMG_HEIGHT_IN_PX: 400,
   },
+  bcryptSaltRounds: 10,
 };
 
 module.exports = { vars };

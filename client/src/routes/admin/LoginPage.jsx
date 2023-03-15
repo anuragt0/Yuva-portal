@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { LoginForm } from "../../components/common/LoginForm";
 
 // My css
-import "../../css/common/login-form.css";
+import loginCss from "../../css/common/login-page.module.css";
 
 import logo from "../../assets/images/yuva_logo.png";
 import { SERVER_ORIGIN } from "../../utilities/constants";
@@ -60,13 +60,13 @@ const LoginPage = () => {
     }
   };
 
-  const onChange = (e) => {
-    setCreds((prevCreds) => {
-      return { ...prevCreds, [e.target.name]: e.target.value };
-    });
+  // const onChange = (e) => {
+  //   setCreds((prevCreds) => {
+  //     return { ...prevCreds, [e.target.name]: e.target.value };
+  //   });
 
-    // console.log(creds);
-  };
+  //   console.log(creds);
+  // };
 
   const updateCreds = (e) => {
     setCreds((prevCreds) => {
@@ -78,8 +78,8 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-page-outer-div">
-      <img src={logo} alt="yuva-big-logo" className="login-page-yuva-img"></img>
+    <div className={loginCss.outerDiv}>
+      <img src={logo} alt="yuva-big-logo" className={loginCss.yuvaImg}></img>
 
       <LoginForm
         role="admin"
