@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700;800&display=swap');
+
+html{
+    overflow-x: hidden;
+}
+.upper-card{
+    margin-top: 9%;
+    height: 60vh;
+    background-image: linear-gradient(
+        to bottom,
+        rgba(235, 138, 27, 0.8),
+        rgba(55, 95, 22, .95)
+      ),url('https://img.freepik.com/free-photo/six-dart-run-success-target-wooden-background_1357-79.jpg?w=900&t=st=1679734345~exp=1679734945~hmac=4b3be1a4bccfc85605b79577aedebddc5ebba237c53feebc6e6e14594b6a197f');
+    background-size: cover;
+    background-position: center center;
+    color: white; 
+    display: flex;  
+}
+
+.card-overlay{
+    flex: 1;
+    display: flex;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+.left-part{
+    flex: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.title{
+    font-size: 10vh;
+    font-weight: 900;
+}
+
+.slogan-text{
+    font-size: 7vh;
+    color: #F99417;
+}
+
+.lower > h2{
+    margin-left: 20%;
+    color: #0e3716;
+}
+
+.right-part{
+    flex: 0.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.heading > h1{
+    margin-top: 5%;
+    font-size: 3rem;
+    color: #13005A;
+}
+
+.para > p{
+    color: #252525;
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 200;
+}
+
+.card-row{
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 50px;
+}
+
+.card-row .card-column{
+    position: relative;
+    margin: 0 10px;
+    width: calc(33.3% - 20px);
+    background: #000;
+    min-height: 250px;
+    float: left;
+    box-sizing: border-box;
+    overflow: hidden;
+    margin-bottom: 50px;
+}
+
+.card-row .card-column:before{
+    content: '';
+    position: absolute;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #F99417;
+    z-index: 1;
+    transition: .5s;
+    mix-blend-mode: soft-light;
+}
+
+.card-row .card-column:hover:before{
+    bottom: 0;
+}
+
+.card-row .card-column .imgTop{
+    position: relative;
+}
+
+.card-row .card-column .imgTop img{
+    width: 100%;
+    transition: 5s;
+}
+
+.card-row .card-column:hover .imgTop img{
+    transform: scale(1.5);
+}
+
+.card-row .card-column .imgOverlay{
+    position: absolute;
+    bottom: -850px;
+    left: 0;
+    padding: 10px;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, .9);
+    width: 100%;
+    transition: 0.5s;
+    z-index: 2;
+}
+
+.card-row .card-column:hover .imgOverlay{
+    bottom: 0;
+}
+
+.card-row .card-column .imgOverlay h3{
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    font-weight: 500;
+    text-align: left;
+}
+
+.card-row .card-column .imgOverlay h3 span{
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    color: aquamarine;
+    position: relative;
+    top: -6px;
+}
+
+
+
+
+
+
+
+
+
+

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import img from "../../assets/images/yi_logo.png";
 
+
 const Navbar = () => {
   const navigate = useNavigate();
 

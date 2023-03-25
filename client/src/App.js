@@ -15,6 +15,7 @@ import UserRegis from "./routes/user/RegisPage";
 import UserQuiz from "./routes/user/QuizPage";
 import CertPage from "./routes/user/CertPage";
 import UserDashBoard from "./routes/user/Dashboard";
+import UserAbout from "./routes/user/About";
 
 import AdminLogin from "./routes/admin/LoginPage";
 import AdminServices from "./routes/admin/ServicesPage";
@@ -25,6 +26,7 @@ import AdminAddUnit from "./routes/admin/AddUnitPage";
 import AddUsersPage from "./routes/admin/AddUsersPage";
 
 import "./App.css";
+
 
 function UserApp() {
   return (
@@ -56,6 +58,7 @@ function UserApp() {
       <Route exact path="/user/register" element={<UserRegis />} />
       <Route exact path="/user/certificate/:certId" element={<CertPage />} />
       <Route exact path="/user/dashboard" element={<UserDashBoard />} />
+      <Route exact path="/user/about" element={<UserAbout/>} />
     </Routes>
   );
 }
